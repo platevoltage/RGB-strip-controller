@@ -62,7 +62,7 @@ void turnOff() {
 // }
 
 void postTest() {  
-  StaticJsonDocument<200> jsonBuffer;
+  StaticJsonDocument<500> jsonBuffer;
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   if (error) {
     server.send ( 200, "text/json", "{success:false}" );
@@ -74,11 +74,26 @@ void postTest() {
     int temp[10] = {1,2,3,4,5,6,7,8,9,10};
 
     server.send ( 200, "text/json", status);
+    Serial.println();
+
     for (int i = 0; i < length; i++) {
-      int data = jsonBuffer["data"][i];
-      Serial.print(i);
-      Serial.print(" - ");
-      Serial.print(data);
+      int red = jsonBuffer["red"][i];
+      int green = jsonBuffer["green"][i];
+      int blue = jsonBuffer["blue"][i];
+      int white = jsonBuffer["white"][i];
+      int position = jsonBuffer["positions"][i];
+      
+      Serial.print(position);
+      Serial.print(" - (");
+      Serial.print(red);
+      Serial.print(",");
+      Serial.print(green);
+      Serial.print(",");
+      Serial.print(blue);
+      Serial.print(",");
+      Serial.print(white);
+      Serial.print(")");
+
       Serial.println();
     }
     
