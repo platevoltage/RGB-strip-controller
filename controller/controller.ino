@@ -15,6 +15,10 @@
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
+uint stripLength = 2;
+uint currentData[2][4] = {{100, 100, 255, 0}, {255, 0, 100, 0}};
+// uint currentData[2] = {255, 233};
+
 
 ESP8266WebServer server(80);
 
@@ -52,14 +56,27 @@ void turnOff() {
   Serial.println("led off");
 }
 
-// void postTest() {
-//   if (server.method() != HTTP_POST) {
-//     server.send(405, "text/json", "Method Not Allowed");
-//   } else {
-//     server.send(200, "text/json", "{ POST body was:\n" + server.arg("plain") + "}" );
-    
-//   }
-// }
+void getCurrentConfig() {
+  StaticJsonDocument<500> jsonBuffer;
+  JsonArray array = jsonBuffer.to<JsonArray>();
+
+
+  
+  for (int i = 0; i < stripLength; i++) {
+    StaticJsonDocument<100> colorBuffer;
+    JsonArray colors = colorBuffer.to<JsonArray>();
+    for (int j = 0; j < 4; j++) {
+      colors.add(currentData[i][j]);
+    }
+    array.add(colors);
+  }
+
+
+  String message;
+  serializeJson(jsonBuffer, message);
+  
+  server.send(200, "text/json", message );
+}
 
 void postTest() {  
   StaticJsonDocument<500> jsonBuffer;
@@ -132,6 +149,7 @@ void setup(void) {
 
   server.on("/on", turnOn);
   server.on("/off", turnOff);
+  server.on("/current", getCurrentConfig);
   server.on("/posttest", postTest);
   server.onNotFound(handleNotFound);
 
