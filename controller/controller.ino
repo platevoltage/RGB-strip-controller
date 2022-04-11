@@ -47,7 +47,14 @@ void turnOff() {
   server.send(200, "text/json", "{ \"led\":\"off\" }");
   digitalWrite(LED_BUILTIN, 1);
   Serial.println("led off");
-  ///fsdfdfsdfsdsdfsssssss
+}
+
+void postTest() {
+  if (server.method() != HTTP_POST) {
+    server.send(405, "text/json", "Method Not Allowed");
+  } else {
+    server.send(200, "text/json", "{ POST body was:\n" + server.arg("plain") + "}" );
+  }
 }
 
 
@@ -79,6 +86,7 @@ void setup(void) {
 
   server.on("/on", turnOn);
   server.on("/off", turnOff);
+  server.on("/posttest", postTest);
   server.onNotFound(handleNotFound);
 
   server.begin();
