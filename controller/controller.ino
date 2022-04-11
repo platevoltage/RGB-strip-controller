@@ -4,6 +4,9 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <ArduinoJson.h>
+
+
 
 #ifndef STASSID
 #define STASSID "Can't stop the signal, Mal"
@@ -49,12 +52,38 @@ void turnOff() {
   Serial.println("led off");
 }
 
-void postTest() {
-  if (server.method() != HTTP_POST) {
-    server.send(405, "text/json", "Method Not Allowed");
+// void postTest() {
+//   if (server.method() != HTTP_POST) {
+//     server.send(405, "text/json", "Method Not Allowed");
+//   } else {
+//     server.send(200, "text/json", "{ POST body was:\n" + server.arg("plain") + "}" );
+    
+//   }
+// }
+
+void postTest() {  
+  StaticJsonDocument<200> jsonBuffer;
+  DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
+  if (error) {
+    server.send ( 200, "text/json", "{success:false}" );
+
   } else {
-    server.send(200, "text/json", "{ POST body was:\n" + server.arg("plain") + "}" );
+    const char* status = jsonBuffer["status"];
+    int length = jsonBuffer["length"];
+
+    int temp[10] = {1,2,3,4,5,6,7,8,9,10};
+
+    server.send ( 200, "text/json", status);
+    for (int i = 0; i < length; i++) {
+      int data = jsonBuffer["data"][i];
+      Serial.print(i);
+      Serial.print(" - ");
+      Serial.print(data);
+      Serial.println();
+    }
+    
   }
+  
 }
 
 
@@ -66,6 +95,8 @@ void setup(void) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.println("");
+
+
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
