@@ -40,11 +40,14 @@ void handleNotFound() {
 void turnOn() {
   server.send(200, "text/json", "{ \"led\":\"on\" }");
   digitalWrite(LED_BUILTIN, 0);
+  Serial.println("led on");
 }
 
 void turnOff() {
   server.send(200, "text/json", "{ \"led\":\"off\" }");
   digitalWrite(LED_BUILTIN, 1);
+  Serial.println("led off");
+  ///fsdfdfsdfsdsdfsssssss
 }
 
 
@@ -52,7 +55,7 @@ void turnOff() {
 void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, 0);
-  Serial.begin(115200);
+  Serial.begin(9600);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.println("");
@@ -69,7 +72,7 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  if (MDNS.begin("esp8266")) {
+  if (MDNS.begin("RGB-controller")) {
     Serial.println("MDNS responder started");
   }
 
