@@ -10,7 +10,7 @@ function App() {
 
   return (
     <div className="App">
-     <PhotoshopPicker color={ state } onChangeComplete={ (color) => setState(color.hex) }/>
+     <PhotoshopPicker color={ state } onChange={ (color) => setState(color.hex) }/>
     </div>
   );
 }
