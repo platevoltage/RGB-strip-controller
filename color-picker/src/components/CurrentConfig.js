@@ -4,9 +4,10 @@ import Tile from './Tile';
 import { useState, createContext, useContext, useEffect } from 'react';
 
 
-export default function CurrentConfig() {
+export default function CurrentConfig({pickerColor}) {
 
     const [colorData, setColorData] = useState([]);
+    const [state, setState] = useState();
    
     const getData = async () => {
         
@@ -15,14 +16,14 @@ export default function CurrentConfig() {
             
             const result = await response.json();
 
-            console.log(result);
+            // console.log(result);
             let hexColorArray = [];
             for (let i of result) {
                 hexColorArray.push(rgbwToHex(i));
             }
-            // console.log(hexColorArray);
-            setColorData(hexColorArray);
             
+            setColorData(hexColorArray);
+            // console.log(hexColorArray);
 
         } catch (error){
             console.error(error);
@@ -34,19 +35,33 @@ export default function CurrentConfig() {
         getData();
         
     }, []);
+    useEffect(()=>{
+        
+        console.log(colorData)
+        
+    }, [colorData]);
+
 
     const style = {
         display: "flex",
         padding: "10px",
     }
+
+    const update = (index) => {
+        colorData[index] = pickerColor;
+        setColorData(colorData);
+        setState({});
+    }
   
-  
+ 
+
     return (
       <div style={style}>
             
         {colorData.map((color, index) => (
-          
-            <Tile color={color} key={index} />   
+            <div key={index} onClick={() => update(index)}>
+                <Tile color={color} />   
+            </div>
         ))}
 
       </div>

@@ -11,9 +11,10 @@ export default function Tile({color}) {
         borderRadius: "4px",
         margin: "2px",
     }
+ 
   
     return (
-        <div style={style}>
+        <div style={style} >
            
         </div>
     );

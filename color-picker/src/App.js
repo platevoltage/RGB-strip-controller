@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="App">
      <PhotoshopPicker color={ state } onChange={ (color) => setState(color.hex) }/>
-     <CurrentConfig />
+     <CurrentConfig pickerColor={ state } />
     </div>
   );
 }
