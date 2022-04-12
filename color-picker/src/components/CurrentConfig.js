@@ -1,8 +1,11 @@
 import {getCurrentConfig } from '../utils/API';
+import Tile from './Tile';
 import { useState, createContext, useContext, useEffect } from 'react';
 
 
 export default function CurrentConfig() {
+
+    const [colorData, setColorData] = useState([]);
    
     const getData = async () => {
         
@@ -12,10 +15,7 @@ export default function CurrentConfig() {
             const result = await response.json();
 
             console.log(result);
-
-            // const randomNumber = Math.floor(Math.random() * result.length);
-
-            // setCurrentStory(result[randomNumber]);
+            setColorData(result);
 
         } catch (error){
             console.error(error);
@@ -31,7 +31,7 @@ export default function CurrentConfig() {
   
     return (
       <div>
-        test
+        <Tile color={"#ffff00"} />
       </div>
     );
   }

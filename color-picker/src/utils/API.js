@@ -6,12 +6,3 @@ export const getCurrentConfig = () => {
     });
 }
 
-
-
-// export const getSnippetByUserName = (username) => {
-//     return fetch(`/api/snippets/${username}`, {
-//       headers: {
-//         'Content-Type': 'application/json',
-//       }
-//     });
-//   };
