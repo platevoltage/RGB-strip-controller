@@ -1,8 +1,9 @@
 import {getCurrentConfig } from '../utils/API';
 import { rgbwToHex } from '../utils/conversion'
 import Tile from './Tile';
-import { useState, createContext, useContext, useEffect } from 'react';
-
+import { useState, useEffect } from 'react';
+import SubmitButton from './SubmitButton';
+import ReadButton from './ReadButton';
 
 export default function CurrentConfig({pickerColor}) {
 
@@ -48,15 +49,23 @@ export default function CurrentConfig({pickerColor}) {
     }
   
     return (
-      <div style={style}>
-            
-        {colorData.map((color, index) => (
-            <div key={index} onClick={() => update(index)}>
-                <Tile color={color} />   
+        <>
+            <div style={style}>
+                    
+                {colorData.map((color, index) => (
+                    <div key={index} onClick={() => update(index)}>
+                        <Tile color={color} />   
+                    </div>
+                ))}
+                
             </div>
-        ))}
+            <div style={style}>
+                <SubmitButton />
+                <ReadButton getData={getData}/>
 
-      </div>
+            </div>
+            
+        </>
     );
 }
   

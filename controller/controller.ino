@@ -79,10 +79,12 @@ void getCurrentConfig() {
   server.send(200, "text/json", message );
 }
 
-void postTest() {  
+void updateConfig() {  
   StaticJsonDocument<500> jsonBuffer;
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   if (error) {
+    server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
+    server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     server.send ( 200, "text/json", "{success:false}" );
 
   } 
@@ -92,7 +94,8 @@ void postTest() {
    
 
     
-
+    server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
+    server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     server.send ( 200, "text/json", status);
     Serial.println();
 
@@ -161,7 +164,7 @@ void setup(void) {
   server.on("/on", turnOn);
   server.on("/off", turnOff);
   server.on("/current", getCurrentConfig);
-  server.on("/posttest", postTest);
+  server.on("/update", updateConfig);
   server.onNotFound(handleNotFound);
   server.enableCORS(true);
   server.begin();

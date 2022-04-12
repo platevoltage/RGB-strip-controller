@@ -1,8 +1,8 @@
 
 // import { useState, createContext, useContext, useEffect } from 'react';
-import { writeChanges } from '../utils/API';
+// import { writeChanges } from '../utils/API';
 
-export default function SubmitButton() {
+export default function ReadButton({getData}) {
 
     const style = {
         backgroundColor: "#666666",
@@ -13,14 +13,14 @@ export default function SubmitButton() {
     }
 
     const handleSubmit = () => {
-        writeChanges();
- 
+
+        getData();
     }
  
   
     return (
         <div style={{margin: "10px"}}>
-            <a href="#x" style={style} onClick={handleSubmit} >Sync</a>
+            <a href="#x" style={style} onClick={handleSubmit} >Read</a>
         </div>
     );
   }
