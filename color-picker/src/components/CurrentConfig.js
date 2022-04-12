@@ -8,6 +8,7 @@ import ReadButton from './ReadButton';
 export default function CurrentConfig({pickerColor}) {
 
     const [colorData, setColorData] = useState([]);
+    const [colorDataUnsaved, setColorDataUnsaved] = useState([]);
     const [state, setState] = useState();
    
     const getData = async () => {
@@ -17,13 +18,14 @@ export default function CurrentConfig({pickerColor}) {
             
             const result = await response.json();
 
-            // console.log(result);
             let hexColorArray = [];
             for (let i of result) {
                 hexColorArray.push(rgbwToHex(i));
             }
             
             setColorData(hexColorArray);
+
+            setColorDataUnsaved([...hexColorArray]);
             // console.log(hexColorArray);
 
         } catch (error){
@@ -43,8 +45,8 @@ export default function CurrentConfig({pickerColor}) {
     }
 
     const update = (index) => {
-        colorData[index] = pickerColor;
-        setColorData(colorData);
+        colorDataUnsaved[index] = pickerColor;
+        setColorDataUnsaved(colorDataUnsaved);
         setState({});
     }
   
@@ -52,7 +54,7 @@ export default function CurrentConfig({pickerColor}) {
         <>
             <div style={style}>
                     
-                {colorData.map((color, index) => (
+                {colorDataUnsaved.map((color, index) => (
                     <div key={index} onClick={() => update(index)}>
                         <Tile color={color} />   
                     </div>
@@ -60,7 +62,7 @@ export default function CurrentConfig({pickerColor}) {
                 
             </div>
             <div style={style}>
-                <SubmitButton />
+                <SubmitButton oldData={colorData} newData={colorDataUnsaved}/>
                 <ReadButton getData={getData}/>
 
             </div>

@@ -2,7 +2,7 @@
 // import { useState, createContext, useContext, useEffect } from 'react';
 import { writeChanges } from '../utils/API';
 
-export default function SubmitButton() {
+export default function SubmitButton({oldData, newData}) {
 
     const style = {
         backgroundColor: "#666666",
@@ -13,7 +13,7 @@ export default function SubmitButton() {
     }
 
     const handleSubmit = () => {
-        writeChanges();
+        writeChanges(oldData, newData);
  
     }
  

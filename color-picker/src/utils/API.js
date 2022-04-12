@@ -1,3 +1,6 @@
+import { compare, hexToRGBW } from './conversion';
+
+
 export const getCurrentConfig = () => {
     return fetch("http://10.0.0.143/current", {
         headers: {
@@ -6,7 +9,25 @@ export const getCurrentConfig = () => {
     });
 }
 
-export const writeChanges = (dataOld, dataNew) => {
+export const writeChanges = (oldData, newData) => {
+    const data = compare(oldData, newData);
+    const redArray = [];
+    const greenArray = [];
+    const blueArray = [];
+    const whiteArray = [];
+
+    for (let i of data.changes) {
+        let rgbwData = hexToRGBW(i);
+        redArray.push(rgbwData.r);
+        greenArray.push(rgbwData.g);
+        blueArray.push(rgbwData.b);
+        whiteArray.push(0);
+    }
+
+    console.log(redArray);
+    
+
+
     return fetch("http://10.0.0.143/update", {
         method: 'POST',
         headers: {
@@ -14,12 +35,12 @@ export const writeChanges = (dataOld, dataNew) => {
         },
         body: JSON.stringify({
             "status" : "Success!",
-            "length" : 3,
-            "positions" : [5,6,7],
-            "red" : [0, 255, 0],
-            "green" : [255, 0, 0],
-            "blue" : [0, 255, 255],
-            "white" : [0, 0, 0]
+            "length" : data.changes.length,
+            "positions" : data.changePositions,
+            "red" : redArray,
+            "green" : greenArray,
+            "blue" : blueArray,
+            "white" : whiteArray
             
         })
     });
