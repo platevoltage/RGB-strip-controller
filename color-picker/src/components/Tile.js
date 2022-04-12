@@ -8,7 +8,8 @@ export default function Tile({color}) {
         backgroundColor: color,
         width: "20px",
         height: "30px",
-        borderRadius: "6px"
+        borderRadius: "4px",
+        margin: "2px",
     }
   
     return (

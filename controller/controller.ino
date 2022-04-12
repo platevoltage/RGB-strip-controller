@@ -15,8 +15,8 @@
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-uint stripLength = 2;
-uint currentData[2][4] = {{100, 100, 255, 0}, {255, 0, 100, 0}};
+uint stripLength = 20;
+uint currentData[100][4] = {};
 // uint currentData[2] = {255, 233};
 
 
@@ -57,7 +57,7 @@ void turnOff() {
 }
 
 void getCurrentConfig() {
-  StaticJsonDocument<500> jsonBuffer;
+  StaticJsonDocument<10000> jsonBuffer;
   JsonArray array = jsonBuffer.to<JsonArray>();
 
 
@@ -85,11 +85,13 @@ void postTest() {
   if (error) {
     server.send ( 200, "text/json", "{success:false}" );
 
-  } else {
+  } 
+  else {
     const char* status = jsonBuffer["status"];
     int length = jsonBuffer["length"];
+   
 
-    int temp[10] = {1,2,3,4,5,6,7,8,9,10};
+    
 
     server.send ( 200, "text/json", status);
     Serial.println();
@@ -113,6 +115,14 @@ void postTest() {
       Serial.print(")");
 
       Serial.println();
+
+      
+      currentData[position][0] = red;
+      currentData[position][1] = green;
+      currentData[position][2] = blue;
+      currentData[position][3] = white;
+
+      
     }
     
   }

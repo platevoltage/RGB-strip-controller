@@ -1,4 +1,5 @@
 import {getCurrentConfig } from '../utils/API';
+import { rgbwToHex } from '../utils/conversion'
 import Tile from './Tile';
 import { useState, createContext, useContext, useEffect } from 'react';
 
@@ -15,7 +16,13 @@ export default function CurrentConfig() {
             const result = await response.json();
 
             console.log(result);
-            setColorData(result);
+            let hexColorArray = [];
+            for (let i of result) {
+                hexColorArray.push(rgbwToHex(i));
+            }
+            // console.log(hexColorArray);
+            setColorData(hexColorArray);
+            
 
         } catch (error){
             console.error(error);
@@ -26,13 +33,23 @@ export default function CurrentConfig() {
 
         getData();
         
-    }, [])
+    }, []);
+
+    const style = {
+        display: "flex",
+        padding: "10px",
+    }
   
   
     return (
-      <div>
-        <Tile color={"#ffff00"} />
+      <div style={style}>
+            
+        {colorData.map((color, index) => (
+          
+            <Tile color={color} key={index} />   
+        ))}
+
       </div>
     );
-  }
+}
   
