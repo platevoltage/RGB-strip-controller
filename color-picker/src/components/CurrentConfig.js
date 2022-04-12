@@ -35,12 +35,6 @@ export default function CurrentConfig({pickerColor}) {
         getData();
         
     }, []);
-    useEffect(()=>{
-        
-        console.log(colorData)
-        
-    }, [colorData]);
-
 
     const style = {
         display: "flex",
@@ -53,8 +47,6 @@ export default function CurrentConfig({pickerColor}) {
         setState({});
     }
   
- 
-
     return (
       <div style={style}>
             
