@@ -4,9 +4,11 @@ import Tile from './Tile';
 import { useState, useEffect } from 'react';
 import SubmitButton from './SubmitButton';
 import ReadButton from './ReadButton';
+import StripLength from './StripLength';
 
 export default function CurrentConfig({pickerColor}) {
 
+    const [textBox, setTextBox] = useState("");
     const [colorData, setColorData] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState([]);
     const [state, setState] = useState();
@@ -22,6 +24,7 @@ export default function CurrentConfig({pickerColor}) {
             for (let i of result) {
                 hexColorArray.push(rgbwToHex(i));
             }
+
             
             setColorData(hexColorArray);
 
@@ -42,6 +45,7 @@ export default function CurrentConfig({pickerColor}) {
     const style = {
         display: "flex",
         padding: "10px",
+
     }
 
     const update = (index) => {
@@ -62,8 +66,9 @@ export default function CurrentConfig({pickerColor}) {
                 
             </div>
             <div style={style}>
-                <SubmitButton oldData={colorData} newData={colorDataUnsaved}/>
+                <SubmitButton length={textBox} oldData={colorData} newData={colorDataUnsaved}/>
                 <ReadButton getData={getData}/>
+                <StripLength colorData={colorData} textBox={textBox} setTextBox={setTextBox} />
 
             </div>
             

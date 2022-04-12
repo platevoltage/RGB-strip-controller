@@ -1,6 +1,6 @@
 
 // import './App.css';
-import { PhotoshopPicker } from 'react-color';
+import { ChromePicker } from 'react-color';
 import { useState } from 'react';
 import CurrentConfig from './components/CurrentConfig';
 
@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div className="App">
-     <PhotoshopPicker color={ state } onChange={ (color) => setState(color.hex) }/>
+     <ChromePicker color={ state } onChange={ (color) => setState(color.hex) }/>
      <CurrentConfig pickerColor={ state } />
      
     </div>

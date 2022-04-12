@@ -80,7 +80,7 @@ void getCurrentConfig() {
 }
 
 void updateConfig() {  
-  StaticJsonDocument<500> jsonBuffer;
+  StaticJsonDocument<10000> jsonBuffer;
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   if (error) {
     server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
@@ -91,6 +91,8 @@ void updateConfig() {
   else {
     const char* status = jsonBuffer["status"];
     int length = jsonBuffer["length"];
+    stripLength = jsonBuffer["stripLength"];
+    Serial.print(stripLength);
    
 
     

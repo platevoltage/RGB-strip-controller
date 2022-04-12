@@ -9,7 +9,7 @@ export const getCurrentConfig = () => {
     });
 }
 
-export const writeChanges = (oldData, newData) => {
+export const writeChanges = (length, oldData, newData) => {
     const data = compare(oldData, newData);
     const redArray = [];
     const greenArray = [];
@@ -35,6 +35,7 @@ export const writeChanges = (oldData, newData) => {
         },
         body: JSON.stringify({
             "status" : "Success!",
+            "stripLength" : length,
             "length" : data.changes.length,
             "positions" : data.changePositions,
             "red" : redArray,
