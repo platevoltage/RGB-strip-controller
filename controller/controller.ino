@@ -98,6 +98,7 @@ void updateConfig() {
     const char* status = jsonBuffer["status"];
     int length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
+    pixels.updateLength(stripLength);
     Serial.print(stripLength);
    
 
