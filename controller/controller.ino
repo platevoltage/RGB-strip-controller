@@ -74,7 +74,8 @@ void getCurrentConfig() {
 
   String message;
   serializeJson(jsonBuffer, message);
-  
+  server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
+  server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   server.send(200, "text/json", message );
 }
 
@@ -152,8 +153,9 @@ void setup(void) {
   server.on("/current", getCurrentConfig);
   server.on("/posttest", postTest);
   server.onNotFound(handleNotFound);
-
+  server.enableCORS(true);
   server.begin();
+
   Serial.println("HTTP server started");
 }
 
