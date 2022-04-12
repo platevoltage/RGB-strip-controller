@@ -1,8 +1,9 @@
 
-// import { useState, createContext, useContext, useEffect } from 'react';
+import { useState } from 'react';
 // import { writeChanges } from '../utils/API';
 
 export default function ReadButton({getData}) {
+    const [loading, setLoading] = useState(false);
 
     const style = {
         backgroundColor: "#666666",
@@ -12,15 +13,30 @@ export default function ReadButton({getData}) {
         color: "#ffffff",
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        setLoading(true);
+        try {
+            const response = await getData();
+            setLoading(false);
+            console.log(response);
 
-        getData();
-    }
+        }
+        catch (error) {
+            console.error(error);
+            setLoading(false);
+        }
+        
  
+    }
   
     return (
         <div style={{margin: "10px"}}>
-            <a href="#x" style={style} onClick={handleSubmit} >Read</a>
+        {loading ? 
+                <a href="#x" style={style}>Loading</a>
+            : 
+                <a href="#x" style={style} onClick={handleSubmit} >Read</a>
+        }
+        
         </div>
     );
   }

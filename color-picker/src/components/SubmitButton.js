@@ -1,8 +1,9 @@
 
-// import { useState, createContext, useContext, useEffect } from 'react';
+import { useState } from 'react';
 import { writeChanges } from '../utils/API';
 
 export default function SubmitButton({length, oldData, newData}) {
+    const [loading, setLoading] = useState(false);
 
     const style = {
         backgroundColor: "#666666",
@@ -12,15 +13,31 @@ export default function SubmitButton({length, oldData, newData}) {
         color: "#ffffff",
     }
 
-    const handleSubmit = () => {
-        writeChanges(length, oldData, newData);
+    const handleSubmit = async () => {
+        setLoading(true);
+        try {
+            const response = await writeChanges(length, oldData, newData);
+            setLoading(false);
+            console.log(response);
+
+        }
+        catch (error) {
+            console.error(error);
+            setLoading(false);
+        }
+        
  
     }
  
   
     return (
         <div style={{margin: "10px"}}>
-            <a href="#x" style={style} onClick={handleSubmit} >Sync</a>
+            {loading ? 
+                    <a href="#x" style={style}>Loading</a>
+                : 
+                    <a href="#x" style={style} onClick={handleSubmit} >Sync</a>
+            }
+            
         </div>
     );
   }

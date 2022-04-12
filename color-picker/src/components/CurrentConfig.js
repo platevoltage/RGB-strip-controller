@@ -1,5 +1,5 @@
 import {getCurrentConfig } from '../utils/API';
-import { rgbwToHex } from '../utils/conversion'
+import { rgbwToHex } from '../utils/conversion';
 import Tile from './Tile';
 import { useState, useEffect } from 'react';
 import SubmitButton from './SubmitButton';
@@ -56,15 +56,20 @@ export default function CurrentConfig({pickerColor}) {
   
     return (
         <>
-            <div style={style}>
-                    
-                {colorDataUnsaved.map((color, index) => (
-                    <div key={index} onClick={() => update(index)}>
-                        <Tile color={color} />   
-                    </div>
-                ))}
-                
-            </div>
+            {!colorData.length ?
+                <div style={style}>
+                    Loading...
+                </div> :
+                <div style={style}>
+                    {colorDataUnsaved.map((color, index) => (
+                        <div key={index} onClick={() => update(index)}>
+                            <Tile color={color} />   
+                        </div>
+                    ))}                
+                </div>
+            }
+
+
             <div style={style}>
                 <SubmitButton length={textBox} oldData={colorData} newData={colorDataUnsaved}/>
                 <ReadButton getData={getData}/>
