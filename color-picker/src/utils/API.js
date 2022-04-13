@@ -24,7 +24,7 @@ export const writeChanges = (length, oldData, newData) => {
         whiteArray.push(0);
     }
 
-    console.log(redArray);
+
     
 
 

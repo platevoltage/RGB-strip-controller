@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 // import { writeChanges } from '../utils/API';
 
 export default function StripLength({colorData, textBox, setTextBox}) {
@@ -8,7 +8,7 @@ export default function StripLength({colorData, textBox, setTextBox}) {
     
  
     useEffect(()=>{
-        console.log(colorData.length);
+  
         setTextBox(colorData.length);
         
     }, [colorData]);

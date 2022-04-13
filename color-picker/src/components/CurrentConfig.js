@@ -20,6 +20,7 @@ export default function CurrentConfig({pickerColor}) {
             
             const result = await response.json();
 
+
             let hexColorArray = [];
             for (let i of result) {
                 hexColorArray.push(rgbwToHex(i));
@@ -42,7 +43,17 @@ export default function CurrentConfig({pickerColor}) {
         
     }, []);
 
-    const style = {
+    const stripStyle = {
+        backgroundColor: "#444444",
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        padding: "10px",
+        width: "100vw",
+
+    }
+    const buttonStyle = {
+
         display: "flex",
         padding: "10px",
 
@@ -56,21 +67,22 @@ export default function CurrentConfig({pickerColor}) {
   
     return (
         <>
-            {!colorData.length ?
-                <div style={style}>
-                    Loading...
-                </div> :
-                <div style={style}>
-                    {colorDataUnsaved.map((color, index) => (
+            
+            <div style={stripStyle}>
+                {!colorData.length ?
+                    <>Loading...</>
+                    :
+                    <>{colorDataUnsaved.map((color, index) => (
                         <div key={index} onClick={() => update(index)}>
                             <Tile color={color} />   
                         </div>
-                    ))}                
-                </div>
-            }
+                    ))}</> 
+                }                 
+            </div>
+            
 
 
-            <div style={style}>
+            <div style={buttonStyle}>
                 <SubmitButton length={textBox} oldData={colorData} newData={colorDataUnsaved}/>
                 <ReadButton getData={getData}/>
                 <StripLength colorData={colorData} textBox={textBox} setTextBox={setTextBox} />

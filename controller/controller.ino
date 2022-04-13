@@ -62,27 +62,44 @@ void turnOff() {
   Serial.println("led off");
 }
 
-void getCurrentConfig() {
-  StaticJsonDocument<10000> jsonBuffer;
-  JsonArray array = jsonBuffer.to<JsonArray>();
-
-
-  
-  for (int i = 0; i < stripLength; i++) {
-    StaticJsonDocument<100> colorBuffer;
-    JsonArray colors = colorBuffer.to<JsonArray>();
-    for (int j = 0; j < 4; j++) {
-      colors.add(currentData[i][j]);
+String jsonStringify(int multiplier, int length) {
+    StaticJsonDocument<10000> jsonBuffer;
+    JsonArray array = jsonBuffer.to<JsonArray>();
+    String message;
+    for (int i = 32*multiplier; i < 32*multiplier+length; i++) {
+      StaticJsonDocument<256> colorBuffer;
+      JsonArray colors = colorBuffer.to<JsonArray>();
+      for (int j = 0; j < 4; j++) {
+        colors.add(currentData[i][j]);
+      }
+      array.add(colors);
     }
-    array.add(colors);
-  }
+    
+    serializeJson(jsonBuffer, message);
+    message.remove(0, 1);
+    message.remove(message.length()-1, 1);
+    return message;
+}
 
+void getCurrentConfig() {
 
-  String message;
-  serializeJson(jsonBuffer, message);
   server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
   server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  server.send(200, "text/json", message );
+
+  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+  server.send(200, "text/json", "[" );
+
+  int chunks = stripLength/32;
+  int remainder = stripLength%32;
+
+  for (int i = 0; i < chunks; i++) {
+    if (i) server.sendContent(",");
+    server.sendContent(jsonStringify(i, 32));
+  }
+  if (chunks) server.sendContent(",");
+  server.sendContent(jsonStringify(chunks*32, remainder));
+  server.sendContent("]");
+    
 }
 
 void updateConfig() {  
@@ -146,9 +163,9 @@ void updateConfig() {
       
 
       pixels.setPixelColor(i, Color(red, green, blue)); 
-      pixels.show();   
+       
     }
-
+    pixels.show();  
     
   }
   

@@ -18,7 +18,7 @@ export default function SubmitButton({length, oldData, newData}) {
         try {
             const response = await writeChanges(length, oldData, newData);
             setLoading(false);
-            console.log(response);
+
 
         }
         catch (error) {
