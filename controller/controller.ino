@@ -95,7 +95,7 @@ void getCurrentConfig() {
   // if (chunks>1) server.sendContent(",");
   if (remainder>0) {
     if (chunks>0) server.sendContent(",");
-    server.sendContent(jsonStringify(chunks*32, remainder));
+    server.sendContent(jsonStringify(chunks, remainder));
   }
   server.sendContent("]");
     
