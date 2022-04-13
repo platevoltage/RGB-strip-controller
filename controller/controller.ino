@@ -6,29 +6,22 @@
 #include <ESP8266mDNS.h>
 #include <ArduinoJson.h>
 #include <Adafruit_NeoPixel.h>
-
-
+#include <EEPROM.h>
 
 #ifndef STASSID
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK  "youcanttaketheskyfromme"
 #endif
 
-
 const int dataPin = 15;       //ws2801 data pin
-
 const char* bonjourName = "RGB-Strip";  //bonjour name - http://xxxx.local 
-
 const char *ssid = STASSID;
 const char *password = STAPSK;
 uint stripLength = 40;
-uint currentData[100][4] = {};
-// uint currentData[2] = {255, 233};
+int currentData[100][4] = {};
 
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRB + NEO_KHZ800);
 ESP8266WebServer server(80);
-
-
 
 void handleNotFound() {
   digitalWrite(LED_BUILTIN, 1);
@@ -116,9 +109,6 @@ void updateConfig() {
     int length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     pixels.updateLength(stripLength);
-    Serial.print(stripLength);
-   
-
     
     server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
     server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -132,55 +122,69 @@ void updateConfig() {
       int white = jsonBuffer["white"][i];
       int position = jsonBuffer["positions"][i];
       
-      Serial.print(position);
-      Serial.print(" - (");
-      Serial.print(red);
-      Serial.print(",");
-      Serial.print(green);
-      Serial.print(",");
-      Serial.print(blue);
-      Serial.print(",");
-      Serial.print(white);
-      Serial.print(")");
-
-      Serial.println();
-
-      
       currentData[position][0] = red;
       currentData[position][1] = green;
       currentData[position][2] = blue;
-      currentData[position][3] = white;
-
-      
-
-      
+      currentData[position][3] = white;   
     }
 
-    for (int i = 0; i < stripLength; i++) {
-      byte red = currentData[i][0];
-      byte green = currentData[i][1];
-      byte blue = currentData[i][2];
-      
+    updateStrip();
 
-      pixels.setPixelColor(i, Color(red, green, blue)); 
-       
+    for (int i = 0; i < 100; i++) {
+      int x = i*3;
+      EEPROM.write(x, currentData[i][0]);
+      EEPROM.write(x+1, currentData[i][1]);
+      EEPROM.write(x+2, currentData[i][2]);
+      EEPROM.write(x+3, currentData[i][3]);
     }
-    pixels.show();  
-    
+
+    EEPROM.commit();
+ 
   }
   
 }
 
 
+void updateStrip() {
+
+  for (int i = 0; i < stripLength; i++) {
+    byte red = currentData[i][0];
+    byte green = currentData[i][1];
+    byte blue = currentData[i][2];
+    pixels.setPixelColor(i, Color(red, green, blue)); 
+       
+  }
+  pixels.show();
+}
+
+void readEEPROM() {
+  for (int i = 0; i < 100; i++) {
+    int x = i*3;
+    currentData[i][0] = EEPROM.read(x);
+    currentData[i][1] = EEPROM.read(x+1);             
+    currentData[i][2] = EEPROM.read(x+2); 
+    currentData[i][3] = EEPROM.read(x+3); 
+      // Serial.print(currentData[i][0]);
+      // Serial.print("/");
+      // Serial.print(currentData[i][1]);
+      // Serial.print("/");
+      // Serial.print(currentData[i][2]);
+      // Serial.print("/");
+      // Serial.println(currentData[i][3]);
+  }
+}
 
 void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, 0);
   Serial.begin(9600);
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
   Serial.println("");
   pixels.begin();
+  EEPROM.begin(512);
+  readEEPROM();
+  updateStrip();
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
 
 
 
@@ -199,7 +203,6 @@ void setup(void) {
   if (MDNS.begin(bonjourName)) {
     Serial.println("MDNS responder started");
   }
-
 
   server.on("/on", turnOn);
   server.on("/off", turnOff);
@@ -222,11 +225,8 @@ uint32_t Color(byte r, byte g, byte b) {
   return c;
 }
 
-
-
 void loop(void) {
   server.handleClient();
-  MDNS.update();
-          
+  MDNS.update();        
 }
 
