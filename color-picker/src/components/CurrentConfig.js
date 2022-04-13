@@ -12,6 +12,7 @@ export default function CurrentConfig({pickerColor}) {
     const [colorData, setColorData] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState([]);
     const [state, setState] = useState();
+    const [mouseClick, setMouseClick] = useState(false);
    
     const getData = async () => {
         
@@ -36,11 +37,15 @@ export default function CurrentConfig({pickerColor}) {
             console.error(error);
         }
     }
-
+    
     useEffect(()=>{
-
+        window.addEventListener("mousedown", () => (setMouseClick(true)));
+        window.addEventListener("mouseup", () => (setMouseClick(false)));
         getData();
-        
+        return () => {
+            window.removeEventListener("mousedown", () => (setMouseClick(true)));
+            window.removeEventListener("mouseup", () => (setMouseClick(false)));
+        };
     }, []);
 
     const stripStyle = {
@@ -59,10 +64,13 @@ export default function CurrentConfig({pickerColor}) {
 
     }
 
-    const update = (index) => {
-        colorDataUnsaved[index] = pickerColor;
-        setColorDataUnsaved(colorDataUnsaved);
-        setState({});
+    const update = (e, index) => {
+        if ((mouseClick && e.type === "mouseover") || (e.type === "mousedown")) {
+            colorDataUnsaved[index] = pickerColor;
+            setColorDataUnsaved(colorDataUnsaved);
+            setState({});
+              
+        }
     }
   
     return (
@@ -73,7 +81,7 @@ export default function CurrentConfig({pickerColor}) {
                     <>Loading...</>
                     :
                     <>{colorDataUnsaved.map((color, index) => (
-                        <div key={index} onClick={() => update(index)}>
+                        <div key={index} onMouseDown={(e) => update(e, index)} onMouseOver={(e) => update(e, index)}>
                             <Tile color={color} />   
                         </div>
                     ))}</> 
