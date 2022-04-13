@@ -17,7 +17,7 @@ const int dataPin = 15;       //ws2801 data pin
 const char* bonjourName = "RGB-Strip";  //bonjour name - http://xxxx.local 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-uint stripLength = 40;
+uint stripLength = 32;
 int currentData[100][4] = {};
 
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRB + NEO_KHZ800);
@@ -59,6 +59,8 @@ String jsonStringify(int multiplier, int length) {
     StaticJsonDocument<10000> jsonBuffer;
     JsonArray array = jsonBuffer.to<JsonArray>();
     String message;
+    //0,32
+    //1,32
     for (int i = 32*multiplier; i < 32*multiplier+length; i++) {
       StaticJsonDocument<256> colorBuffer;
       JsonArray colors = colorBuffer.to<JsonArray>();
@@ -82,15 +84,19 @@ void getCurrentConfig() {
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
   server.send(200, "text/json", "[" );
 
-  int chunks = stripLength/32;
-  int remainder = stripLength%32;
+  int chunks = stripLength/32; //1
+  int remainder = stripLength%32; //0
 
   for (int i = 0; i < chunks; i++) {
-    if (i) server.sendContent(",");
+    if (i>0) server.sendContent(",");
     server.sendContent(jsonStringify(i, 32));
+    
   }
-  if (chunks) server.sendContent(",");
-  server.sendContent(jsonStringify(chunks*32, remainder));
+  // if (chunks>1) server.sendContent(",");
+  if (remainder>0) {
+    if (chunks>0) server.sendContent(",");
+    server.sendContent(jsonStringify(chunks*32, remainder));
+  }
   server.sendContent("]");
     
 }
@@ -109,6 +115,7 @@ void updateConfig() {
     int length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     pixels.updateLength(stripLength);
+    
     
     server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
     server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -130,15 +137,7 @@ void updateConfig() {
 
     updateStrip();
 
-    for (int i = 0; i < 100; i++) {
-      int x = i*3;
-      EEPROM.write(x, currentData[i][0]);
-      EEPROM.write(x+1, currentData[i][1]);
-      EEPROM.write(x+2, currentData[i][2]);
-      EEPROM.write(x+3, currentData[i][3]);
-    }
-
-    EEPROM.commit();
+    writeEEPROM();
  
   }
   
@@ -157,7 +156,20 @@ void updateStrip() {
   pixels.show();
 }
 
+void writeEEPROM() {
+  for (int i = 0; i < 100; i++) {
+      int x = i*3;
+      EEPROM.write(x, currentData[i][0]);
+      EEPROM.write(x+1, currentData[i][1]);
+      EEPROM.write(x+2, currentData[i][2]);
+      EEPROM.write(x+3, currentData[i][3]);
+  }
+  // EEPROM.write(500, stripLength);
+  EEPROM.commit();
+}
+
 void readEEPROM() {
+  // stripLength = EEPROM.read(500);
   for (int i = 0; i < 100; i++) {
     int x = i*3;
     currentData[i][0] = EEPROM.read(x);
