@@ -164,12 +164,12 @@ void writeEEPROM() {
       EEPROM.write(x+2, currentData[i][2]);
       EEPROM.write(x+3, currentData[i][3]);
   }
-  // EEPROM.write(500, stripLength);
+  EEPROM.write(500, stripLength);
   EEPROM.commit();
 }
 
 void readEEPROM() {
-  // stripLength = EEPROM.read(500);
+  stripLength = EEPROM.read(500);
   for (int i = 0; i < 100; i++) {
     int x = i*3;
     currentData[i][0] = EEPROM.read(x);
