@@ -12,11 +12,16 @@ function App() {
   const [saturation, setSaturation] = useState(1);
   const [whiteLevel, setWhiteLevel] = useState({ r: 0, g: 0, b: 0, a: 0 });
 
-  const saturationSlider = {...pickerColor, a: saturation};
-  const whiteSlider = {r:255, g:255, b:255, a: whiteLevel.a};
  
   const style = {
-    marginTop: "100px"
+    marginTop: "100px",
+    backgroundColor: "#444444",
+    width: "90vw",
+    borderRadius: "4px",
+    borderStyle: "solid",
+    borderWidth: "1px",
+    borderColor: "#ffffff33",
+    boxShadow: "2px 2px 2px #ffffff33"
   }
   // console.log(pickerColor);
   return (
@@ -25,7 +30,7 @@ function App() {
       <ColorPicker setPickerColor={setPickerColor} setWhiteLevel={setWhiteLevel} pickerColor={pickerColor} setSaturation={setSaturation} saturation={saturation} whiteLevel={whiteLevel}/>
 
 
-      <CurrentConfig pickerColor={ pickerColor } whiteLevel={ whiteLevel.a*255 }/>
+      <CurrentConfig pickerColor={ pickerColor } saturation={saturation} whiteLevel={ whiteLevel.a*255 }/>
      
     </div>
   );

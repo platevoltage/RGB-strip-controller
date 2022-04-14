@@ -6,13 +6,15 @@ import SubmitButton from './SubmitButton';
 import ReadButton from './ReadButton';
 import StripLength from './StripLength';
 
-export default function CurrentConfig({pickerColor, whiteLevel}) {
+export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
 
     const [textBox, setTextBox] = useState("");
     const [colorData, setColorData] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState([]);
     const [state, setState] = useState();
     const [mouseClick, setMouseClick] = useState(false);
+
+    
    
     const getData = async () => {
         
@@ -67,7 +69,7 @@ export default function CurrentConfig({pickerColor, whiteLevel}) {
 
     const update = (e, index) => {
         if ((mouseClick && e.type === "mouseover") || (e.type === "mousedown")) {
-            colorDataUnsaved[index] = {...pickerColor, w: whiteLevel};
+            colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
         
             setColorDataUnsaved(colorDataUnsaved);
 
