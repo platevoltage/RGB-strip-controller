@@ -8,9 +8,13 @@ export default function SubmitButton({length, oldData, newData}) {
     const style = {
         backgroundColor: "#666666",
         padding: "10px",
-        borderRadius: "4px",
         textDecoration: "none",
         color: "#ffffff",
+        borderRadius: "4px",
+        borderStyle: "solid",
+        borderWidth: "1px",
+        borderColor: "#ffffff22",
+        boxShadow: "2px 2px 2px #00000044"
     }
 
     const handleSubmit = async () => {

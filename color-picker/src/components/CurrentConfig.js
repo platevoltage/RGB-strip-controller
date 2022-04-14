@@ -1,5 +1,4 @@
 import {getCurrentConfig } from '../utils/API';
-import { rgbwToHex } from '../utils/conversion';
 import Tile from './Tile';
 import { useState, useEffect } from 'react';
 import SubmitButton from './SubmitButton';
@@ -87,7 +86,7 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
                     :
                     <>{colorDataUnsaved.map((color, index) => (
                         <div key={index} onMouseDown={(e) => update(e, index)} onMouseOver={(e) => update(e, index)}>
-                            <Tile color={color} />   
+                            <Tile index={index} color={color} />   
                         </div>
                     ))}</> 
                 }                 
