@@ -20,7 +20,7 @@ const char *password = STAPSK;
 uint stripLength = 32;
 int currentData[100][4] = {};
 
-Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
 ESP8266WebServer server(80);
 
 void handleNotFound() {
@@ -150,7 +150,8 @@ void updateStrip() {
     byte red = currentData[i][0];
     byte green = currentData[i][1];
     byte blue = currentData[i][2];
-    pixels.setPixelColor(i, Color(red, green, blue)); 
+    byte white = currentData[i][3];
+    pixels.setPixelColor(i, Color(red, green, blue, white)); 
        
   }
   pixels.show();
@@ -227,9 +228,12 @@ void setup(void) {
   Serial.println("HTTP server started");
   
 }
-uint32_t Color(byte r, byte g, byte b) {
+uint32_t Color(byte r, byte g, byte b, byte w) {
   uint32_t c;
-  c = r;
+  
+  c = w;
+  c <<= 8;
+  c |= r;
   c <<= 8;
   c |= g;
   c <<= 8;

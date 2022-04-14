@@ -16,7 +16,7 @@ export default function SubmitButton({length, oldData, newData}) {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const response = await writeChanges(length, oldData, newData);
+            await writeChanges(length, oldData, newData);
             setLoading(false);
 
 

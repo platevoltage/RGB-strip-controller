@@ -20,7 +20,7 @@ export default function CurrentConfig({pickerColor, whiteLevel}) {
             const response = await getCurrentConfig();
             
             const result = await response.json();
-            console.log(result);
+
 
 
             let hexColorArray = [];
@@ -31,10 +31,8 @@ export default function CurrentConfig({pickerColor, whiteLevel}) {
 
             
             setColorData(hexColorArray);
-            // console.log(hexColorArray);
-
             setColorDataUnsaved([...hexColorArray]);
-            // console.log(hexColorArray);
+
 
         } catch (error){
             console.error(error);
@@ -72,7 +70,7 @@ export default function CurrentConfig({pickerColor, whiteLevel}) {
             colorDataUnsaved[index] = pickerColor;
             
             setColorDataUnsaved(colorDataUnsaved);
-            console.log(colorDataUnsaved[index]);
+
             setState({});
               
         }
