@@ -188,7 +188,7 @@ void readEEPROM() {
 
 void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, 0);
+  // digitalWrite(LED_BUILTIN, 0);
   Serial.begin(9600);
   Serial.println("");
   pixels.begin();
@@ -237,8 +237,12 @@ uint32_t Color(byte r, byte g, byte b) {
   return c;
 }
 
+
 void loop(void) {
   server.handleClient();
-  MDNS.update();        
+  MDNS.update();   
+
+
+       
 }
 

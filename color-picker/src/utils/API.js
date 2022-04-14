@@ -17,7 +17,7 @@ export const writeChanges = (length, oldData, newData) => {
     const whiteArray = [];
 
     for (let i of data.changes) {
-        let rgbwData = hexToRGBW(i);
+        let rgbwData = i;
         redArray.push(rgbwData.r);
         greenArray.push(rgbwData.g);
         blueArray.push(rgbwData.b);

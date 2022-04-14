@@ -3,13 +3,15 @@
 
 
 export default function Tile({color}) {
+    
 
     const style = {
-        backgroundColor: color,
-        width: "20px",
-        height: "30px",
+        backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
+        // backgroundColor: `rgb(${100}, ${100}, ${0})`,
+        width: "30px",
+        height: "50px",
         borderRadius: "4px",
-        margin: "2px",
+        margin: "4px",
     }
  
   

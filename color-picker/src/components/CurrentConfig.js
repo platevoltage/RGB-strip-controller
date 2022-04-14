@@ -6,7 +6,7 @@ import SubmitButton from './SubmitButton';
 import ReadButton from './ReadButton';
 import StripLength from './StripLength';
 
-export default function CurrentConfig({pickerColor}) {
+export default function CurrentConfig({pickerColor, whiteLevel}) {
 
     const [textBox, setTextBox] = useState("");
     const [colorData, setColorData] = useState([]);
@@ -20,15 +20,18 @@ export default function CurrentConfig({pickerColor}) {
             const response = await getCurrentConfig();
             
             const result = await response.json();
+            console.log(result);
 
 
             let hexColorArray = [];
             for (let i of result) {
-                hexColorArray.push(rgbwToHex(i));
+                const colorObject = {r:i[0], g:i[1], b:i[2], w:i[3]};
+                hexColorArray.push(colorObject);
             }
 
             
             setColorData(hexColorArray);
+            // console.log(hexColorArray);
 
             setColorDataUnsaved([...hexColorArray]);
             // console.log(hexColorArray);
@@ -53,8 +56,8 @@ export default function CurrentConfig({pickerColor}) {
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
-        padding: "10px",
-        width: "100vw",
+        margin: "10px",
+        // width: "100vw",
 
     }
     const buttonStyle = {
@@ -67,7 +70,9 @@ export default function CurrentConfig({pickerColor}) {
     const update = (e, index) => {
         if ((mouseClick && e.type === "mouseover") || (e.type === "mousedown")) {
             colorDataUnsaved[index] = pickerColor;
+            
             setColorDataUnsaved(colorDataUnsaved);
+            console.log(colorDataUnsaved[index]);
             setState({});
               
         }
