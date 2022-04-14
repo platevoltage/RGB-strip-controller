@@ -24,7 +24,7 @@ export const writeChanges = (length, oldData, newData) => {
         // redArray.push(255);
         // greenArray.push(0);
         // blueArray.push(0);
-        whiteArray.push(0);
+        whiteArray.push(rgbwData.w);
     }
 
 

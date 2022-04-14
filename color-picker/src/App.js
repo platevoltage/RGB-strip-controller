@@ -20,7 +20,7 @@ function App() {
       <AlphaPicker color={ whiteLevel } onChange={ (color) => setWhiteLevel({ r: 0, g: 0, b: 0, a: color.rgb.a }) }/>
 
 
-     <CurrentConfig pickerColor={ pickerColor } whiteLevel={ whiteLevel }/>
+     <CurrentConfig pickerColor={ pickerColor } whiteLevel={ whiteLevel.a*255 }/>
      
     </div>
   );

@@ -54,7 +54,7 @@ export default function CurrentConfig({pickerColor, whiteLevel}) {
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
-        margin: "10px",
+        margin: "30px 10px 10px 10px",
         // width: "100vw",
 
     }
@@ -67,8 +67,8 @@ export default function CurrentConfig({pickerColor, whiteLevel}) {
 
     const update = (e, index) => {
         if ((mouseClick && e.type === "mouseover") || (e.type === "mousedown")) {
-            colorDataUnsaved[index] = pickerColor;
-            
+            colorDataUnsaved[index] = {...pickerColor, w: whiteLevel};
+        
             setColorDataUnsaved(colorDataUnsaved);
 
             setState({});
