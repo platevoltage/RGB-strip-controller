@@ -1,19 +1,19 @@
 
 // import './App.css';
 import { HuePicker, AlphaPicker, SliderPicker } from 'react-color';
-import { Hue, Alpha } from 'react-color/lib/components/common';
+import { Hue, Alpha, Saturation } from 'react-color/lib/components/common';
 import { useState } from 'react';
 import CurrentConfig from './components/CurrentConfig';
 import { RGBToHSL, HSLtoRGB } from './utils/conversion';
 
 function App() {
   const [pickerColor, setPickerColor] = useState({ r: 0, g: 0, b: 0 });
+  const [saturation, setSaturation] = useState(1);
   const [whiteLevel, setWhiteLevel] = useState({ r: 0, g: 0, b: 0, a: 0 });
-  
-  const whiteSlider = {...whiteLevel, a: 1-whiteLevel.a};
+  const saturationSlider = {...pickerColor, a: saturation};
+  const whiteSlider = {r:255, g:255, b:255, a: whiteLevel.a};
 
-  console.log(whiteLevel);
-  console.log(whiteSlider);
+ 
   const style = {
     marginTop: "100px"
   }
@@ -34,8 +34,12 @@ function App() {
           <div style={{height: "20px", width: "1000px", position: "relative"}}>
             <Hue hsl={ RGBToHSL(pickerColor) }  onChange={ (color) => setPickerColor(HSLtoRGB(color)) } />
           </div>
+          Saturation
+          <div style={{height: "20px", width: "1000px", position: "relative", backgroundColor: "#000000"}}>
+            <Alpha rgb={ saturationSlider } hsl={ {h:0,s:0,l:0} } onChange={ (color) => setSaturation(color.a) } />
+          </div>
           White Level
-          <div style={{height: "20px", width: "1000px", position: "relative", backgroundColor: "#ffffff", transform: "scale(-1, 1)"}}>
+          <div style={{height: "20px", width: "1000px", position: "relative", backgroundColor: "#000000"}}>
             <Alpha rgb={ whiteSlider } hsl={ {h:0,s:0,l:0} } onChange={ (color) => setWhiteLevel({ r: 0, g: 0, b: 0, a: color.a }) } />
           </div>
           
