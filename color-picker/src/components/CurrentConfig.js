@@ -12,9 +12,10 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
 
     const [textBox, setTextBox] = useState("");
     const [colorData, setColorData] = useState([]);
-    const [colorDataUnsaved, setColorDataUnsaved] = useState([]);
+    const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
     const [state, setState] = useState();
     const [mouseClick, setMouseClick] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     
     
@@ -39,11 +40,13 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
             
             setColorData(hexColorArray);
             setColorDataUnsaved([...hexColorArray]);
+            setLoading(false);
 
 
 
         } catch (error){
             console.error(error);
+            setLoading(false);
             setError(true);
         }
     }
@@ -110,33 +113,31 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
         
                 <div style={stripStyle}>
                     
-                    {!colorData.length ?
-                        <>
-                            <div style={loadingOverlayStyle}>
-                                {error ? <span>Connection Error</span> : <span>Loading...</span>}
-                            </div>
-                            {noConnectionArray.map((color, index) => (
-                                <div key={index} onMouseDown={(e) => update(e, index)} onMouseOver={(e) => update(e, index)}>
-                                    <Tile index={index} color={color} />   
+               
+                            {loading || error ? 
+                                <div style={loadingOverlayStyle}>
+                                    {error ? <span>Connection Error</span> : <span>Loading...</span>}
                                 </div>
-                            ))}
-                        </>
-                        :
-                        <>
+                                :
+                                <></>
+                            
+                            }
+                            
+                         
                             {colorDataUnsaved.map((color, index) => (
                                 <div key={index} onMouseDown={(e) => update(e, index)} onMouseOver={(e) => update(e, index)}>
                                     <Tile index={index} color={color} />   
                                 </div>
                             ))}
-                        </> 
-                    }                 
+                        
+                                    
                 </div>
                 
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={textBox} oldData={colorData} newData={colorDataUnsaved}/>
-                <ReadButton getData={getData}/>
+                <SubmitButton length={textBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error}/>
+                <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={textBox} setTextBox={setTextBox} />
             </div>
         </>  

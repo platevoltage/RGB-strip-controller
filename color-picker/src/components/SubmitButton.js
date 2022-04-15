@@ -2,44 +2,57 @@
 import { useState } from 'react';
 import { writeChanges } from '../utils/API';
 
-export default function SubmitButton({length, oldData, newData}) {
+export default function SubmitButton({length, oldData, newData, setLoadingParent, loadingParent, setError, error}) {
     const [loading, setLoading] = useState(false);
 
     const style = {
         backgroundColor: "#666666",
         padding: "10px",
         textDecoration: "none",
-        color: "#ffffff",
+        color: error || loadingParent || loading ? "#ffffff44" : "#ffffff",
         borderRadius: "4px",
         borderStyle: "solid",
         borderWidth: "1px",
         borderColor: "#ffffff22",
-        boxShadow: "2px 2px 2px #00000044"
+        boxShadow: "2px 2px 2px #00000044",
+        width: "100px",
     }
 
     const handleSubmit = async () => {
-        setLoading(true);
-        try {
-            await writeChanges(length, oldData, newData);
-            setLoading(false);
+        if (!loadingParent) {
+            setLoading(true);
+            setLoadingParent(true);
+            
+            try {
+                await writeChanges(length, oldData, newData);
+                setLoading(false);
+                setLoadingParent(false);
+                setError(false);
 
-
+            }
+            catch (error) {
+                console.error(error);
+                setLoading(false);
+                setLoadingParent(false);
+                setError(true);
+            }
         }
-        catch (error) {
-            console.error(error);
-            setLoading(false);
-        }
-        
  
     }
  
   
     return (
-        <div style={{margin: "10px"}}>
+        <div style={{margin: "10px", display: "flex", justifyContent: "center", flexDirection: "column", textAlign: "center"}}>
             {loading ? 
                     <a href="#x" style={style}>Loading</a>
-                : 
-                    <a href="#x" style={style} onClick={handleSubmit} >Sync</a>
+                    : 
+                    <>
+                        {!error ? 
+                            <a href="#x" style={style} onClick={handleSubmit} >Sync</a> 
+                            : 
+                            <a href="#x" style={style}>Error</a>
+                        }
+                    </>
             }
             
         </div>
