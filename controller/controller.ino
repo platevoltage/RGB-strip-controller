@@ -3,6 +3,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266WebServerSecure.h>
 #include <ESP8266mDNS.h>
 #include <ArduinoJson.h>
 #include <Adafruit_NeoPixel.h>
@@ -14,15 +15,53 @@
 #endif
 
 const int dataPin = 15;       //ws2801 data pin
-const char* bonjourName = "RGB-Strip";  //bonjour name - http://xxxx.local 
+const char* bonjourName = "rgb-Strip";  //bonjour name - http://xxxx.local 
 const char *ssid = STASSID;
 const char *password = STAPSK;
 uint stripLength = 32;
 int currentData[100][4] = {};
 
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
-ESP8266WebServer server(80);
+BearSSL::ESP8266WebServerSecure server(443);
+ESP8266WebServer serverHTTP(80);
 
+static const char serverCert[] PROGMEM = R"EOF(
+-----BEGIN CERTIFICATE-----
+MIICZDCCAc0CFC8twtj7DPCftTMs/ZDNSpnYR/F4MA0GCSqGSIb3DQEBCwUAMHEx
+CzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEQMA4GA1UEBwwHT2FrbGFuZDEWMBQG
+A1UECgwNamdjb3JiaW4gW1VTXTERMA8GA1UECwwIamdjb3JiaW4xGDAWBgNVBAMM
+D3JnYi1zdHJpcC5sb2NhbDAeFw0yMjA0MTUwODAwMDdaFw0yMzA0MTUwODAwMDda
+MHExCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEQMA4GA1UEBwwHT2FrbGFuZDEW
+MBQGA1UECgwNamdjb3JiaW4gW1VTXTERMA8GA1UECwwIamdjb3JiaW4xGDAWBgNV
+BAMMD3JnYi1zdHJpcC5sb2NhbDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA
+1jy3HkgXf4mMVvVw1VrcMZ8WfgbanLdvgzXwC+VzzJoxmLtkaA9+VzhgymztR4sL
+HeKYETt9/JjQOTlISHsz+qH20GcGZrPEBh/TySuDmveBAlerCiK7H75HeNtt+Kx3
+Zc2ttHds0E9+8ibH6u0Fl7pBe/tnyg8wgswJTFTCT38CAwEAATANBgkqhkiG9w0B
+AQsFAAOBgQAOifY2kaXc2JxAqWDXixRE+REX5ykKO7dFVRlkf/MPnLPPVGAKwckv
+cZtETYJJUJ1fPk51HuXpoP1XoQnJmaVGgsrVU05UY5ofN+yB6//u6NU42h9oyicw
+PKKUUaUbtHtRz/XO6viIPYeXUQ7rWuLMhZ48dbKG3sUKW/rH+yaXyg==
+-----END CERTIFICATE-----
+
+)EOF";
+
+static const char serverKey[] PROGMEM =  R"EOF(
+-----BEGIN PRIVATE KEY-----
+MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBANY8tx5IF3+JjFb1
+cNVa3DGfFn4G2py3b4M18Avlc8yaMZi7ZGgPflc4YMps7UeLCx3imBE7ffyY0Dk5
+SEh7M/qh9tBnBmazxAYf08krg5r3gQJXqwoiux++R3jbbfisd2XNrbR3bNBPfvIm
+x+rtBZe6QXv7Z8oPMILMCUxUwk9/AgMBAAECgYBsEky9tdhEufpVk5LLzf3t+ja6
+dHKrQ824/uiM177Go7IJPd60r7wn+4S4GKLJyFZfSQM1DjHLzrqbY04XYi8hfuFN
+h5SZw1u/Pb7NtjzPvpvDm5vypc8Zfr6MwVBo+YlohS7Ap+eEhYTucqrxCFGv4EGC
+fEiYwm3v6K+YOqnyYQJBAPsSV3uljbSsqJe7AMvFHFL8249Ocy9OIor+zNZhVKoR
+a0yjzE3Rim9RQuE884q1qaasuazOyH1k8P622lykVr0CQQDacUbjvgHKHTMGFUlv
+PheYv/ngD2p9VuEH26W7qbkWa4m1LG27lelBZQEjlaeZy+rXFAKIfsNZrjAm1zk9
+BHDrAkAX+2SH1wR2IZfpBl/JFwbhlm2SfrfZ6Oi7xiLix2FC7W8GXw8Az+cdQvHU
+efH5aejOlukVbJsR/zZV3jl1Z+0xAkEAvc+ejLiHL4vt0URf+hTXRjjStLpQizcZ
+9M0MlyPkm7G4CEDh3RVniRZuRfB9oStLFbbieJ7FusCcQLPVncqlHwJBALLej9kz
+pz6E0bnIVkWKOYGy3nN8SvKj7tyzCukdppKn5yNZ5sc6EE0TltFdCPBijOBgIBlh
+H2yce9afVtTo6G0=
+-----END PRIVATE KEY-----
+)EOF";
 
 void handleNotFound() {
   digitalWrite(LED_BUILTIN, 1);
@@ -188,6 +227,11 @@ void readEEPROM() {
   }
 }
 
+void secureRedirect() {
+  serverHTTP.sendHeader("Location", String("https://rgb-strip.local"), true);
+  serverHTTP.send(301, "text/plain", "");
+}
+
 void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
   // digitalWrite(LED_BUILTIN, 0);
@@ -221,7 +265,11 @@ void setup(void) {
   WiFi.setAutoReconnect(true);
   WiFi.persistent(true);
 
+  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
 
+  serverHTTP.on("/", secureRedirect);
+  serverHTTP.begin();
+  server.getServer().setRSACert(new BearSSL::X509List(serverCert), new BearSSL::PrivateKey(serverKey));
   server.on("/on", turnOn);
   server.on("/off", turnOff);
   server.on("/current", getCurrentConfig);
@@ -249,6 +297,7 @@ uint32_t Color(byte r, byte g, byte b, byte w) {
 unsigned long previousMillis = 0;
 unsigned long interval = 30000;
 void loop(void) {
+  serverHTTP.handleClient();
   server.handleClient();
   MDNS.update();   
 

@@ -2,14 +2,14 @@ import { compare, hexToRGBW } from './conversion';
 
 
 export const getCurrentConfig = (address) => {
-    return fetch(`http://${address}/current`, {
+    return fetch(`https://${address}/current`, {
         headers: {
             'Content-Type': 'application/json',
         }
     });
 }
 
-export const writeChanges = (length, oldData, newData) => {
+export const writeChanges = (length, oldData, newData, address) => {
     const data = compare(oldData, newData);
     const redArray = [];
     const greenArray = [];
@@ -31,7 +31,7 @@ export const writeChanges = (length, oldData, newData) => {
     
 
 
-    return fetch("http://10.0.0.143/update", {
+    return fetch(`https://${address}/update`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

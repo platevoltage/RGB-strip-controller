@@ -142,7 +142,7 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error}/>
+                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
