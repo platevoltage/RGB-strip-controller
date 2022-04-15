@@ -1,14 +1,10 @@
-
-// import './App.css';
-import { HuePicker, AlphaPicker, SliderPicker } from 'react-color';
-import { Hue, Alpha, Saturation } from 'react-color/lib/components/common';
 import { useState } from 'react';
 import CurrentConfig from './components/CurrentConfig';
 import ColorPicker from './components/ColorPicker';
-import { RGBToHSL, HSLtoRGB } from './utils/conversion';
+
 
 function App() {
-  const [pickerColor, setPickerColor] = useState({ r: 0, g: 0, b: 0 });
+  const [pickerColor, setPickerColor] = useState({ r: 255, g: 0, b: 0 });
   const [saturation, setSaturation] = useState(1);
   const [whiteLevel, setWhiteLevel] = useState({ r: 0, g: 0, b: 0, a: 0 });
 
@@ -23,7 +19,7 @@ function App() {
     borderColor: "#ffffff33",
     boxShadow: "2px 2px 2px #ffffff33"
   }
-  // console.log(pickerColor);
+
   return (
     <div className="App" style={style}>
       

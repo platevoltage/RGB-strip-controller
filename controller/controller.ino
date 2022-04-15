@@ -23,6 +23,7 @@ int currentData[100][4] = {};
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
 ESP8266WebServer server(80);
 
+
 void handleNotFound() {
   digitalWrite(LED_BUILTIN, 1);
   String message = "File Not Found\n\n";
@@ -217,6 +218,10 @@ void setup(void) {
     Serial.println("MDNS responder started");
   }
 
+  WiFi.setAutoReconnect(true);
+  WiFi.persistent(true);
+
+
   server.on("/on", turnOn);
   server.on("/off", turnOff);
   server.on("/current", getCurrentConfig);
@@ -241,10 +246,30 @@ uint32_t Color(byte r, byte g, byte b, byte w) {
   return c;
 }
 
-
+unsigned long previousMillis = 0;
+unsigned long interval = 30000;
 void loop(void) {
   server.handleClient();
   MDNS.update();   
+
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >=interval){
+    switch (WiFi.status()){
+      case WL_NO_SSID_AVAIL:
+        Serial.println("Configured SSID cannot be reached");
+        break;
+      case WL_CONNECTED:
+        Serial.println("Connection successfully established");
+        break;
+      case WL_CONNECT_FAILED:
+        Serial.println("Connection failed");
+        break;
+    }
+    Serial.printf("Connection status: %d\n", WiFi.status());
+    Serial.print("RRSI: ");
+    Serial.println(WiFi.RSSI());
+    previousMillis = currentMillis;
+  }
 
 
        

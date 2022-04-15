@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-// import { writeChanges } from '../utils/API';
 
 export default function ReadButton({getData}) {
     const [loading, setLoading] = useState(false);

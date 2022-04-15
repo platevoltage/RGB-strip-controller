@@ -13,7 +13,8 @@ export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor,
         position: "relative",
         borderRadius: "4px",
         boxShadow: "2px 2px 2px #00000044",
-        overflow: "hidden"
+        overflow: "hidden",
+        cursor: "pointer"
     }
     const whiteStyle = {
         position: "absolute",
@@ -37,13 +38,13 @@ export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor,
         borderColor: "#555555"
     }
     
-    console.log(saturationSlider);
+    console.log(pickerColor);
 
   
     return (
         <div style={{display: 'flex', position: 'relative'}}>
             <div style={{margin: "30px", width: "calc(100% - 200px)"}}>
-                <div style={{marginTop: "20px"}}>
+                <div>
                     Hue
                     <div style={sliderStyle}>
                         <Hue hsl={ RGBToHSL(pickerColor) }  onChange={ (color) => setPickerColor(HSLtoRGB(color)) } />

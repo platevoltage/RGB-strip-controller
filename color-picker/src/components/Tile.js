@@ -18,7 +18,8 @@ export default function Tile({index, color}) {
         borderColor: "#555555",
         margin: "4px",
         boxShadow: "inset 2px 2px 2px #00000044",
-        overflow: "hidden"
+        overflow: "hidden",
+        cursor: "pointer"
     }
     const whiteStyle = {
         position: "absolute",
