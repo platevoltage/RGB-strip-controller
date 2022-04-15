@@ -1,1 +1,1 @@
-*.js linguist-detectable=false
+*/components/*.js linguist-detectable=false
