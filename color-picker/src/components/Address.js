@@ -2,7 +2,11 @@
 import { useEffect } from 'react';
 // import { writeChanges } from '../utils/API';
 
-export default function StripLength({colorData, textBox, setTextBox}) {
+export default function Address({textBox, setTextBox}) {
+
+    // const [textBox, setTextBox] = useState("");
+    
+ 
 
 
     const style = {
@@ -13,20 +17,20 @@ export default function StripLength({colorData, textBox, setTextBox}) {
     }
 
     const inputStyle = {
-        width: "40px",
+        width: "200px",
         fontSize: "1.6em"
     }
   
     return (
         <div style={style}>
-            Length:
+            Address:
             <input
                 value={textBox}
                 name="strip-length"
                 onChange={(e) => {setTextBox(e.target.value)}}
                 // onChange={orThisWayForBoth}
                 type="text"
-                placeholder="#"
+                placeholder="0.0.0.0"
                 style={inputStyle}
             />
 

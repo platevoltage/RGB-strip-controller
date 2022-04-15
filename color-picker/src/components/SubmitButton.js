@@ -19,6 +19,7 @@ export default function SubmitButton({length, oldData, newData, setLoadingParent
     }
 
     const handleSubmit = async () => {
+        window.localStorage.setItem("length", length);
         if (!loadingParent) {
             setLoading(true);
             setLoadingParent(true);

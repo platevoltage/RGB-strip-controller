@@ -4,13 +4,18 @@ import { useState, useEffect } from 'react';
 import SubmitButton from './SubmitButton';
 import ReadButton from './ReadButton';
 import StripLength from './StripLength';
+import Address from './Address';
 
 const noConnectionArray = [];
 for (let i = 0; i < 20; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
+let storedLength = window.localStorage.getItem("length");
+console.log(storedLength);
+if (!storedLength) storedLength = 20;
 
 export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
 
-    const [textBox, setTextBox] = useState("");
+    const [lengthTextBox, setLengthTextBox] = useState(storedLength);
+    const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
     const [colorData, setColorData] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
     const [state, setState] = useState();
@@ -25,21 +30,22 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
     const getData = async () => {
         
         try {
-            const response = await getCurrentConfig();
+            window.localStorage.setItem("ip", addressTextBox);
+            const response = await getCurrentConfig(addressTextBox);
             
             const result = await response.json();
 
 
 
-            let hexColorArray = [];
+            let colorArray = [];
             for (let i of result) {
                 const colorObject = {r:i[0], g:i[1], b:i[2], w:i[3]};
-                hexColorArray.push(colorObject);
+                colorArray.push(colorObject);
             }
 
-            
-            setColorData(hexColorArray);
-            setColorDataUnsaved([...hexColorArray]);
+            setLengthTextBox(colorArray.length);
+            setColorData(colorArray);
+            setColorDataUnsaved([...colorArray]);
             setLoading(false);
 
 
@@ -136,9 +142,10 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={textBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error}/>
+                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
-                <StripLength colorData={colorData} textBox={textBox} setTextBox={setTextBox} />
+                <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
+                <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
             </div>
         </>  
         

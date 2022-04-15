@@ -1,8 +1,8 @@
 import { compare, hexToRGBW } from './conversion';
 
 
-export const getCurrentConfig = () => {
-    return fetch("http://10.0.0.143/current", {
+export const getCurrentConfig = (address) => {
+    return fetch(`http://${address}/current`, {
         headers: {
             'Content-Type': 'application/json',
         }
