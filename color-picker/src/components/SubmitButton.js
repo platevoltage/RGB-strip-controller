@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { writeChanges } from '../utils/API';
 
-export default function SubmitButton({length, oldData, newData, setLoadingParent, loadingParent, setError, error, address}) {
+export default function SubmitButton({length, oldData, newData, setLoadingParent, loadingParent, setError, error, address, getData}) {
     const [loading, setLoading] = useState(false);
 
     const style = {
@@ -26,9 +26,12 @@ export default function SubmitButton({length, oldData, newData, setLoadingParent
             
             try {
                 await writeChanges(length, oldData, newData, address);
-                setLoading(false);
+                // setLoading(false);
                 setLoadingParent(false);
                 setError(false);
+                await getData();
+                setLoading(false);
+                setLoadingParent(false);
 
             }
             catch (error) {

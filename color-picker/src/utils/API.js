@@ -15,7 +15,7 @@ export const writeChanges = (length, oldData, newData, address) => {
     const greenArray = [];
     const blueArray = [];
     const whiteArray = [];
-
+    console.log(data);
     for (let i of data.changes) {
         let rgbwData = i;
         redArray.push(rgbwData.r);
@@ -48,5 +48,7 @@ export const writeChanges = (length, oldData, newData, address) => {
             
         })
     });
+ 
+   
 }
 

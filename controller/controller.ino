@@ -183,12 +183,18 @@ void getCurrentConfig() {
 }
 
 void updateConfig() {  
-  StaticJsonDocument<10000> jsonBuffer;
+  DynamicJsonDocument jsonBuffer(10000);
+  
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
+
+
+  Serial.println(jsonBuffer.memoryUsage());
+  
   if (error) {
     server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
     server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     server.send ( 200, "text/json", "{success:false}" );
+    Serial.println(error.c_str());
 
   } 
   else {
@@ -200,8 +206,10 @@ void updateConfig() {
     
     server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
     server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    server.send ( 200, "text/json", status);
-    Serial.println();
+
+    Serial.println(status);
+    server.send ( 200, "text/json", "{success:true}");
+
 
     for (int i = 0; i < length; i++) {
       int red = jsonBuffer["red"][i];
@@ -214,8 +222,10 @@ void updateConfig() {
       currentData[position][1] = green;
       currentData[position][2] = blue;
       currentData[position][3] = white;   
-    }
+ 
 
+    }
+    
     updateStrip();
 
     writeEEPROM();
@@ -231,6 +241,9 @@ void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, 0);
   Serial.begin(9600);
+
+  WiFi.setAutoReconnect(true);
+  WiFi.persistent(true);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.println("");
@@ -255,22 +268,22 @@ void setup(void) {
     Serial.println("MDNS responder started");
   }
 
-  server.on("/", [](){ server.send(200, "text/html", _index_html); });
+  server.on(F("/"), [](){ server.send(200, "text/html", _index_html); });
 
   //-----begin generated paths
 
   
-	server.on("/RGB-strip-controller/manifest.json", [](){ server.send(200, "text/json", _manifest_json); });
-	server.on("/RGB-strip-controller/static/css/main.f8f8c452.css", [](){ server.send(200, "text/css", _main_css); });
-	server.on("/RGB-strip-controller/static/js/main.606bb971.js", [](){ server.send(200, "text/javascript", _main_js); });
-	server.on("/RGB-strip-controller/static/js/787.05b7a068.chunk.js", [](){ server.send(200, "text/javascript", _chunk_js); });
-	server.on("/RGB-strip-controller/index.html", [](){ server.send(200, "text/html", _index_html); });
+	server.on(F("/RGB-strip-controller/manifest.json"), [](){ server.send(200, "text/json", _manifest_json); });
+	server.on(F("/RGB-strip-controller/static/css/main.f8f8c452.css"), [](){ server.send(200, "text/css", _main_css); });
+	server.on(F("/RGB-strip-controller/static/js/main.606bb971.js"), [](){ server.send(200, "text/javascript", _main_js); });
+	server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), [](){ server.send(200, "text/javascript", _chunk_js); });
+	server.on(F("/RGB-strip-controller/index.html"), [](){ server.send(200, "text/html", _index_html); });
 
 
   //-----end generated paths
 
-  server.on("/current", getCurrentConfig);
-  server.on("/update", updateConfig);
+  server.on(F("/current"), getCurrentConfig);
+  server.on(F("/update"), updateConfig);
   
   server.onNotFound(handleNotFound);
   server.enableCORS(true);
@@ -283,5 +296,6 @@ void setup(void) {
 void loop(void) {
   server.handleClient();
   MDNS.update();
+  
 }
 
