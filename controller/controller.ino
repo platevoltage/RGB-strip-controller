@@ -11,7 +11,7 @@
 
 #include "payload/manifest.json.h"
 #include "payload/static/css/main.f8f8c452.css.h"
-#include "payload/static/js/main.1bf1e66c.js.h"
+#include "payload/static/js/main.606bb971.js.h"
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 
@@ -262,7 +262,7 @@ void setup(void) {
   
 	server.on("/RGB-strip-controller/manifest.json", [](){ server.send(200, "text/json", _manifest_json); });
 	server.on("/RGB-strip-controller/static/css/main.f8f8c452.css", [](){ server.send(200, "text/css", _main_css); });
-	server.on("/RGB-strip-controller/static/js/main.1bf1e66c.js", [](){ server.send(200, "text/javascript", _main_js); });
+	server.on("/RGB-strip-controller/static/js/main.606bb971.js", [](){ server.send(200, "text/javascript", _main_js); });
 	server.on("/RGB-strip-controller/static/js/787.05b7a068.chunk.js", [](){ server.send(200, "text/javascript", _chunk_js); });
 	server.on("/RGB-strip-controller/index.html", [](){ server.send(200, "text/html", _index_html); });
 
