@@ -2,7 +2,7 @@ import { compare, hexToRGBW } from './conversion';
 
 
 export const getCurrentConfig = (address) => {
-    return fetch(`http://${address}/current`, {
+    return fetch(`${address}/current`, {
         headers: {
             'Content-Type': 'application/json',
         }
@@ -31,7 +31,7 @@ export const writeChanges = (length, oldData, newData, address) => {
     
 
 
-    return fetch(`http://${address}/update`, {
+    return fetch(`${address}/update`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
