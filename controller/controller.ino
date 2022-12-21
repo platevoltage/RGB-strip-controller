@@ -27,7 +27,7 @@ const char *ssid = STASSID;
 const char *password = STAPSK;
 const int dataPin = 15;       //ws2801 data pin
 uint stripLength = 32;
-int currentData[100][4] = {};
+int currentData[400][4] = {};
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
 ESP8266WebServer server(80);
 
@@ -74,7 +74,7 @@ void sendFile(String fileName, String fileType) {
 
 void readEEPROM() {
   stripLength = EEPROM.read(500);
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < stripLength; i++) {
     int x = i*4;
     currentData[i][0] = EEPROM.read(x);
     currentData[i][1] = EEPROM.read(x+1);             
@@ -93,7 +93,7 @@ void readEEPROM() {
 }
 
 void writeEEPROM() {
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < stripLength; i++) {
       int x = i*4;
       EEPROM.write(x, currentData[i][0]);
       EEPROM.write(x+1, currentData[i][1]);
@@ -133,9 +133,10 @@ void updateStrip() {
     byte blue = currentData[i][2];
     byte white = currentData[i][3];
     pixels.setPixelColor(i, Color(red, green, blue, white)); 
+    delay(100);
        
-  }
   pixels.show();
+  }
 }
 
 
