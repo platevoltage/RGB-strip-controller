@@ -44,32 +44,7 @@ uint32_t Color(byte r, byte g, byte b, byte w) {
   return c;
 }
 
-void sendFile(String fileName, String fileType) {
-  File testFile = SPIFFS.open(fileName, "r");
-  if (!testFile) {
-    Serial.println("file open failed");
-    Serial.println(fileName);
-  }
-  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  server.send(200, fileType, "" );
-    while(testFile.available()) 
-    {
-      //read line by line from the file
-      String line;
-      if (fileType == "text/javascript" || fileType == "text/json") {
-        line = testFile.readStringUntil(' ');
-        if (line != "") server.sendContent(line + " ");
-      }
-      else {
-        line = testFile.readStringUntil('\n');
-        if (line != "") server.sendContent(line);
-      } 
-      
-      
-    }
-    server.client().stop();
-    Serial.println("Done");
-}
+
 
 
 void readEEPROM() {
@@ -132,10 +107,8 @@ void updateStrip() {
     byte green = currentData[i][1];
     byte blue = currentData[i][2];
     byte white = currentData[i][3];
-    pixels.setPixelColor(i, Color(red, green, blue, white)); 
-    delay(100);
-       
-  pixels.show();
+    pixels.setPixelColor(i, Color(red, green, blue, white));    
+    pixels.show();
   }
 }
 
