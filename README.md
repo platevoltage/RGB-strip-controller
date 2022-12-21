@@ -1,6 +1,6 @@
 # RGB-strip-controller
 
-## https://antieatingactivist.github.io/RGB-strip-controller/
+## https://platevoltage.github.io/RGB-strip-controller/
 
 This is a web app built with React that communicates with an ESP8266 microcontroller to operate addressable RGBW led strips.
 
