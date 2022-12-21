@@ -71,9 +71,30 @@ void sendFile(String fileName, String fileType) {
     Serial.println("Done");
 }
 
+
+void readEEPROM() {
+  stripLength = EEPROM.read(500);
+  for (int i = 0; i < 100; i++) {
+    int x = i*4;
+    currentData[i][0] = EEPROM.read(x);
+    currentData[i][1] = EEPROM.read(x+1);             
+    currentData[i][2] = EEPROM.read(x+2); 
+    currentData[i][3] = EEPROM.read(x+3); 
+      Serial.print(i);
+      Serial.print(" - ");
+      Serial.print(currentData[i][0]);
+      Serial.print("/");
+      Serial.print(currentData[i][1]);
+      Serial.print("/");
+      Serial.print(currentData[i][2]);
+      Serial.print("/");
+      Serial.println(currentData[i][3]);
+  }
+}
+
 void writeEEPROM() {
   for (int i = 0; i < 100; i++) {
-      int x = i*3;
+      int x = i*4;
       EEPROM.write(x, currentData[i][0]);
       EEPROM.write(x+1, currentData[i][1]);
       EEPROM.write(x+2, currentData[i][2]);
@@ -81,24 +102,8 @@ void writeEEPROM() {
   }
   EEPROM.write(500, stripLength);
   EEPROM.commit();
-}
+  readEEPROM();
 
-void readEEPROM() {
-  stripLength = EEPROM.read(500);
-  for (int i = 0; i < 100; i++) {
-    int x = i*3;
-    currentData[i][0] = EEPROM.read(x);
-    currentData[i][1] = EEPROM.read(x+1);             
-    currentData[i][2] = EEPROM.read(x+2); 
-    currentData[i][3] = EEPROM.read(x+3); 
-      // Serial.print(currentData[i][0]);
-      // Serial.print("/");
-      // Serial.print(currentData[i][1]);
-      // Serial.print("/");
-      // Serial.print(currentData[i][2]);
-      // Serial.print("/");
-      // Serial.println(currentData[i][3]);
-  }
 }
 
 void handleNotFound() {
@@ -222,7 +227,7 @@ void updateConfig() {
       currentData[position][1] = green;
       currentData[position][2] = blue;
       currentData[position][3] = white;   
- 
+
 
     }
     
