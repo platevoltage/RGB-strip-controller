@@ -49,6 +49,7 @@ uint32_t Color(byte r, byte g, byte b, byte w) {
 
 void readEEPROM() {
   stripLength = EEPROM.read(500);
+  pixels.updateLength(stripLength);
   for (int i = 0; i < stripLength; i++) {
     int x = i*4;
     currentData[i][0] = EEPROM.read(x);
@@ -228,8 +229,10 @@ void setup(void) {
   Serial.println("");
   pixels.begin();
   EEPROM.begin(512);
+
   readEEPROM();
-  updateStrip();  
+  updateStrip();
+
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
