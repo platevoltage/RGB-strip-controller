@@ -48,7 +48,7 @@ uint32_t Color(byte r, byte g, byte b, byte w) {
 
 
 void readEEPROM() {
-  stripLength = EEPROM.read(500);
+  stripLength = EEPROM.read(1000);
   pixels.updateLength(stripLength);
   for (int i = 0; i < stripLength; i++) {
     int x = i*4;
@@ -76,7 +76,7 @@ void writeEEPROM() {
       EEPROM.write(x+2, currentData[i][2]);
       EEPROM.write(x+3, currentData[i][3]);
   }
-  EEPROM.write(500, stripLength);
+  EEPROM.write(1000, stripLength);
   EEPROM.commit();
   readEEPROM();
 
@@ -117,7 +117,7 @@ void updateStrip() {
 
 
 String jsonStringify(int multiplier, int length) {
-    StaticJsonDocument<10000> jsonBuffer;
+    StaticJsonDocument<20000> jsonBuffer;
     JsonArray array = jsonBuffer.to<JsonArray>();
     String message;
     //0,32
@@ -163,7 +163,7 @@ void getCurrentConfig() {
 }
 
 void updateConfig() {  
-  DynamicJsonDocument jsonBuffer(10000);
+  DynamicJsonDocument jsonBuffer(20000);
   
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
 
@@ -228,7 +228,7 @@ void setup(void) {
   WiFi.begin(ssid, password);
   Serial.println("");
   pixels.begin();
-  EEPROM.begin(512);
+  EEPROM.begin(1024);
 
   readEEPROM();
   updateStrip();
@@ -278,6 +278,8 @@ void setup(void) {
 void loop(void) {
   server.handleClient();
   MDNS.update();
-  
+  //Serial.print(ESP.getFreeHeap());
+  //Serial.print("----");
+  //Serial.println(ESP.getHeapFragmentation());
 }
 
