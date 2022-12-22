@@ -2,20 +2,17 @@
 
 void readEEPROM( void (*setStripLength)(int), void(*setPixel)(int, int, int, int, int) ) {
   int stripLength = EEPROM.read(1000);
-  //pixels.updateLength(stripLength);
   (*setStripLength)(stripLength);
   for (int i = 0; i < stripLength; i++) {
-   int x = i*4;
-   int red = EEPROM.read(x);
-   int green = EEPROM.read(x+1);             
-   int blue = EEPROM.read(x+2); 
-   int white = EEPROM.read(x+3); 
-
+    int x = i*4;
+    int red = EEPROM.read(x);
+    int green = EEPROM.read(x+1);             
+    int blue = EEPROM.read(x+2); 
+    int white = EEPROM.read(x+3); 
       
     (*setPixel)(i, red, green, blue, white);
   }
         
-
 }
 
 void writeEEPROM(int stripLength, int currentData[][4]) {

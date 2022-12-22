@@ -2,11 +2,11 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-#include <ArduinoJson.h>
 #include <Adafruit_NeoPixel.h>
 #include <EEPROM.h>
 #include "color.h"
 #include "eeprom.h"
+#include "json.h"
 
 //----begin generated includes and wifi definitions
 
@@ -33,41 +33,6 @@ int currentData[400][4] = {};
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
 ESP8266WebServer server(80);
 
-
-// void readEEPROM() {
-//   stripLength = EEPROM.read(1000);
-//   pixels.updateLength(stripLength);
-//   for (int i = 0; i < stripLength; i++) {
-//     int x = i*4;
-//     currentData[i][0] = EEPROM.read(x);
-//     currentData[i][1] = EEPROM.read(x+1);             
-//     currentData[i][2] = EEPROM.read(x+2); 
-//     currentData[i][3] = EEPROM.read(x+3); 
-//       Serial.print(i);
-//       Serial.print(" - ");
-//       Serial.print(currentData[i][0]);
-//       Serial.print("/");
-//       Serial.print(currentData[i][1]);
-//       Serial.print("/");
-//       Serial.print(currentData[i][2]);
-//       Serial.print("/");
-//       Serial.println(currentData[i][3]);
-//   }
-// }
-
-// void writeEEPROM() {
-//   for (int i = 0; i < stripLength; i++) {
-//       int x = i*4;
-//       EEPROM.write(x, currentData[i][0]);
-//       EEPROM.write(x+1, currentData[i][1]);
-//       EEPROM.write(x+2, currentData[i][2]);
-//       EEPROM.write(x+3, currentData[i][3]);
-//   }
-//   EEPROM.write(1000, stripLength);
-//   EEPROM.commit();
-//   readEEPROM();
-
-// }
 
 void handleNotFound() {
   digitalWrite(LED_BUILTIN, 1);
@@ -101,29 +66,6 @@ void updateStrip() {
 }
 
 
-
-
-String jsonStringify(int multiplier, int length) {
-    StaticJsonDocument<20000> jsonBuffer;
-    JsonArray array = jsonBuffer.to<JsonArray>();
-    String message;
-    //0,32
-    //1,32
-    for (int i = 32*multiplier; i < 32*multiplier+length; i++) {
-      StaticJsonDocument<256> colorBuffer;
-      JsonArray colors = colorBuffer.to<JsonArray>();
-      for (int j = 0; j < 4; j++) {
-        colors.add(currentData[i][j]);
-      }
-      array.add(colors);
-    }
-    
-    serializeJson(jsonBuffer, message);
-    message.remove(0, 1);
-    message.remove(message.length()-1, 1);
-    return message;
-}
-
 void getCurrentConfig() {
 
   server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
@@ -137,13 +79,13 @@ void getCurrentConfig() {
 
   for (int i = 0; i < chunks; i++) {
     if (i>0) server.sendContent(",");
-    server.sendContent(jsonStringify(i, 32));
+    server.sendContent(jsonStringify(i, 32, currentData));
     
   }
   // if (chunks>1) server.sendContent(",");
   if (remainder>0) {
     if (chunks>0) server.sendContent(",");
-    server.sendContent(jsonStringify(chunks, remainder));
+    server.sendContent(jsonStringify(chunks, remainder, currentData));
   }
   server.sendContent("]");
     
@@ -203,12 +145,9 @@ void updateConfig() {
 
 void setStripLength(int newStripLength) {
   stripLength = newStripLength;
-  Serial.println("setStripLength");
-  Serial.println(stripLength);
 }
 
 void setPixel(int position, int red, int green, int blue, int white) {
-  Serial.println("setPixel");
   currentData[position][0] = red;
   currentData[position][1] = green;
   currentData[position][2] = blue;
