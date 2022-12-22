@@ -25,7 +25,7 @@
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-const int dataPin = 15;       //ws2801 data pin
+const int dataPin = 5;       //ws2801 data pin
 uint stripLength = 32;
 int currentData[400][4] = {};
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
