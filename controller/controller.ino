@@ -5,6 +5,8 @@
 #include <ArduinoJson.h>
 #include <Adafruit_NeoPixel.h>
 #include <EEPROM.h>
+#include "color.h"
+#include "eeprom.h"
 
 //----begin generated includes and wifi definitions
 
@@ -31,56 +33,41 @@ int currentData[400][4] = {};
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
 ESP8266WebServer server(80);
 
-uint32_t Color(byte r, byte g, byte b, byte w) {
-  uint32_t c;
-  
-  c = w;
-  c <<= 8;
-  c |= r;
-  c <<= 8;
-  c |= g;
-  c <<= 8;
-  c |= b;
-  return c;
-}
 
+// void readEEPROM() {
+//   stripLength = EEPROM.read(1000);
+//   pixels.updateLength(stripLength);
+//   for (int i = 0; i < stripLength; i++) {
+//     int x = i*4;
+//     currentData[i][0] = EEPROM.read(x);
+//     currentData[i][1] = EEPROM.read(x+1);             
+//     currentData[i][2] = EEPROM.read(x+2); 
+//     currentData[i][3] = EEPROM.read(x+3); 
+//       Serial.print(i);
+//       Serial.print(" - ");
+//       Serial.print(currentData[i][0]);
+//       Serial.print("/");
+//       Serial.print(currentData[i][1]);
+//       Serial.print("/");
+//       Serial.print(currentData[i][2]);
+//       Serial.print("/");
+//       Serial.println(currentData[i][3]);
+//   }
+// }
 
+// void writeEEPROM() {
+//   for (int i = 0; i < stripLength; i++) {
+//       int x = i*4;
+//       EEPROM.write(x, currentData[i][0]);
+//       EEPROM.write(x+1, currentData[i][1]);
+//       EEPROM.write(x+2, currentData[i][2]);
+//       EEPROM.write(x+3, currentData[i][3]);
+//   }
+//   EEPROM.write(1000, stripLength);
+//   EEPROM.commit();
+//   readEEPROM();
 
-
-void readEEPROM() {
-  stripLength = EEPROM.read(1000);
-  pixels.updateLength(stripLength);
-  for (int i = 0; i < stripLength; i++) {
-    int x = i*4;
-    currentData[i][0] = EEPROM.read(x);
-    currentData[i][1] = EEPROM.read(x+1);             
-    currentData[i][2] = EEPROM.read(x+2); 
-    currentData[i][3] = EEPROM.read(x+3); 
-      Serial.print(i);
-      Serial.print(" - ");
-      Serial.print(currentData[i][0]);
-      Serial.print("/");
-      Serial.print(currentData[i][1]);
-      Serial.print("/");
-      Serial.print(currentData[i][2]);
-      Serial.print("/");
-      Serial.println(currentData[i][3]);
-  }
-}
-
-void writeEEPROM() {
-  for (int i = 0; i < stripLength; i++) {
-      int x = i*4;
-      EEPROM.write(x, currentData[i][0]);
-      EEPROM.write(x+1, currentData[i][1]);
-      EEPROM.write(x+2, currentData[i][2]);
-      EEPROM.write(x+3, currentData[i][3]);
-  }
-  EEPROM.write(1000, stripLength);
-  EEPROM.commit();
-  readEEPROM();
-
-}
+// }
 
 void handleNotFound() {
   digitalWrite(LED_BUILTIN, 1);
@@ -208,12 +195,25 @@ void updateConfig() {
     
     updateStrip();
 
-    writeEEPROM();
+    writeEEPROM(stripLength, currentData);
  
   }
   
 }
 
+void setStripLength(int newStripLength) {
+  stripLength = newStripLength;
+  Serial.println("setStripLength");
+  Serial.println(stripLength);
+}
+
+void setPixel(int position, int red, int green, int blue, int white) {
+  Serial.println("setPixel");
+  currentData[position][0] = red;
+  currentData[position][1] = green;
+  currentData[position][2] = blue;
+  currentData[position][3] = white;  
+}
 
 
 
@@ -230,7 +230,19 @@ void setup(void) {
   pixels.begin();
   EEPROM.begin(1024);
 
-  readEEPROM();
+  readEEPROM(setStripLength, setPixel);
+  pixels.updateLength(stripLength);
+  for (int i = 0; i < stripLength; i++) {
+        Serial.print(i);
+      Serial.print(" - ");
+      Serial.print(currentData[i][0]);
+      Serial.print("/");
+      Serial.print(currentData[i][1]);
+      Serial.print("/");
+      Serial.print(currentData[i][2]);
+      Serial.print("/");
+      Serial.println(currentData[i][3]);
+  }
   updateStrip();
 
 
