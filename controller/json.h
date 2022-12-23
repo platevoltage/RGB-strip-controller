@@ -1,6 +1,6 @@
 #include <ArduinoJson.h>
 
-String jsonStringify(int multiplier, int length, int currentData[][4]) {
+String jsonStringify(int multiplier, int length, uint8_t currentData[][4]) {
     StaticJsonDocument<20000> jsonBuffer;
     JsonArray array = jsonBuffer.to<JsonArray>();
     String message;
