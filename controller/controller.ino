@@ -76,8 +76,9 @@ void getCurrentConfig() {
 
   int chunks = stripLength/32; //1
   int remainder = stripLength%32; //0
+
   uint8_t currentData[stripLength][4] = {};
-  
+
   for (int i = 0; i < stripLength; i++) {
     currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
     currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
@@ -128,6 +129,15 @@ void updateConfig() {
     Serial.println(status);
     server.send ( 200, "text/json", "{success:true}");
 
+    uint8_t currentData[stripLength][4] = {};
+
+    for (int i = 0; i < stripLength; i++) {
+      currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
+      currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
+      currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
+      currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
+    }
+
 
     for (int i = 0; i < length; i++) {
       int red = jsonBuffer["red"][i];
@@ -136,19 +146,21 @@ void updateConfig() {
       int white = jsonBuffer["white"][i];
       int position = jsonBuffer["positions"][i];
       
-      //currentData[position][0] = red;
-      //currentData[position][1] = green;
-      //currentData[position][2] = blue;
-      //currentData[position][3] = white;
+      currentData[position][0] = red;
+      currentData[position][1] = green;
+      currentData[position][2] = blue;
+      currentData[position][3] = white;
 
-      pixels.setPixelColor(position, Color(red, green, blue, white));    
-      pixels.show();
       writePixelToEEPROM(position, red, green, blue, white);
-
     }
-    
-    //updateStrip();
-
+    for (int i = 0; i < stripLength; i++) {
+      int red = currentData[i][0];
+      int green = currentData[i][1];
+      int blue = currentData[i][2];
+      int white = currentData[i][3];
+      pixels.setPixelColor(i, Color(red, green, blue, white));    
+      pixels.show();
+    }
   }
   
 }
