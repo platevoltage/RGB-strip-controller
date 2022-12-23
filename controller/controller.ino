@@ -29,7 +29,7 @@ const char *ssid = STASSID;
 const char *password = STAPSK;
 const int dataPin = 5;       //ws2801 data pin
 uint stripLength = 32;
-//int currentData[400][4] = {};
+
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
 ESP8266WebServer server(80);
 
@@ -52,18 +52,6 @@ void handleNotFound() {
   server.send(404, "text/plain", message);
   digitalWrite(LED_BUILTIN, 0);
 }
-
-// void updateStrip() {
-
-//   for (int i = 0; i < stripLength; i++) {
-//     byte red = currentData[i][0];
-//     byte green = currentData[i][1];
-//     byte blue = currentData[i][2];
-//     byte white = currentData[i][3];
-//     pixels.setPixelColor(i, Color(red, green, blue, white));    
-//     pixels.show();
-//   }
-// }
 
 
 void getCurrentConfig() {
@@ -153,6 +141,7 @@ void updateConfig() {
 
       writePixelToEEPROM(position, red, green, blue, white);
     }
+    writeStripLengthToEEPROM(stripLength);
     for (int i = 0; i < stripLength; i++) {
       int red = currentData[i][0];
       int green = currentData[i][1];
@@ -170,10 +159,7 @@ void setStripLength(int newStripLength) {
 }
 
 void setPixel(int position, int red, int green, int blue, int white) {
-  //currentData[position][0] = red;
-  //currentData[position][1] = green;
-  //currentData[position][2] = blue;
-  //currentData[position][3] = white;  
+
   pixels.setPixelColor(position, Color(red, green, blue, white));    
   pixels.show();
 }
@@ -195,19 +181,6 @@ void setup(void) {
 
   readEEPROMAndSetPixels(setStripLength, setPixel);
   pixels.updateLength(stripLength);
-  // for (int i = 0; i < stripLength; i++) {
-  //       Serial.print(i);
-  //     Serial.print(" - ");
-  //     Serial.print(currentData[i][0]);
-  //     Serial.print("/");
-  //     Serial.print(currentData[i][1]);
-  //     Serial.print("/");
-  //     Serial.print(currentData[i][2]);
-  //     Serial.print("/");
-  //     Serial.println(currentData[i][3]);
-  // }
- // updateStrip();
-
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {

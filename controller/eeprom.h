@@ -35,6 +35,11 @@ void writePixelToEEPROM(int position, int red, int green, int blue, int white) {
 
 }
 
+void writeStripLengthToEEPROM(int stripLength) {
+  EEPROM.write(1000, stripLength);
+  EEPROM.commit();
+}
+
 // void writeEEPROM(int stripLength, int currentData[][4]) {
 //   for (int i = 0; i < stripLength; i++) {
 //       int x = i*4;
