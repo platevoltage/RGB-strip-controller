@@ -3,10 +3,10 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <Adafruit_NeoPixel.h>
-#include <EEPROM.h>
+#include "json.h"
 #include "color.h"
 #include "eeprom.h"
-#include "json.h"
+
 
 //----begin generated includes and wifi definitions
 
@@ -53,13 +53,17 @@ void handleNotFound() {
   digitalWrite(LED_BUILTIN, 0);
 }
 
-
-void getCurrentConfig() {
-
+void sendHeaders() {
   server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
   server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+}
+
+
+void getCurrentConfig() {
+  sendHeaders();
+
   server.send(200, "text/json", "[" );
 
   int chunks = stripLength/32; //1
@@ -80,7 +84,7 @@ void getCurrentConfig() {
     server.sendContent(jsonStringify(i, 32, currentData));
     
   }
-  // if (chunks>1) server.sendContent(",");
+
   if (remainder>0) {
     if (chunks>0) server.sendContent(",");
     server.sendContent(jsonStringify(chunks, remainder, currentData));
@@ -91,30 +95,19 @@ void getCurrentConfig() {
 
 void updateConfig() {  
   DynamicJsonDocument jsonBuffer(20000);
-  
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
+  sendHeaders();
 
-
-  Serial.println(jsonBuffer.memoryUsage());
-  
   if (error) {
-    server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
-    server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     server.send ( 200, "text/json", "{success:false}" );
     Serial.println(error.c_str());
-
   } 
+
   else {
     const char* status = jsonBuffer["status"];
     int length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     pixels.updateLength(stripLength);
-    
-    
-    server.sendHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
-    server.sendHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-    Serial.println(status);
     server.send ( 200, "text/json", "{success:true}");
 
     uint8_t currentData[stripLength][4] = {};
@@ -156,6 +149,7 @@ void updateConfig() {
 
 void setStripLength(int newStripLength) {
   stripLength = newStripLength;
+  pixels.updateLength(stripLength);
 }
 
 void setPixel(int position, int red, int green, int blue, int white) {
@@ -180,7 +174,7 @@ void setup(void) {
   EEPROM.begin(1024);
 
   readEEPROMAndSetPixels(setStripLength, setPixel);
-  pixels.updateLength(stripLength);
+  setStripLength(stripLength);
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
