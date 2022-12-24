@@ -163,7 +163,7 @@ void setPixel(int position, int red, int green, int blue, int white) {
 void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, 0);
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   WiFi.setAutoReconnect(true);
   WiFi.persistent(true);
@@ -188,7 +188,7 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  if (MDNS.begin("test")) {
+  if (MDNS.begin("beep")) {
     Serial.println("MDNS responder started");
   }
 
