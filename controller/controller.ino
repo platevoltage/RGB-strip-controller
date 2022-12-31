@@ -1,7 +1,22 @@
+
+#ifdef ESP32
+
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+WebServer server(80);
+
+#else
+
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
+ESP8266WebServer server(80);
+
+#endif
+
 #include <Adafruit_NeoPixel.h>
 #include "json.h"
 #include "color.h"
@@ -31,7 +46,6 @@ const int dataPin = 5;  //ws2801 data pin
 uint stripLength = 32;
 
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
-WebServer server(80);
 
 
 void handleNotFound() {
