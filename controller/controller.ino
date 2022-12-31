@@ -1,7 +1,7 @@
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
+#include <WebServer.h>
+#include <ESPmDNS.h>
 #include <Adafruit_NeoPixel.h>
 #include "json.h"
 #include "color.h"
@@ -19,7 +19,7 @@
 
 #ifndef STASSID
 #define STASSID "Can't stop the signal, Mal"
-#define STAPSK  "youcanttaketheskyfromme"
+#define STAPSK "youcanttaketheskyfromme"
 #endif
 
 //----end generated includes and wifi definitions
@@ -27,11 +27,11 @@
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-const int dataPin = 5;       //ws2801 data pin
+const int dataPin = 5;  //ws2801 data pin
 uint stripLength = 32;
 
 Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
-ESP8266WebServer server(80);
+WebServer server(80);
 
 
 void handleNotFound() {
@@ -64,10 +64,10 @@ void sendHeaders() {
 void getCurrentConfig() {
   sendHeaders();
 
-  server.send(200, "text/json", "[" );
+  server.send(200, "text/json", "[");
 
-  int chunks = stripLength/32; //1
-  int remainder = stripLength%32; //0
+  int chunks = stripLength / 32;     //1
+  int remainder = stripLength % 32;  //0
 
   uint8_t currentData[stripLength][4] = {};
 
@@ -80,35 +80,34 @@ void getCurrentConfig() {
 
 
   for (int i = 0; i < chunks; i++) {
-    if (i>0) server.sendContent(",");
+    if (i > 0) server.sendContent(",");
     server.sendContent(jsonStringify(i, 32, currentData));
-    
   }
 
-  if (remainder>0) {
-    if (chunks>0) server.sendContent(",");
+  if (remainder > 0) {
+    if (chunks > 0) server.sendContent(",");
     server.sendContent(jsonStringify(chunks, remainder, currentData));
   }
   server.sendContent("]");
-    
+
 }
 
-void updateConfig() {  
+void updateConfig() {
   DynamicJsonDocument jsonBuffer(20000);
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   sendHeaders();
 
   if (error) {
-    server.send ( 200, "text/json", "{success:false}" );
+    server.send(200, "text/json", "{success:false}");
     Serial.println(error.c_str());
-  } 
+  }
 
   else {
-    const char* status = jsonBuffer["status"];
+    const char *status = jsonBuffer["status"];
     int length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     pixels.updateLength(stripLength);
-    server.send ( 200, "text/json", "{success:true}");
+    server.send(200, "text/json", "{success:true}");
 
     uint8_t currentData[stripLength][4] = {};
 
@@ -126,7 +125,7 @@ void updateConfig() {
       int blue = jsonBuffer["blue"][i];
       int white = jsonBuffer["white"][i];
       int position = jsonBuffer["positions"][i];
-      
+
       currentData[position][0] = red;
       currentData[position][1] = green;
       currentData[position][2] = blue;
@@ -140,11 +139,10 @@ void updateConfig() {
       int green = currentData[i][1];
       int blue = currentData[i][2];
       int white = currentData[i][3];
-      pixels.setPixelColor(i, Color(red, green, blue, white));    
+      pixels.setPixelColor(i, Color(red, green, blue, white));
       pixels.show();
     }
   }
-  
 }
 
 void setStripLength(int newStripLength) {
@@ -154,7 +152,7 @@ void setStripLength(int newStripLength) {
 
 void setPixel(int position, int red, int green, int blue, int white) {
 
-  pixels.setPixelColor(position, Color(red, green, blue, white));    
+  pixels.setPixelColor(position, Color(red, green, blue, white));
   pixels.show();
 }
 
@@ -192,23 +190,35 @@ void setup(void) {
     Serial.println("MDNS responder started");
   }
 
-  server.on(F("/"), [](){ server.send(200, "text/html", _index_html); });
+  server.on(F("/"), []() {
+    server.send(200, "text/html", _index_html);
+  });
 
   //-----begin generated paths
 
-  
-	server.on(F("/RGB-strip-controller/manifest.json"), [](){ server.send(200, "text/json", _manifest_json); });
-	server.on(F("/RGB-strip-controller/static/css/main.f8f8c452.css"), [](){ server.send(200, "text/css", _main_css); });
-	server.on(F("/RGB-strip-controller/static/js/main.606bb971.js"), [](){ server.send(200, "text/javascript", _main_js); });
-	server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), [](){ server.send(200, "text/javascript", _chunk_js); });
-	server.on(F("/RGB-strip-controller/index.html"), [](){ server.send(200, "text/html", _index_html); });
+
+  server.on(F("/RGB-strip-controller/manifest.json"), []() {
+    server.send_P(200, "text/json", _manifest_json);
+  });
+  server.on(F("/RGB-strip-controller/static/css/main.f8f8c452.css"), []() {
+    server.send_P(200, "text/css", _main_css);
+  });
+  server.on(F("/RGB-strip-controller/static/js/main.606bb971.js"), []() {
+    server.send_P(200, "text/javascript", _main_js);
+  });
+  server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
+    server.send_P(200, "text/javascript", _chunk_js);
+  });
+  server.on(F("/RGB-strip-controller/index.html"), []() {
+    server.send_P(200, "text/html", _index_html);
+  });
 
 
   //-----end generated paths
 
   server.on(F("/current"), getCurrentConfig);
   server.on(F("/update"), updateConfig);
-  
+
   server.onNotFound(handleNotFound);
   server.enableCORS(true);
   server.begin();
@@ -219,9 +229,8 @@ void setup(void) {
 
 void loop(void) {
   server.handleClient();
-  MDNS.update();
+  //MDNS.update();
   //Serial.print(ESP.getFreeHeap());
   //Serial.print("----");
   //Serial.println(ESP.getHeapFragmentation());
 }
-
