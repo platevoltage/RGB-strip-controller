@@ -83,11 +83,6 @@ void sendHeaders() {
 void getCurrentConfig() {
   sendHeaders();
 
-  //server.send(200, "text/json", "");
-
-  int chunks = stripLength / 32;     //1
-  int remainder = stripLength % 32;  //0
-
   uint8_t currentData[stripLength][4] = {};
 
   for (int i = 0; i < stripLength; i++) {
@@ -97,22 +92,7 @@ void getCurrentConfig() {
     currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
   }
 
-
   server.send(200, "text/json", jsonStringify(stripLength, currentData));
-
-  // server.send(200, "text/json", "{success:true}");
- 
-  
-  // for (int i = 0; i < chunks; i++) {
-  //   if (i > 0) server.sendContent(",");
-  //   server.sendContent(jsonStringify(i, 32, currentData));
-  // }
-
-  // if (remainder > 0) {
-  //   if (chunks > 0) server.sendContent(",");
-  //   server.sendContent((jsonStringify(chunks, remainder, currentData)));
-  // }
-  // server.sendContent("]");
 
 }
 
