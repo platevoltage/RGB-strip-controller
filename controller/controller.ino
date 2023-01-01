@@ -1,5 +1,8 @@
 
-//#define WS2801
+#define WS2801
+#define STASSID "Can't stop the signal, Mal"
+#define STAPSK "youcanttaketheskyfromme"
+#define BONJOURNAME "pipe"
 
 #ifdef ESP32
 
@@ -35,10 +38,6 @@ ESP8266WebServer server(80);
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 
-#ifndef STASSID
-#define STASSID "Can't stop the signal, Mal"
-#define STAPSK "youcanttaketheskyfromme"
-#endif
 
 
 //----end generated includes and wifi definitions
@@ -203,8 +202,9 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  if (MDNS.begin("pipe")) {
+  if (MDNS.begin(BONJOURNAME)) {
     Serial.println("MDNS responder started");
+    Serial.println(BONJOURNAME);
   }
 
   server.on(F("/"), []() {
