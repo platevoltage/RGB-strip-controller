@@ -1,10 +1,11 @@
 
+//#define WS2801
+
 #ifdef ESP32
 
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
-
 WebServer server(80);
 
 #else
@@ -14,14 +15,12 @@ WebServer server(80);
 #include <ESP8266mDNS.h>
 ESP8266WebServer server(80);
 
-
 #endif
 
 #include <WiFiClient.h>
 #include <WiFiUdp.h>
-#include <ArduinoOTA.h>
-#include <Adafruit_NeoPixel.h>
 #include <ArduinoJson.h>
+#include "ota.h"
 #include "json.h"
 #include "color.h"
 #include "eeprom.h"
@@ -41,6 +40,7 @@ ESP8266WebServer server(80);
 #define STAPSK "youcanttaketheskyfromme"
 #endif
 
+
 //----end generated includes and wifi definitions
 
 
@@ -49,8 +49,14 @@ const char *password = STAPSK;
 const int dataPin = 5;  //ws2801 data pin
 uint stripLength = 32;
 
-Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
 
+#ifdef WS2801
+#include <Adafruit_WS2801.h>
+Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, 15, 13); //enable for ws2801 strip
+#else
+#include <Adafruit_NeoPixel.h>
+Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
+#endif
 
 void handleNotFound() {
   digitalWrite(LED_BUILTIN, 1);
@@ -197,7 +203,7 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  if (MDNS.begin("beep")) {
+  if (MDNS.begin("pipe")) {
     Serial.println("MDNS responder started");
   }
 
@@ -234,34 +240,7 @@ void setup(void) {
   server.enableCORS(true);
   server.begin();
   Serial.println("HTTP server started");
-
-  ArduinoOTA.onStart([]() {
-      String type;
-      if (ArduinoOTA.getCommand() == U_FLASH)
-        type = "sketch";
-      else // U_SPIFFS
-        type = "filesystem";
-
-      // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-      Serial.println("Start updating " + type);
-    });
-    ArduinoOTA.onEnd([]() {
-      Serial.println("\nEnd");
-    });
-    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-      Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-    });
-    ArduinoOTA.onError([](ota_error_t error) {
-      Serial.printf("Error[%u]: ", error);
-      if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-      else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-      else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-      else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-      else if (error == OTA_END_ERROR) Serial.println("End Failed");
-    });
-
-  ArduinoOTA.begin();
-
+  startOTA();
 }
 
 
@@ -269,8 +248,8 @@ void setup(void) {
 void loop(void) {
   server.handleClient();
   ArduinoOTA.handle();
-  //MDNS.update();
-  //Serial.println(ESP.getFreeHeap());
-  //Serial.print("----");
-  //Serial.println(ESP.getHeapFragmentation());
+  // MDNS.update();
+  // Serial.println(ESP.getFreeHeap());
+  Serial.print("-");  //solves bug with ws2801, investigating.
+  // Serial.println(ESP.getHeapFragmentation());
 }

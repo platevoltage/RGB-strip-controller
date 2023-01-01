@@ -7,7 +7,7 @@ int readEEPROMAndReturnSubPixel(int position, int subPixel) {
 
 void readEEPROMAndSetPixels( void (*setStripLength)(int), void(*setPixel)(int, int, int, int, int) ) {
   int stripLength = EEPROM.read(1000);
-  if (stripLength < 0 || stripLength > 150) stripLength = 20;
+  if (stripLength < 0 || stripLength > 170) stripLength = 20;
   (*setStripLength)(stripLength);
   for (int i = 0; i < stripLength; i++) {
     int x = i*4;
