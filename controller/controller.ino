@@ -15,9 +15,11 @@ WebServer server(80);
 #include <ESP8266mDNS.h>
 ESP8266WebServer server(80);
 
+
 #endif
 
 #include <Adafruit_NeoPixel.h>
+#include <ArduinoJson.h>
 #include "json.h"
 #include "color.h"
 #include "eeprom.h"
@@ -75,10 +77,13 @@ void sendHeaders() {
 }
 
 
+
+
+
 void getCurrentConfig() {
   sendHeaders();
 
-  server.send(200, "text/json", "[");
+  //server.send(200, "text/json", "");
 
   int chunks = stripLength / 32;     //1
   int remainder = stripLength % 32;  //0
@@ -93,16 +98,21 @@ void getCurrentConfig() {
   }
 
 
-  for (int i = 0; i < chunks; i++) {
-    if (i > 0) server.sendContent(",");
-    server.sendContent(jsonStringify(i, 32, currentData));
-  }
+  server.send(200, "text/json", jsonStringify(stripLength, currentData));
 
-  if (remainder > 0) {
-    if (chunks > 0) server.sendContent(",");
-    server.sendContent(jsonStringify(chunks, remainder, currentData));
-  }
-  server.sendContent("]");
+  // server.send(200, "text/json", "{success:true}");
+ 
+  
+  // for (int i = 0; i < chunks; i++) {
+  //   if (i > 0) server.sendContent(",");
+  //   server.sendContent(jsonStringify(i, 32, currentData));
+  // }
+
+  // if (remainder > 0) {
+  //   if (chunks > 0) server.sendContent(",");
+  //   server.sendContent((jsonStringify(chunks, remainder, currentData)));
+  // }
+  // server.sendContent("]");
 
 }
 
@@ -237,6 +247,7 @@ void setup(void) {
   server.enableCORS(true);
   server.begin();
   Serial.println("HTTP server started");
+
 }
 
 
@@ -244,7 +255,7 @@ void setup(void) {
 void loop(void) {
   server.handleClient();
   //MDNS.update();
-  //Serial.print(ESP.getFreeHeap());
+  //Serial.println(ESP.getFreeHeap());
   //Serial.print("----");
   //Serial.println(ESP.getHeapFragmentation());
 }
