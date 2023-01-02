@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 
 String jsonStringify(int length, uint8_t currentData[][4]) {
-    DynamicJsonDocument jsonBuffer(20000);
+    DynamicJsonDocument jsonBuffer(21000);
     JsonArray array = jsonBuffer.to<JsonArray>();
     
     for (int i = 0; i < length; i++) {

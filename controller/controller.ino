@@ -2,7 +2,7 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "pipe"
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -48,7 +48,7 @@ ESP8266WebServer server(80);
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-uint stripLength = 32;
+uint8_t stripLength = 32;
 
 
 #ifdef WS2801
@@ -106,7 +106,7 @@ void getCurrentConfig() {
 }
 
 void updateConfig() {
-  DynamicJsonDocument jsonBuffer(20000);
+  DynamicJsonDocument jsonBuffer(21000);
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   sendHeaders();
 
@@ -145,16 +145,17 @@ void updateConfig() {
       currentData[position][3] = white;
 
       writePixelToEEPROM(position, red, green, blue, white);
+      // commitEEPROM();
     }
     writeStripLengthToEEPROM(stripLength);
     for (int i = 0; i < stripLength; i++) {
-      int red = currentData[i][0];
-      int green = currentData[i][1];
-      int blue = currentData[i][2];
-      int white = currentData[i][3];
+      uint8_t red = currentData[i][0];
+      uint8_t green = currentData[i][1];
+      uint8_t blue = currentData[i][2];
+      uint8_t white = currentData[i][3];
       pixels.setPixelColor(i, Color(red, green, blue, white));
-      pixels.show();
     }
+    pixels.show();
   }
 }
 
@@ -185,7 +186,7 @@ void setup(void) {
   WiFi.begin(ssid, password);
   Serial.println();
   pixels.begin();
-  EEPROM.begin(1024);
+  EEPROM.begin(1280);
 
   readEEPROMAndSetPixels(setStripLength, setPixel);
   setStripLength(stripLength);
