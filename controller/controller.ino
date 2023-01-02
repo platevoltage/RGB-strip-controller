@@ -2,7 +2,7 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "lamp"
+#define BONJOURNAME "pipe"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -48,13 +48,12 @@ ESP8266WebServer server(80);
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-// const int dataPin = 5;  //ws2801 data pin
 uint stripLength = 32;
 
 
 #ifdef WS2801
 #include <Adafruit_WS2801.h>
-Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CLK_PIN); //enable for ws2801 strip
+Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CLK_PIN);
 #else
 #include <Adafruit_NeoPixel.h>
 Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
