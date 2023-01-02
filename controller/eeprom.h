@@ -1,33 +1,34 @@
 #include "HardwareSerial.h"
 #include <EEPROM.h>
 
+#define EEPROM_OFFSET 10
+
 //stripLength - 1
 
 
-int readEEPROMAndReturnSubPixel(int position, int subPixel) {
-  position += 10;
-  position *= 4;
-  return EEPROM.read(position+subPixel);    
+uint8_t readEEPROMAndReturnSubPixel(uint8_t position, uint8_t subPixel) {
+
+  return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
 }
 
-void readEEPROMAndSetPixels( void (*setStripLength)(int), void(*setPixel)(int, int, int, int, int) ) {
-  int stripLength = EEPROM.read(1);
+void readEEPROMAndSetPixels( void (*setStripLength)(uint8_t), void(*setPixel)(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t) ) {
+  uint8_t stripLength = EEPROM.read(1);
   if (stripLength < 0 || stripLength > 255) stripLength = 255;
   (*setStripLength)(stripLength);
-  for (int i = 10; i < stripLength+10; i++) {
+  for (int i = EEPROM_OFFSET; i < stripLength + EEPROM_OFFSET; i++) {
     int x = i*4;
-    int red = EEPROM.read(x);
-    int green = EEPROM.read(x+1);             
-    int blue = EEPROM.read(x+2); 
-    int white = EEPROM.read(x+3); 
+    uint8_t red = EEPROM.read(x);
+    uint8_t green = EEPROM.read(x+1);             
+    uint8_t blue = EEPROM.read(x+2); 
+    uint8_t white = EEPROM.read(x+3); 
       
-    (*setPixel)(i, red, green, blue, white);
+    (*setPixel)(i-EEPROM_OFFSET, red, green, blue, white);
   }
         
 }
 
-void writePixelToEEPROM(int position, int red, int green, int blue, int white) {
-  int x = (position+10)*4;
+void writePixelToEEPROM(uint8_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
+  int x = (position + EEPROM_OFFSET )*4;
   EEPROM.write(x, red);
   EEPROM.write(x+1, green);
   EEPROM.write(x+2, blue);
@@ -38,7 +39,7 @@ void commitEEPROM() {
   EEPROM.commit();
 }
 
-void writeStripLengthToEEPROM(int stripLength) {
+void writeStripLengthToEEPROM(uint8_t stripLength) {
   EEPROM.write(1, stripLength);
   EEPROM.commit();
 }

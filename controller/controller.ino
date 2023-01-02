@@ -117,7 +117,7 @@ void updateConfig() {
 
   else {
     const char *status = jsonBuffer["status"];
-    int length = jsonBuffer["length"];
+    uint8_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     pixels.updateLength(stripLength);
     server.send(200, "text/json", F("{success:true}"));
@@ -133,11 +133,11 @@ void updateConfig() {
 
 
     for (int i = 0; i < length; i++) {
-      int red = jsonBuffer["red"][i];
-      int green = jsonBuffer["green"][i];
-      int blue = jsonBuffer["blue"][i];
-      int white = jsonBuffer["white"][i];
-      int position = jsonBuffer["positions"][i];
+      uint8_t red = jsonBuffer["red"][i];
+      uint8_t green = jsonBuffer["green"][i];
+      uint8_t blue = jsonBuffer["blue"][i];
+      uint8_t white = jsonBuffer["white"][i];
+      uint8_t position = jsonBuffer["positions"][i];
 
       currentData[position][0] = red;
       currentData[position][1] = green;
@@ -159,12 +159,12 @@ void updateConfig() {
   }
 }
 
-void setStripLength(int newStripLength) {
+void setStripLength(uint8_t newStripLength) {
   stripLength = newStripLength;
   pixels.updateLength(stripLength);
 }
 
-void setPixel(int position, int red, int green, int blue, int white) {
+void setPixel(uint8_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
 
   pixels.setPixelColor(position, Color(red, green, blue, white));
   pixels.show();
