@@ -30,6 +30,7 @@ ESP8266WebServer server(80);
 #include "json.h"
 #include "color.h"
 #include "eeprom.h"
+#include "effects.h"
 
 
 //----begin generated includes and wifi definitions
@@ -164,20 +165,15 @@ void setStripLength(uint8_t newStripLength) {
   pixels.updateLength(stripLength);
 }
 
-void setPixel(uint8_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, boolean show) {
-  pixels.setPixelColor(position, Color(red, green, blue, white));
+void setPixel(uint8_t position, uint32_t color, boolean show) {
+  pixels.setPixelColor(position, color);
   if (show) pixels.show();
 }
 
-void walk() {
-      int firstPixel = pixels.getPixelColor(0);
-      Serial.println(firstPixel);
-      for (int i=1; i < stripLength; i++) {
-        pixels.setPixelColor(i-1, pixels.getPixelColor(i));
-      }
-      pixels.setPixelColor(stripLength-1, firstPixel);
-      pixels.show();
+uint32_t readPixel(uint8_t position) {
+  return pixels.getPixelColor(position);
 }
+
 
 
 
@@ -189,7 +185,7 @@ void timer() {
     if (currentMillis - previousMillis >= interval) {
       previousMillis = currentMillis;
 
-      walk();
+      walk(readPixel, setPixel, stripLength);
 
     }
 }

@@ -10,7 +10,7 @@ uint8_t readEEPROMAndReturnSubPixel(uint8_t position, uint8_t subPixel) {
   return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
 }
 
-void readEEPROMAndSetPixels( void (*setStripLength)(uint8_t), void(*setPixel)(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, boolean) ) {
+void readEEPROMAndSetPixels( void (*setStripLength)(uint8_t), void(*setPixel)(uint8_t, uint32_t, boolean) ) {
   uint8_t stripLength = EEPROM.read(1);
   if (stripLength < 0 || stripLength > 255) stripLength = 255;
   (*setStripLength)(stripLength);
@@ -21,7 +21,7 @@ void readEEPROMAndSetPixels( void (*setStripLength)(uint8_t), void(*setPixel)(ui
     uint8_t blue = EEPROM.read(x+2); 
     uint8_t white = EEPROM.read(x+3); 
       
-    (*setPixel)(i-EEPROM_OFFSET, red, green, blue, white, i == stripLength-1);
+    (*setPixel)(i-EEPROM_OFFSET, Color(red, green, blue, white), i == stripLength-1);
   }
         
 }
