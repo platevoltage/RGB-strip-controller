@@ -25,6 +25,6 @@ void startOTA() {
       else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
       else if (error == OTA_END_ERROR) Serial.println("End Failed");
     });
-  ArduinoOTA.setHostname(BONJOURNAME);
+  ArduinoOTA.setHostname(BONJOURNAME); //fixed bug with example code
   ArduinoOTA.begin();
 }

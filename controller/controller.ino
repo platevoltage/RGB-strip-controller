@@ -1,8 +1,11 @@
 
-#define WS2801
+// #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "pipe"
+#define BONJOURNAME "lamp"
+#define DATA_PIN 5
+#define WS2801_DATA_PIN 15
+#define WS2801_CLK_PIN 13
 
 #ifdef ESP32
 
@@ -45,16 +48,16 @@ ESP8266WebServer server(80);
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-const int dataPin = 5;  //ws2801 data pin
+// const int dataPin = 5;  //ws2801 data pin
 uint stripLength = 32;
 
 
 #ifdef WS2801
 #include <Adafruit_WS2801.h>
-Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, 15, 13); //enable for ws2801 strip
+Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CLK_PIN); //enable for ws2801 strip
 #else
 #include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel pixels(stripLength, dataPin, NEO_GRBW + NEO_KHZ800);
+Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 #endif
 
 void handleNotFound() {
@@ -109,7 +112,7 @@ void updateConfig() {
   sendHeaders();
 
   if (error) {
-    server.send(200, "text/json", "{success:false}");
+    server.send(200, "text/json", F("{success:false}"));
     Serial.println(error.c_str());
   }
 
@@ -118,7 +121,7 @@ void updateConfig() {
     int length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     pixels.updateLength(stripLength);
-    server.send(200, "text/json", "{success:true}");
+    server.send(200, "text/json", F("{success:true}"));
 
     uint8_t currentData[stripLength][4] = {};
 
@@ -177,8 +180,11 @@ void setup(void) {
   WiFi.setAutoReconnect(true);
   WiFi.persistent(true);
   WiFi.mode(WIFI_STA);
+  String hostname = "LED-controller-";
+  hostname.concat(BONJOURNAME);
+  WiFi.hostname(hostname.c_str());
   WiFi.begin(ssid, password);
-  Serial.println("");
+  Serial.println();
   pixels.begin();
   EEPROM.begin(1024);
 
@@ -188,22 +194,22 @@ void setup(void) {
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Serial.print(F("."));
   }
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! Rebooting...");
+    Serial.println(F("Connection Failed! Rebooting..."));
     delay(5000);
     ESP.restart();
   }
 
-  Serial.println("");
-  Serial.print("Connected to ");
+  Serial.println();
+  Serial.print(F("Connected to "));
   Serial.println(ssid);
-  Serial.print("IP address: ");
+  Serial.print(F("IP address: "));
   Serial.println(WiFi.localIP());
 
   if (MDNS.begin(BONJOURNAME)) {
-    Serial.println("MDNS responder started");
+    Serial.println(F("MDNS responder started"));
     Serial.println(BONJOURNAME);
   }
 
@@ -239,7 +245,7 @@ void setup(void) {
   server.onNotFound(handleNotFound);
   server.enableCORS(true);
   server.begin();
-  Serial.println("HTTP server started");
+  Serial.println(F("HTTP server started"));
   startOTA();
 }
 
@@ -248,8 +254,13 @@ void setup(void) {
 void loop(void) {
   server.handleClient();
   ArduinoOTA.handle();
-  // MDNS.update();
+  // MDNS.update(); //don't need maybe
+
+
   // Serial.println(ESP.getFreeHeap());
-  Serial.print("-");  //solves bug with ws2801, investigating.
   // Serial.println(ESP.getHeapFragmentation());
+
+  #ifdef WS2801
+  Serial.print("-");  //solves bug with ws2801, investigating.
+  #endif
 }
