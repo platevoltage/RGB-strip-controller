@@ -1,5 +1,6 @@
 import {getCurrentConfig } from '../utils/API';
 import Tile from './Tile';
+import Divider from './Divider';
 import { useState, useEffect } from 'react';
 import SubmitButton from './SubmitButton';
 import ReadButton from './ReadButton';
@@ -17,6 +18,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
     const [colorData, setColorData] = useState([]);
+    const [dividerLocations, setDividerLocations] = useState([2,8]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
     const [state, setState] = useState();
     const [mouseClick, setMouseClick] = useState(false);
@@ -146,18 +148,34 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
                             
                          
                             {colorDataUnsaved.map((color, index) => (
-                                <div key={index} 
-                                onMouseDown={(e) => {
-                                    update(e, index);
-                                    if (shiftKey) {
-                                        setPickerColor(color);
-                                        setWhiteLevel({a: color.w});
-                                    }
-                                }} 
-                                onMouseOver={(e) => update(e, index)}>
-                                    <Tile index={index} color={color} shiftKey={shiftKey}/>   
+                                <div key={index} style={{"display": "flex"}}>
+                                    <div 
+                                        onMouseDown={(e) => {
+                                            update(e, index);
+                                            if (shiftKey) {
+                                                setPickerColor(color);
+                                                setWhiteLevel({a: color.w});
+                                            }
+                                        }} 
+                                        onMouseOver={(e) => update(e, index)}
+                                    >
+                                        <Tile index={index} color={color} shiftKey={shiftKey}/>
+                                    </div>
+                                    <div 
+                                        onMouseDown={(e) => {
+                                            const indexClicked = dividerLocations.indexOf(index+1);
+                                            if (indexClicked === -1) {
+                                                setDividerLocations([...dividerLocations, index+1]);
+                                            } else {
+                                                setDividerLocations(dividerLocations.filter(x => x !== index+1));
+                                            }
+                                        }} 
+                                    >
+                                        <Divider exists={dividerLocations.includes(index+1)}/>   
+                                    </div>
                                 </div>
                             ))}
+                            
                         
                                     
                 </div>

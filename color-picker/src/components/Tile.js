@@ -18,7 +18,7 @@ export default function Tile({index, color, shiftKey}) {
         borderStyle: "solid",
         borderWidth: "1px",
         borderColor: "#555555",
-        margin: "4px",
+        // margin: "4px",
         boxShadow: "inset 2px 2px 2px #00000044",
         overflow: "hidden",
         cursor: shiftKey ? "copy" : "pointer"
