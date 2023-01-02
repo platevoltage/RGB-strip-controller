@@ -2,7 +2,7 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "test"
+#define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -164,12 +164,35 @@ void setStripLength(uint8_t newStripLength) {
   pixels.updateLength(stripLength);
 }
 
-void setPixel(uint8_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
-
+void setPixel(uint8_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, boolean show) {
   pixels.setPixelColor(position, Color(red, green, blue, white));
-  pixels.show();
+  if (show) pixels.show();
 }
 
+void walk() {
+      int firstPixel = pixels.getPixelColor(0);
+      Serial.println(firstPixel);
+      for (int i=1; i < stripLength; i++) {
+        pixels.setPixelColor(i-1, pixels.getPixelColor(i));
+      }
+      pixels.setPixelColor(stripLength-1, firstPixel);
+      pixels.show();
+}
+
+
+
+unsigned long previousMillis = 0;
+const long interval = 100;
+int count = 0;
+void timer() {
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= interval) {
+      previousMillis = currentMillis;
+
+      walk();
+
+    }
+}
 
 
 void setup(void) {
@@ -188,8 +211,8 @@ void setup(void) {
   pixels.begin();
   EEPROM.begin(1280);
 
-  readEEPROMAndSetPixels(setStripLength, setPixel);
   setStripLength(stripLength);
+  readEEPROMAndSetPixels(setStripLength, setPixel);
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -247,6 +270,7 @@ void setup(void) {
   server.begin();
   Serial.println(F("HTTP server started"));
   startOTA();
+  
 }
 
 
@@ -255,7 +279,7 @@ void loop(void) {
   server.handleClient();
   ArduinoOTA.handle();
   // MDNS.update(); //don't need maybe
-
+  timer();
 
   // Serial.println(ESP.getFreeHeap());
   // Serial.println(ESP.getHeapFragmentation());
