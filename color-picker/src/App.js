@@ -26,7 +26,7 @@ function App() {
       <ColorPicker setPickerColor={setPickerColor} setWhiteLevel={setWhiteLevel} pickerColor={pickerColor} setSaturation={setSaturation} saturation={saturation} whiteLevel={whiteLevel}/>
 
 
-      <CurrentConfig pickerColor={ pickerColor } saturation={saturation} whiteLevel={ whiteLevel.a*255 }/>
+      <CurrentConfig pickerColor={ pickerColor } setPickerColor={ setPickerColor } saturation={saturation} whiteLevel={ whiteLevel.a*255 } setWhiteLevel={ setWhiteLevel}/>
      
     </div>
   );

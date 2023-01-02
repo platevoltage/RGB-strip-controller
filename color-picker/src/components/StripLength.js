@@ -13,7 +13,7 @@ export default function StripLength({colorData, textBox, setTextBox}) {
     }
 
     const inputStyle = {
-        width: "40px",
+        width: "50px",
         fontSize: "1.6em"
     }
   

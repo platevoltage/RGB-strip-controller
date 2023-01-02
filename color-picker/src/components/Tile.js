@@ -1,8 +1,10 @@
 
 // import { useState, createContext, useContext, useEffect } from 'react';
 
+import { useEffect } from "react"
 
-export default function Tile({index, color}) {
+
+export default function Tile({index, color, shiftKey}) {
     
 
     const style = {
@@ -19,7 +21,7 @@ export default function Tile({index, color}) {
         margin: "4px",
         boxShadow: "inset 2px 2px 2px #00000044",
         overflow: "hidden",
-        cursor: "pointer"
+        cursor: shiftKey ? "copy" : "pointer"
     }
     const whiteStyle = {
         position: "absolute",
@@ -45,6 +47,13 @@ export default function Tile({index, color}) {
         left: "calc(50% - 10px )",
         top: "calc(50% - 20px)"
     }
+
+    // if ((e.type === "mousedown") && shiftKey) {
+    //     setPickerColor({ r: 0, g: 0, b: 0 });
+    //     setWhiteLevel({ a: 100 })
+
+    // }
+
  
 
     return (

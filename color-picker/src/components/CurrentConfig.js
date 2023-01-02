@@ -12,7 +12,7 @@ let storedLength = window.localStorage.getItem("length");
 console.log(storedLength);
 if (!storedLength) storedLength = 20;
 
-export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
+export default function CurrentConfig({pickerColor, setPickerColor, saturation, whiteLevel, setWhiteLevel}) {
 
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
@@ -20,6 +20,7 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
     const [state, setState] = useState();
     const [mouseClick, setMouseClick] = useState(false);
+    const [shiftKey, setShiftKey] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     
@@ -58,12 +59,24 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
     }
     
     useEffect(()=>{
+        window.addEventListener("keydown", (e) => {
+            if (e.shiftKey) setShiftKey(true);
+        });
+        window.addEventListener("keyup", (e) => {
+            setShiftKey(false);
+        });
         window.addEventListener("mousedown", () => (setMouseClick(true)));
         window.addEventListener("mouseup", () => (setMouseClick(false)));
         getData();
         return () => {
             window.removeEventListener("mousedown", () => (setMouseClick(true)));
             window.removeEventListener("mouseup", () => (setMouseClick(false)));
+            window.removeEventListener("keyup", (e) => {
+                if (e.shiftKey) setShiftKey(false);
+            });
+            window.removeEventListener("keydown", (e) => {
+                if (e.shiftKey) setShiftKey(true);
+            });
         };
     }, []);
 
@@ -103,7 +116,8 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
     
 
     const update = (e, index) => {
-        if ((mouseClick && e.type === "mouseover") || (e.type === "mousedown")) {
+
+        if (!shiftKey && ((mouseClick && e.type === "mouseover") || (e.type === "mousedown"))) {
             colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
         
             setColorDataUnsaved(colorDataUnsaved);
@@ -111,6 +125,7 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
             setState({});
               
         }
+
     }
   
     return (
@@ -131,8 +146,16 @@ export default function CurrentConfig({pickerColor, saturation, whiteLevel}) {
                             
                          
                             {colorDataUnsaved.map((color, index) => (
-                                <div key={index} onMouseDown={(e) => update(e, index)} onMouseOver={(e) => update(e, index)}>
-                                    <Tile index={index} color={color} />   
+                                <div key={index} 
+                                onMouseDown={(e) => {
+                                    update(e, index);
+                                    if (shiftKey) {
+                                        setPickerColor(color);
+                                        setWhiteLevel({a: color.w});
+                                    }
+                                }} 
+                                onMouseOver={(e) => update(e, index)}>
+                                    <Tile index={index} color={color} shiftKey={shiftKey}/>   
                                 </div>
                             ))}
                         
