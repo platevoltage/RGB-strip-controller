@@ -2,7 +2,7 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "lamp"
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -120,9 +120,16 @@ void updateConfig() {
     const char *status = jsonBuffer["status"];
     uint8_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
+    
     pixels.updateLength(stripLength);
     server.send(200, "text/json", F("{success:true}"));
 
+    uint8_t dividersLength = jsonBuffer["dividers"].size();
+    uint8_t dividers[dividersLength] = {};
+    for (int i=0; i<dividersLength; i++) {
+      dividers[i] = jsonBuffer["dividers"][i];
+    }
+    
     uint8_t currentData[stripLength][4] = {};
 
     for (int i = 0; i < stripLength; i++) {
@@ -275,7 +282,7 @@ void loop(void) {
   server.handleClient();
   ArduinoOTA.handle();
   // MDNS.update(); //don't need maybe
-  timer();
+  //timer();
 
   // Serial.println(ESP.getFreeHeap());
   // Serial.println(ESP.getHeapFragmentation());

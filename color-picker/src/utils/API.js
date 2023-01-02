@@ -9,13 +9,13 @@ export const getCurrentConfig = (address) => {
     });
 }
 
-export const writeChanges = (length, oldData, newData, address) => {
+export const writeChanges = (stripLength, oldData, newData, address, dividers) => {
     const data = compare(oldData, newData);
     const redArray = [];
     const greenArray = [];
     const blueArray = [];
     const whiteArray = [];
-    console.log(data);
+
     for (let i of data.changes) {
         let rgbwData = i;
         redArray.push(rgbwData.r);
@@ -38,7 +38,8 @@ export const writeChanges = (length, oldData, newData, address) => {
         },
         body: JSON.stringify({
             "status" : "Success!",
-            "stripLength" : length,
+            stripLength,
+            dividers: dividers,
             "length" : data.changes.length,
             "positions" : data.changePositions,
             "red" : redArray,

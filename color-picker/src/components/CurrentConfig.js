@@ -18,7 +18,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
     const [colorData, setColorData] = useState([]);
-    const [dividerLocations, setDividerLocations] = useState([2,8]);
+    const [dividerLocations, setDividerLocations] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
     const [state, setState] = useState();
     const [mouseClick, setMouseClick] = useState(false);
@@ -149,20 +149,18 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
                          
                             {colorDataUnsaved.map((color, index) => (
                                 <div key={index} style={{"display": "flex"}}>
-                                    <div 
-                                        onMouseDown={(e) => {
-                                            update(e, index);
-                                            if (shiftKey) {
-                                                setPickerColor(color);
-                                                setWhiteLevel({a: color.w});
-                                            }
-                                        }} 
-                                        onMouseOver={(e) => update(e, index)}
+                                    <div onMouseDown={(e) => {
+                                                update(e, index);
+                                                if (shiftKey) {
+                                                    setPickerColor(color);
+                                                    setWhiteLevel({a: color.w});
+                                                }
+                                            }} 
+                                            onMouseOver={(e) => update(e, index)}
                                     >
                                         <Tile index={index} color={color} shiftKey={shiftKey}/>
                                     </div>
-                                    <div 
-                                        onMouseDown={(e) => {
+                                    <div onMouseDown={(e) => {
                                             const indexClicked = dividerLocations.indexOf(index+1);
                                             if (indexClicked === -1) {
                                                 setDividerLocations([...dividerLocations, index+1]);
@@ -183,7 +181,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} getData={getData}/>
+                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} getData={getData} dividers={dividerLocations}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
