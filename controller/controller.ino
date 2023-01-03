@@ -101,8 +101,8 @@ void getCurrentConfig() {
     currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
     currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
   }
-
-  server.send(200, "text/json", jsonStringify(stripLength, currentData));
+  uint8_t temp[3] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2)};
+  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(temp), temp));
 
 }
 
@@ -125,9 +125,10 @@ void updateConfig() {
     server.send(200, "text/json", F("{success:true}"));
 
     uint8_t dividersLength = jsonBuffer["dividers"].size();
-    uint8_t dividers[dividersLength] = {};
+    // uint8_t dividers[dividersLength] = {};
     for (int i=0; i<dividersLength; i++) {
-      dividers[i] = jsonBuffer["dividers"][i];
+      // dividers[i] = jsonBuffer["dividers"][i];
+      writeDividerToEEPROM(i, jsonBuffer["dividers"][i]);
     }
     
     uint8_t currentData[stripLength][4] = {};
@@ -165,6 +166,7 @@ void updateConfig() {
     }
     pixels.show();
   }
+  jsonBuffer.clear();
 }
 
 void setStripLength(uint8_t newStripLength) {

@@ -42,3 +42,11 @@ void writeStripLengthToEEPROM(uint8_t stripLength) {
   EEPROM.write(1, stripLength);
   EEPROM.commit();
 }
+
+void writeDividerToEEPROM(uint8_t position, uint8_t divider) {
+  EEPROM.write(position+2, divider);
+}
+
+uint8_t readDividerFromEEPROM(uint8_t position) {
+  return EEPROM.read(position+2);
+}

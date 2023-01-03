@@ -28,9 +28,6 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers) =
     }
 
 
-    
-
-
     return fetch(`${address}/update`, {
         method: 'POST',
         headers: {
@@ -39,7 +36,7 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers) =
         body: JSON.stringify({
             "status" : "Success!",
             stripLength,
-            dividers: dividers,
+            "dividers": [...dividers, 0, 0, 0].splice(0, 3),
             "length" : data.changes.length,
             "positions" : data.changePositions,
             "red" : redArray,

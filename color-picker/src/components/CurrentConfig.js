@@ -37,14 +37,17 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
             const response = await getCurrentConfig(addressTextBox);
             
             const result = await response.json();
-
+            
+            console.log(result);
+            
 
 
             let colorArray = [];
-            for (let i of result) {
+            for (let i of result.pixels) {
                 const colorObject = {r:i[0], g:i[1], b:i[2], w:i[3]};
                 colorArray.push(colorObject);
             }
+            setDividerLocations(result.dividers);
 
             setLengthTextBox(colorArray.length);
             setColorData(colorArray);
@@ -163,7 +166,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
                                     <div onMouseDown={(e) => {
                                             const indexClicked = dividerLocations.indexOf(index+1);
                                             if (indexClicked === -1) {
-                                                setDividerLocations([...dividerLocations, index+1]);
+                                                setDividerLocations([...dividerLocations.filter(x => x !== 0), index+1]);
                                             } else {
                                                 setDividerLocations(dividerLocations.filter(x => x !== index+1));
                                             }
