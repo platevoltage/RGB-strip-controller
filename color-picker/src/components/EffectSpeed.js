@@ -1,8 +1,4 @@
-import { useEffect } from 'react';
-// import { writeChanges } from '../utils/API';
-
 export default function EffectSpeed({colorData, textBox, setTextBox}) {
-
 
     const style = {
         display: 'flex',
@@ -18,17 +14,15 @@ export default function EffectSpeed({colorData, textBox, setTextBox}) {
   
     return (
         <div style={style}>
-            EffectSpeed:
+            <span>EffectSpeed:</span>
             <input
                 value={textBox}
                 name="effect-speed"
                 onChange={(e) => {setTextBox(e.target.value)}}
-                // onChange={orThisWayForBoth}
                 type="text"
                 placeholder="#"
                 style={inputStyle}
             />
-
         </div>
     );
   }

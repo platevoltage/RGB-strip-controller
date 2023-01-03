@@ -1,9 +1,4 @@
-
-import { useEffect } from 'react';
-// import { writeChanges } from '../utils/API';
-
 export default function StripLength({colorData, textBox, setTextBox}) {
-
 
     const style = {
         display: 'flex',
@@ -19,17 +14,15 @@ export default function StripLength({colorData, textBox, setTextBox}) {
   
     return (
         <div style={style}>
-            Length:
+            <span>Length:</span>
             <input
                 value={textBox}
                 name="strip-length"
                 onChange={(e) => {setTextBox(e.target.value)}}
-                // onChange={orThisWayForBoth}
                 type="text"
                 placeholder="#"
                 style={inputStyle}
             />
-
         </div>
     );
   }

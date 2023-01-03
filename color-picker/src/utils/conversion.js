@@ -7,8 +7,6 @@ export const rgbwToHex = ( rgbw ) => {
         }
         hex += byte
     }
-
-
     return hex;
 }
 
@@ -24,8 +22,7 @@ export const hexToRGBW = ( hex ) => {
 export const compare = (oldData, newData) => {
     let changePositions = [];
     let changes = [];
-  
-    // console.log(newData);
+
     for (let i in oldData) {
         if ( oldData[i] !== newData[i]) {
             changes.push(newData[i]);
@@ -52,7 +49,7 @@ export const RGBToHSL = ({r, g, b}) => {
     let l = 0;
     if (delta === 0)
     h = 0;
-  // Red is max
+    // Red is max
     else if (cmax === r)
         h = ((g - b) / delta) % 6;
     // Green is max
@@ -76,8 +73,6 @@ export const RGBToHSL = ({r, g, b}) => {
     s = +(s * 100).toFixed(1);
     l = +(l * 100).toFixed(1);
     
-
-
     return {h, s, l};
 
   }
@@ -85,7 +80,6 @@ export const RGBToHSL = ({r, g, b}) => {
 
   export const HSLtoRGB = ({h, s, l}) => {
     // Must be fractions of 1
-    // console.log(h, s, l);
     // s /= 100;
     s = 1;
     // l /= 100;
@@ -115,6 +109,5 @@ export const RGBToHSL = ({r, g, b}) => {
           g = Math.round((g + m) * 255);
           b = Math.round((b + m) * 255);
         
-        // console.log(r, g, b);
     return {r, g, b};
   }

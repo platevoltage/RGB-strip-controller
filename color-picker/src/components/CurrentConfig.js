@@ -11,7 +11,7 @@ import EffectSpeed from './EffectSpeed';
 const noConnectionArray = [];
 for (let i = 0; i < 20; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
 let storedLength = window.localStorage.getItem("length");
-console.log(storedLength);
+
 if (!storedLength) storedLength = 20;
 
 export default function CurrentConfig({pickerColor, setPickerColor, saturation, whiteLevel, setWhiteLevel}) {
@@ -28,36 +28,26 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     
-    
-
-    
-   
     const getData = async () => {
         
         try {
             window.localStorage.setItem("ip", addressTextBox);
+
             const response = await getCurrentConfig(addressTextBox);
-            
             const result = await response.json();
-            
-            console.log(result);
-            
-
-
             let colorArray = [];
+
             for (let i of result.pixels) {
                 const colorObject = {r:i[0], g:i[1], b:i[2], w:i[3]};
                 colorArray.push(colorObject);
             }
+
             setDividerLocations(result.dividers);
             setEffectSpeedTextBox(result.effectSpeed);
-
             setLengthTextBox(colorArray.length);
             setColorData(colorArray);
             setColorDataUnsaved([...colorArray]);
             setLoading(false);
-
-
 
         } catch (error){
             console.error(error);
@@ -93,15 +83,11 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
-        // margin: "30px 10px 10px 10px",
-        // width: "100vw",
-
+        marginLeft: "8px"
     }
     const buttonStyle = {
-
         display: "flex",
         padding: "10px",
-
     }
     const loadingOverlayStyle = {
         backgroundColor: "#77777755", 
@@ -117,73 +103,50 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
         flexDirection: "column",
         justifyContent: "center",
         fontSize: "60px"
-        // padding: "10px",
-        // margin: "-10px",
     }
 
-    
-
-    const update = (e, index) => {
-
+    function update(e, index) {
         if (!shiftKey && ((mouseClick && e.type === "mouseover") || (e.type === "mousedown"))) {
             colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
-        
             setColorDataUnsaved(colorDataUnsaved);
-
-            setState({});
-              
+            setState({});     
         }
-
     }
   
     return (
         <>
             <div style={{position: "relative"}}>
-        
                 <div style={stripStyle}>
-                    
-               
-                            {loading || error ? 
-                                <div style={loadingOverlayStyle}>
-                                    {error ? <span>Connection Error</span> : <span>Loading...</span>}
-                                </div>
-                                :
-                                <></>
-                            
-                            }
-                            
-                         
-                            {colorDataUnsaved.map((color, index) => (
-                                <div key={index} style={{"display": "flex"}}>
-                                    <div onMouseDown={(e) => {
-                                                update(e, index);
-                                                if (shiftKey) {
-                                                    setPickerColor(color);
-                                                    setWhiteLevel({a: color.w});
-                                                }
-                                            }} 
-                                            onMouseOver={(e) => update(e, index)}
-                                    >
-                                        <Tile index={index} color={color} shiftKey={shiftKey}/>
-                                    </div>
-                                    <div onMouseDown={(e) => {
-                                            const indexClicked = dividerLocations.indexOf(index+1);
-                                            if (indexClicked === -1) {
-                                                setDividerLocations([...dividerLocations.filter(x => x !== 0), index+1]);
-                                            } else {
-                                                setDividerLocations(dividerLocations.filter(x => x !== index+1));
-                                            }
-                                        }} 
-                                    >
-                                        <Divider exists={dividerLocations.includes(index+1)}/>   
-                                    </div>
-                                </div>
-                            ))}
-                            
-                        
-                                    
+                    {(loading || error) && 
+                        <div style={loadingOverlayStyle}>
+                            {error ? <span>Connection Error</span> : <span>Loading...</span>}
+                        </div>
+                    }
+                    {colorDataUnsaved.map((color, index) => (
+                        <div key={index} style={{"display": "flex"}}>
+                            <div onMouseDown={(e) => {
+                                    update(e, index);
+                                    if (shiftKey) {
+                                        setPickerColor(color);
+                                        setWhiteLevel({a: color.w});
+                                    }
+                                }} 
+                                onMouseOver={(e) => update(e, index)}>
+                                <Tile index={index} color={color} shiftKey={shiftKey}/>
+                            </div>
+                            <div onMouseDown={(e) => {
+                                    const indexClicked = dividerLocations.indexOf(index+1);
+                                    if (indexClicked === -1) {
+                                        setDividerLocations([...dividerLocations.filter(x => x !== 0), index+1]);
+                                    } else {
+                                        setDividerLocations(dividerLocations.filter(x => x !== index+1));
+                                    }
+                                }}>
+                                { (index !== colorData.length-1) && <Divider exists={dividerLocations.includes(index+1)}/> }   
+                            </div>
+                        </div>
+                    ))}           
                 </div>
-                
             </div>
 
             <div style={buttonStyle}>
@@ -193,8 +156,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
             </div>
-        </>  
-        
+        </>     
     );
 }
   

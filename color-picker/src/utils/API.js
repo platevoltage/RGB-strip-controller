@@ -1,5 +1,4 @@
-import { compare, hexToRGBW } from './conversion';
-
+import { compare } from './conversion';
 
 export const getCurrentConfig = (address) => {
     return fetch(`${address}/current`, {
@@ -21,9 +20,6 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
         redArray.push(rgbwData.r);
         greenArray.push(rgbwData.g);
         blueArray.push(rgbwData.b);
-        // redArray.push(255);
-        // greenArray.push(0);
-        // blueArray.push(0);
         whiteArray.push(rgbwData.w);
     }
 
@@ -48,6 +44,5 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
         })
     });
  
-   
 }
 

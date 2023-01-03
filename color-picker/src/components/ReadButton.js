@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 
 export default function ReadButton({getData, setLoadingParent, setError}) {
     const [loading, setLoading] = useState(false);
-    // setLoadingParent(loading);
+
     const style = {
         backgroundColor: "#666666",
         padding: "10px",
@@ -25,7 +24,6 @@ export default function ReadButton({getData, setLoadingParent, setError}) {
             await getData();
             setLoading(false);
             setLoadingParent(false);
-          
         }
         catch (error) {
             console.error(error);
@@ -33,18 +31,15 @@ export default function ReadButton({getData, setLoadingParent, setError}) {
             setLoadingParent(false);
             setError(true);
         }
-        
- 
     }
   
     return (
         <div style={{margin: "10px", display: "flex", justifyContent: "center", flexDirection: "column", textAlign: "center"}}>
-        {loading ? 
+            {loading ? 
                 <a href="#x" style={style}>Loading</a>
-            : 
+                : 
                 <a href="#x" style={style} onClick={handleSubmit} >Read</a>
-        }
-        
+            } 
         </div>
     );
   }

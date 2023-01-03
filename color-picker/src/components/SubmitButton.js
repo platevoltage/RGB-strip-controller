@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { writeChanges } from '../utils/API';
 
@@ -26,13 +25,11 @@ export default function SubmitButton({length, oldData, newData, setLoadingParent
             
             try {
                 await writeChanges(length, oldData, newData, address, dividers, effectSpeed);
-                // setLoading(false);
                 setLoadingParent(false);
                 setError(false);
                 await getData();
                 setLoading(false);
                 setLoadingParent(false);
-
             }
             catch (error) {
                 console.error(error);
@@ -44,19 +41,18 @@ export default function SubmitButton({length, oldData, newData, setLoadingParent
  
     }
  
-  
     return (
         <div style={{margin: "10px", display: "flex", justifyContent: "center", flexDirection: "column", textAlign: "center"}}>
             {loading ? 
-                    <a href="#x" style={style}>Loading</a>
-                    : 
-                    <>
-                        {!error ? 
-                            <a href="#x" style={style} onClick={handleSubmit} >Sync</a> 
-                            : 
-                            <a href="#x" style={style}>Error</a>
-                        }
-                    </>
+                <a href="#x" style={style}>Loading</a>
+                : 
+                <>
+                    {!error ? 
+                        <a href="#x" style={style} onClick={handleSubmit} >Sync</a> 
+                        : 
+                        <a href="#x" style={style}>Error</a>
+                    }
+                </>
             }
             
         </div>

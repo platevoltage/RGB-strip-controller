@@ -1,13 +1,4 @@
-
-import { useEffect } from 'react';
-// import { writeChanges } from '../utils/API';
-
 export default function Address({textBox, setTextBox}) {
-
-    // const [textBox, setTextBox] = useState("");
-    
- 
-
 
     const style = {
         display: 'flex',
@@ -28,12 +19,10 @@ export default function Address({textBox, setTextBox}) {
                 value={textBox}
                 name="strip-length"
                 onChange={(e) => {setTextBox(e.target.value)}}
-                // onChange={orThisWayForBoth}
                 type="text"
                 placeholder="0.0.0.0"
                 style={inputStyle}
             />
-
         </div>
     );
   }

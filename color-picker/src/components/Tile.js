@@ -1,15 +1,7 @@
-
-// import { useState, createContext, useContext, useEffect } from 'react';
-
-import { useEffect } from "react"
-
-
 export default function Tile({index, color, shiftKey}) {
     
-
     const style = {
         display: 'flex',
-        // justifyContent: 'center',
         backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
         position: "relative",
         width: "30px",
@@ -18,7 +10,6 @@ export default function Tile({index, color, shiftKey}) {
         borderStyle: "solid",
         borderWidth: "1px",
         borderColor: "#555555",
-        // margin: "4px",
         boxShadow: "inset 2px 2px 2px #00000044",
         overflow: "hidden",
         cursor: shiftKey ? "copy" : "pointer"
@@ -42,19 +33,10 @@ export default function Tile({index, color, shiftKey}) {
     const xStyle = {
         color: "#ff000055",
         fontSize: "30px",
-        // backgroundColor: "#ffffff",
         position: "absolute",
         left: "calc(50% - 10px )",
         top: "calc(50% - 20px)"
     }
-
-    // if ((e.type === "mousedown") && shiftKey) {
-    //     setPickerColor({ r: 0, g: 0, b: 0 });
-    //     setWhiteLevel({ a: 100 })
-
-    // }
-
- 
 
     return (
         <div style={style} >
