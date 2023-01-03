@@ -22,6 +22,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
     const [colorData, setColorData] = useState([]);
     const [dividerLocations, setDividerLocations] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
+    // eslint-disable-next-line no-unused-vars
     const [state, setState] = useState();
     const [mouseClick, setMouseClick] = useState(false);
     const [shiftKey, setShiftKey] = useState(false);
@@ -76,6 +77,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
                 if (e.shiftKey) setShiftKey(true);
             });
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const stripStyle = {
