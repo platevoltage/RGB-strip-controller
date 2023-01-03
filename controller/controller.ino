@@ -2,7 +2,7 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "test"
+#define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -50,7 +50,9 @@ ESP8266WebServer server(80);
 const char *ssid = STASSID;
 const char *password = STAPSK;
 uint8_t stripLength = 32;
-
+// uint8_t dividers[4] = {};
+uint8_t groups[5][2] = {};
+uint8_t activeGroups = 0;
 
 #ifdef WS2801
 #include <Adafruit_WS2801.h>
@@ -101,8 +103,26 @@ void getCurrentConfig() {
     currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
     currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
   }
-  uint8_t temp[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
-  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(temp), temp));
+
+  //dividers and groups
+  uint8_t dividers[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
+  uint8_t numDividers = 0;
+  for (int i=0; i < sizeof(dividers); i++) {
+    if (dividers[i] != 0) numDividers++;
+  }
+  activeGroups = numDividers+1;
+  for (int i=0; i<numDividers+1; i++) {
+    if (i == 0) groups[i][0] = 1;
+    else groups[i][0] = dividers[i-1]+1;
+    if (i < numDividers) groups[i][1] = dividers[i];
+    else groups[i][1] = stripLength;
+
+    Serial.print(groups[i][0]);
+    Serial.print(" - ");
+    Serial.println(groups[i][1]);
+  }
+
+  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers), dividers));
 
 }
 
@@ -193,8 +213,9 @@ void timer() {
     unsigned long currentMillis = millis();
     if (currentMillis - previousMillis >= interval) {
       previousMillis = currentMillis;
-
-      walk(readPixel, setPixel, stripLength);
+      for(int i=0; i < activeGroups; i++) {
+        walk(readPixel, setPixel, groups[i][0], groups[i][1]);
+      }
 
     }
 }
@@ -284,7 +305,7 @@ void loop(void) {
   server.handleClient();
   ArduinoOTA.handle();
   // MDNS.update(); //don't need maybe
-  //timer();
+  timer();
 
   // Serial.println(ESP.getFreeHeap());
   // Serial.println(ESP.getHeapFragmentation());
