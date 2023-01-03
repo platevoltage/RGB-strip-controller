@@ -209,7 +209,9 @@ int count = 0;
 
 void timer() {
     unsigned long currentMillis = millis();
-    if (currentMillis - previousMillis >= effectSpeed) {
+    uint16_t speed = effectSpeed;
+    if (speed < 20) speed = 20;
+    if (currentMillis - previousMillis >= speed) {
       previousMillis = currentMillis;
       for(int i=0; i < activeGroups; i++) {
         walk(readPixel, setPixel, groups[i][0], groups[i][1]);
