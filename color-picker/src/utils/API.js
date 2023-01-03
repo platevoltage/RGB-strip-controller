@@ -36,7 +36,7 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers) =
         body: JSON.stringify({
             "status" : "Success!",
             stripLength,
-            "dividers": [...dividers, 0, 0, 0].splice(0, 3),
+            "dividers": [...dividers, 0, 0, 0, 0].splice(0, 4),
             "length" : data.changes.length,
             "positions" : data.changePositions,
             "red" : redArray,

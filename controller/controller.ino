@@ -37,8 +37,8 @@ ESP8266WebServer server(80);
 
 
 #include "payload/manifest.json.h"
-#include "payload/static/css/main.f8f8c452.css.h"
-#include "payload/static/js/main.606bb971.js.h"
+#include "payload/static/css/main.c83abc47.css.h"
+#include "payload/static/js/main.3c3cdc75.js.h"
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 
@@ -101,7 +101,7 @@ void getCurrentConfig() {
     currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
     currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
   }
-  uint8_t temp[3] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2)};
+  uint8_t temp[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
   server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(temp), temp));
 
 }
@@ -251,10 +251,10 @@ void setup(void) {
   server.on(F("/RGB-strip-controller/manifest.json"), []() {
     server.send_P(200, "text/json", _manifest_json);
   });
-  server.on(F("/RGB-strip-controller/static/css/main.f8f8c452.css"), []() {
+  server.on(F("/RGB-strip-controller/static/css/main.c83abc47.css"), []() {
     server.send_P(200, "text/css", _main_css);
   });
-  server.on(F("/RGB-strip-controller/static/js/main.606bb971.js"), []() {
+  server.on(F("/RGB-strip-controller/static/js/main.3c3cdc75.js"), []() {
     server.send_P(200, "text/javascript", _main_js);
   });
   server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
