@@ -9,7 +9,7 @@ export const getCurrentConfig = (address) => {
     });
 }
 
-export const writeChanges = (stripLength, oldData, newData, address, dividers) => {
+export const writeChanges = (stripLength, oldData, newData, address, dividers, effectSpeed) => {
     const data = compare(oldData, newData);
     const redArray = [];
     const greenArray = [];
@@ -36,6 +36,7 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers) =
         body: JSON.stringify({
             "status" : "Success!",
             stripLength,
+            effectSpeed,
             "dividers": [...dividers, 0, 0, 0, 0].splice(0, 4),
             "length" : data.changes.length,
             "positions" : data.changePositions,

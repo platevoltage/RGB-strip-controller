@@ -50,9 +50,9 @@ ESP8266WebServer server(80);
 const char *ssid = STASSID;
 const char *password = STAPSK;
 uint8_t stripLength = 32;
-// uint8_t dividers[4] = {};
 uint8_t groups[5][2] = {};
 uint8_t activeGroups = 0;
+uint16_t effectSpeed = 0;
 
 #ifdef WS2801
 #include <Adafruit_WS2801.h>
@@ -89,9 +89,6 @@ void sendHeaders() {
 }
 
 
-
-
-
 void getCurrentConfig() {
   sendHeaders();
 
@@ -105,6 +102,7 @@ void getCurrentConfig() {
   }
 
   //dividers and groups
+  effectSpeed = readEffectSpeedFromEEPROM();
   uint8_t dividers[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
   uint8_t numDividers = 0;
   for (int i=0; i < sizeof(dividers); i++) {
@@ -116,15 +114,12 @@ void getCurrentConfig() {
     else groups[i][0] = dividers[i-1]+1;
     if (i < numDividers) groups[i][1] = dividers[i];
     else groups[i][1] = stripLength;
-
-    Serial.print(groups[i][0]);
-    Serial.print(" - ");
-    Serial.println(groups[i][1]);
   }
 
-  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers), dividers));
+  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers), dividers, effectSpeed));
 
 }
+
 
 void updateConfig() {
   DynamicJsonDocument jsonBuffer(21000);
@@ -140,6 +135,7 @@ void updateConfig() {
     const char *status = jsonBuffer["status"];
     uint8_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
+    effectSpeed = jsonBuffer["effectSpeed"];
     
     pixels.updateLength(stripLength);
     server.send(200, "text/json", F("{success:true}"));
@@ -177,6 +173,7 @@ void updateConfig() {
       // commitEEPROM();
     }
     writeStripLengthToEEPROM(stripLength);
+    writeEffectSpeedToEEPROM(effectSpeed);
     for (int i = 0; i < stripLength; i++) {
       uint8_t red = currentData[i][0];
       uint8_t green = currentData[i][1];
@@ -207,11 +204,12 @@ uint32_t readPixel(uint8_t position) {
 
 
 unsigned long previousMillis = 0;
-const long interval = 100;
+
 int count = 0;
+
 void timer() {
     unsigned long currentMillis = millis();
-    if (currentMillis - previousMillis >= interval) {
+    if (currentMillis - previousMillis >= effectSpeed) {
       previousMillis = currentMillis;
       for(int i=0; i < activeGroups; i++) {
         walk(readPixel, setPixel, groups[i][0], groups[i][1]);
@@ -305,7 +303,7 @@ void loop(void) {
   server.handleClient();
   ArduinoOTA.handle();
   // MDNS.update(); //don't need maybe
-  timer();
+  if (effectSpeed > 0) timer();
 
   // Serial.println(ESP.getFreeHeap());
   // Serial.println(ESP.getHeapFragmentation());

@@ -47,6 +47,15 @@ void writeDividerToEEPROM(uint8_t position, uint8_t divider) {
   EEPROM.write(position+2, divider);
 }
 
+void writeEffectSpeedToEEPROM(uint16_t effectSpeed) {
+  EEPROM.write(7, effectSpeed >> 8);
+  EEPROM.write(8, effectSpeed);
+  // Serial.println((EEPROM.read(7) << 8) + EEPROM.read(8));
+}
+
 uint8_t readDividerFromEEPROM(uint8_t position) {
   return EEPROM.read(position+2);
+}
+uint16_t readEffectSpeedFromEEPROM() {
+  return (EEPROM.read(7) << 8) + EEPROM.read(8);
 }

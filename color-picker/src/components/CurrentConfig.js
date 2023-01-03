@@ -6,6 +6,7 @@ import SubmitButton from './SubmitButton';
 import ReadButton from './ReadButton';
 import StripLength from './StripLength';
 import Address from './Address';
+import EffectSpeed from './EffectSpeed';
 
 const noConnectionArray = [];
 for (let i = 0; i < 20; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
@@ -17,6 +18,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
 
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
+    const [effectSpeedTextBox, setEffectSpeedTextBox] = useState("0");
     const [colorData, setColorData] = useState([]);
     const [dividerLocations, setDividerLocations] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
@@ -48,6 +50,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
                 colorArray.push(colorObject);
             }
             setDividerLocations(result.dividers);
+            setEffectSpeedTextBox(result.effectSpeed);
 
             setLengthTextBox(colorArray.length);
             setColorData(colorArray);
@@ -184,10 +187,11 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} getData={getData} dividers={dividerLocations}/>
+                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} getData={getData} dividers={dividerLocations} effectSpeed={effectSpeedTextBox}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
+                <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
             </div>
         </>  
         

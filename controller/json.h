@@ -2,7 +2,7 @@
 #include "ArduinoJson/Document/DynamicJsonDocument.hpp"
 #include <ArduinoJson.h>
 
-String jsonStringify(int length, uint8_t currentData[][4], size_t dividersSize, uint8_t dividers[]) {
+String jsonStringify(int length, uint8_t currentData[][4], size_t dividersSize, uint8_t dividers[], uint16_t effectSpeed) {
 
     DynamicJsonDocument pixelBuffer(21000);
     JsonArray pixelArray = pixelBuffer.to<JsonArray>();
@@ -31,6 +31,8 @@ String jsonStringify(int length, uint8_t currentData[][4], size_t dividersSize, 
     serializeJson(pixelBuffer, message); 
     message += ", \"dividers\": ";
     serializeJson(dividerBuffer, message);
+    message += ", \"effectSpeed\": ";
+    message += String(effectSpeed);
     message += "}";
 
     Serial.println(message);
