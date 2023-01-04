@@ -23,8 +23,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     const [dividerLocations, setDividerLocations] = useState([]);
     const [tempArray, setTempArray] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
-    // eslint-disable-next-line no-unused-vars
-    const [state, setState] = useState();
     const [mouseClick, setMouseClick] = useState(false);
     const [shiftKey, setShiftKey] = useState(false);
     const [altKey, setAltKey] = useState(false);
@@ -71,7 +69,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setAltKey(false);
         });
         window.addEventListener("mousedown", () => (setMouseClick(true)));
-        window.addEventListener("mouseup", () => {setMouseClick(false)});
+        window.addEventListener("mouseup", () => setMouseClick(false));
         getData();
         return () => {
             window.removeEventListener("mousedown", () => (setMouseClick(true)));
@@ -115,13 +113,11 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         fontSize: "60px"
     }
 
-    function update(e, index) {        
+    function update(e, index) {    
+        //gradient    
         if (altKey && (mouseClick && e.type === "mouseover")) {
-            // colorDataUnsaved[index] = {r:0, g:0, b:0, w:0};
-            // setDraggedTo(index);
+
             let draggedTo = index;
-            console.log("colorDataUnsaved", colorDataUnsaved[0]);
-            console.log("temp", tempArray[0]);
             for (let i = 0; i < colorDataUnsaved.length; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
@@ -144,19 +140,17 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                     colorDataUnsaved[i].w = tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i));  
                 }
             }
-            setState({});  
+            setColorDataUnsaved([...colorDataUnsaved]);  
         }
+        //start gradient
         else if (altKey && (e.type === "mousedown")) {
             setDraggedFrom(index);
             setTempArray([...colorDataUnsaved]);
-            setState({});
-            // colorDataUnsaved[index] = {r:0, g:0, b:0, w:0};
         }
-
+        //regular click
         else if (!shiftKey && ((mouseClick && e.type === "mouseover") || (e.type === "mousedown"))) {
             colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
-            setColorDataUnsaved(colorDataUnsaved);
-            setState({});     
+            setColorDataUnsaved([...colorDataUnsaved]);  
         }
     }
   
