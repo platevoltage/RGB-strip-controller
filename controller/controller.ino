@@ -122,13 +122,17 @@ void getCurrentConfig() {
 
 
 void updateConfig() {
-  DynamicJsonDocument jsonBuffer(21000);
+  Serial.println(ESP.getFreeHeap());
+  DynamicJsonDocument jsonBuffer(25000);
+  
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   sendHeaders();
 
   if (error) {
     server.send(200, "text/json", F("{success:false}"));
     Serial.println(error.c_str());
+    Serial.println(ESP.getFreeHeap());
+    Serial.println(server.arg("plain"));
   }
 
   else {
@@ -207,7 +211,7 @@ unsigned long previousMillis = 0;
 
 int count = 0;
 
-void timer() {
+void effectTimer() {
     unsigned long currentMillis = millis();
     uint16_t speed = effectSpeed;
     if (speed < 20) speed = 20;
@@ -217,6 +221,20 @@ void timer() {
         walk(readPixel, setPixel, groups[i][0], groups[i][1]);
       }
 
+    }
+}
+
+void webClientTimer() {
+    unsigned long currentMillis = millis();
+    uint16_t speed = 500;
+    if (currentMillis - previousMillis >= speed) {
+      previousMillis = currentMillis;
+      server.handleClient();
+      ArduinoOTA.handle();
+
+      #ifdef WS2801
+        Serial.print("-");  //solves bug with ws2801, investigating.
+      #endif
     }
 }
 
@@ -302,15 +320,8 @@ void setup(void) {
 
 
 void loop(void) {
-  server.handleClient();
-  ArduinoOTA.handle();
-  // MDNS.update(); //don't need maybe
-  if (effectSpeed > 0) timer();
+  webClientTimer();
 
-  // Serial.println(ESP.getFreeHeap());
-  // Serial.println(ESP.getHeapFragmentation());
+  if (effectSpeed > 0) effectTimer();
 
-  #ifdef WS2801
-  Serial.print("-");  //solves bug with ws2801, investigating.
-  #endif
 }

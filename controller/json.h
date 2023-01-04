@@ -3,8 +3,9 @@
 #include <ArduinoJson.h>
 
 String jsonStringify(int length, uint8_t currentData[][4], size_t dividersSize, uint8_t dividers[], uint16_t effectSpeed) {
-
+    // Serial.println(ESP.getFreeHeap());
     DynamicJsonDocument pixelBuffer(21000);
+    // Serial.println(ESP.getFreeHeap());
     JsonArray pixelArray = pixelBuffer.to<JsonArray>();
     
     for (int i = 0; i < length; i++) {
@@ -35,7 +36,7 @@ String jsonStringify(int length, uint8_t currentData[][4], size_t dividersSize, 
     message += String(effectSpeed);
     message += "}";
 
-    Serial.println(message);
+    // Serial.println(message);
     
     
     pixelBuffer.clear();
