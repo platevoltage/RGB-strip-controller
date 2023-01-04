@@ -123,7 +123,7 @@ void getCurrentConfig() {
 
 void updateConfig() {
   Serial.println(ESP.getFreeHeap());
-  DynamicJsonDocument jsonBuffer(25000);
+  DynamicJsonDocument jsonBuffer(22000);
   
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   sendHeaders();
@@ -176,8 +176,8 @@ void updateConfig() {
       writePixelToEEPROM(position, red, green, blue, white);
       // commitEEPROM();
     }
-    writeStripLengthToEEPROM(stripLength);
     writeEffectSpeedToEEPROM(effectSpeed);
+    writeStripLengthToEEPROM(stripLength);
     for (int i = 0; i < stripLength; i++) {
       uint8_t red = currentData[i][0];
       uint8_t green = currentData[i][1];
@@ -226,7 +226,7 @@ void effectTimer() {
 
 void webClientTimer() {
     unsigned long currentMillis = millis();
-    uint16_t speed = 500;
+    uint16_t speed = 1;
     if (currentMillis - previousMillis >= speed) {
       previousMillis = currentMillis;
       server.handleClient();

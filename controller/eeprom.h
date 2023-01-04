@@ -57,5 +57,6 @@ uint8_t readDividerFromEEPROM(uint8_t position) {
   return EEPROM.read(position+2);
 }
 uint16_t readEffectSpeedFromEEPROM() {
-  return (EEPROM.read(7) << 8) + EEPROM.read(8);
+
+  return EEPROM.read(7) << 8 | EEPROM.read(8) ;
 }
