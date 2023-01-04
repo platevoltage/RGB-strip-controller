@@ -120,7 +120,8 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             // colorDataUnsaved[index] = {r:0, g:0, b:0, w:0};
             // setDraggedTo(index);
             let draggedTo = index;
-            // console.log(tempArray);
+            console.log("colorDataUnsaved", colorDataUnsaved[0]);
+            console.log("temp", tempArray[0]);
             for (let i = 0; i < colorDataUnsaved.length; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
@@ -131,18 +132,18 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                     colorDataUnsaved[i].r = tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(i-draggedFrom));
                     colorDataUnsaved[i].g = tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(i-draggedFrom));
                     colorDataUnsaved[i].b = tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(i-draggedFrom));
-                    colorDataUnsaved[i].w = tempArray[draggedFrom].w + (pickerColor.w*saturation - tempArray[draggedFrom].w)/(length/(i-draggedFrom));
+                    colorDataUnsaved[i].w = tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(i-draggedFrom));
                 }
-            } else {
+            } 
+            if (draggedFrom > draggedTo) {
                 const length =  draggedFrom - draggedTo;
                 for (let i = draggedTo; i <= draggedFrom; i++) {
                     colorDataUnsaved[i].r = tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(draggedFrom-i));
                     colorDataUnsaved[i].g = tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(draggedFrom-i));
                     colorDataUnsaved[i].b = tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(draggedFrom-i));
-                    colorDataUnsaved[i].w = tempArray[draggedFrom].w + (pickerColor.w*saturation - tempArray[draggedFrom].w)/(length/(draggedFrom-i));  
+                    colorDataUnsaved[i].w = tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i));  
                 }
             }
-            // setColorDataUnsaved(colorDataUnsaved);
             setState({});  
         }
         else if (altKey && (e.type === "mousedown")) {
