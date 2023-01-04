@@ -1,7 +1,7 @@
 import {getCurrentConfig } from '../utils/API';
+import { useState, useEffect } from 'react';
 import Tile from './Tile';
 import Divider from './Divider';
-import { useState, useEffect } from 'react';
 import SubmitButton from './SubmitButton';
 import ReadButton from './ReadButton';
 import StripLength from './StripLength';
