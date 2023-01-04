@@ -14,20 +14,24 @@ let storedLength = window.localStorage.getItem("length");
 
 if (!storedLength) storedLength = 20;
 
-export default function CurrentConfig({pickerColor, setPickerColor, saturation, whiteLevel, setWhiteLevel}) {
+export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel}) {
 
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
     const [effectSpeedTextBox, setEffectSpeedTextBox] = useState("0");
     const [colorData, setColorData] = useState([]);
     const [dividerLocations, setDividerLocations] = useState([]);
+    const [tempArray, setTempArray] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
     // eslint-disable-next-line no-unused-vars
     const [state, setState] = useState();
     const [mouseClick, setMouseClick] = useState(false);
     const [shiftKey, setShiftKey] = useState(false);
+    const [altKey, setAltKey] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+
+    const [draggedFrom, setDraggedFrom] = useState(0);
     
     const getData = async () => {
         
@@ -60,21 +64,25 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
     useEffect(()=>{
         window.addEventListener("keydown", (e) => {
             if (e.shiftKey) setShiftKey(true);
+            if (e.altKey) setAltKey(true);
         });
         window.addEventListener("keyup", (e) => {
             setShiftKey(false);
+            setAltKey(false);
         });
         window.addEventListener("mousedown", () => (setMouseClick(true)));
-        window.addEventListener("mouseup", () => (setMouseClick(false)));
+        window.addEventListener("mouseup", () => {setMouseClick(false)});
         getData();
         return () => {
             window.removeEventListener("mousedown", () => (setMouseClick(true)));
             window.removeEventListener("mouseup", () => (setMouseClick(false)));
             window.removeEventListener("keyup", (e) => {
-                if (e.shiftKey) setShiftKey(false);
+                setShiftKey(false);
+                setAltKey(false);
             });
             window.removeEventListener("keydown", (e) => {
                 if (e.shiftKey) setShiftKey(true);
+                if (e.altKey) setAltKey(true);
             });
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,8 +115,44 @@ export default function CurrentConfig({pickerColor, setPickerColor, saturation, 
         fontSize: "60px"
     }
 
-    function update(e, index) {
-        if (!shiftKey && ((mouseClick && e.type === "mouseover") || (e.type === "mousedown"))) {
+    function update(e, index) {        
+        if (altKey && (mouseClick && e.type === "mouseover")) {
+            // colorDataUnsaved[index] = {r:0, g:0, b:0, w:0};
+            // setDraggedTo(index);
+            let draggedTo = index;
+            // console.log(tempArray);
+            for (let i = 0; i < colorDataUnsaved.length; i++) {
+                colorDataUnsaved[i] = {...tempArray[i]};
+            }
+            
+            if (draggedFrom < draggedTo) {
+                for (let i = draggedFrom; i <= draggedTo; i++) {
+                    const length = draggedTo - draggedFrom+1;
+                    colorDataUnsaved[i].r = tempArray[draggedFrom].r + (pickerColor.r - tempArray[draggedFrom].r)/(length/(i-draggedFrom));
+                    colorDataUnsaved[i].g = tempArray[draggedFrom].g + (pickerColor.g - tempArray[draggedFrom].g)/(length/(i-draggedFrom));
+                    colorDataUnsaved[i].b = tempArray[draggedFrom].b + (pickerColor.b - tempArray[draggedFrom].b)/(length/(i-draggedFrom));
+                    colorDataUnsaved[i].w = tempArray[draggedFrom].w + (pickerColor.w - tempArray[draggedFrom].w)/(length/(i-draggedFrom));
+                }
+            } else {
+                for (let i = draggedTo; i <= draggedFrom; i++) {
+                    const length =  draggedFrom - draggedTo;
+                    colorDataUnsaved[i].r = tempArray[draggedFrom].r + (pickerColor.r - tempArray[draggedFrom].r)/(length/(draggedFrom-i));
+                    colorDataUnsaved[i].g = tempArray[draggedFrom].g + (pickerColor.g - tempArray[draggedFrom].g)/(length/(draggedFrom-i));
+                    colorDataUnsaved[i].b = tempArray[draggedFrom].b + (pickerColor.b - tempArray[draggedFrom].b)/(length/(draggedFrom-i));
+                    colorDataUnsaved[i].w = tempArray[draggedFrom].w + (pickerColor.w - tempArray[draggedFrom].w)/(length/(draggedFrom-i));  
+                }
+            }
+            // setColorDataUnsaved(colorDataUnsaved);
+            setState({});  
+        }
+        else if (altKey && (e.type === "mousedown")) {
+            setDraggedFrom(index);
+            setTempArray([...colorDataUnsaved]);
+            setState({});
+            // colorDataUnsaved[index] = {r:0, g:0, b:0, w:0};
+        }
+
+        else if (!shiftKey && ((mouseClick && e.type === "mouseover") || (e.type === "mousedown"))) {
             colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
             setColorDataUnsaved(colorDataUnsaved);
             setState({});     
