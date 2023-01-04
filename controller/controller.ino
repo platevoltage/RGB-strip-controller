@@ -6,19 +6,21 @@
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
-#define JSON_BUFFER_SIZE 31000
-#define EEPROM_SIZE 2048
-//31000 max for esp8266. 150 pixels.
 
 #ifdef ESP32
-
+#define JSON_BUFFER_SIZE 91000
+#define EEPROM_SIZE 3000
+#define MAX_PIXELS 700
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 WebServer server(80);
 
 #else
-
+//31000 max for esp8266. 150 pixels.
+#define JSON_BUFFER_SIZE 31000
+#define EEPROM_SIZE 2048
+#define MAX_PIXELS 150
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
@@ -144,6 +146,7 @@ void updateConfig() {
     stripLength = jsonBuffer["stripLength"];
     effectSpeed = jsonBuffer["effectSpeed"];
     
+    if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
     pixels.updateLength(stripLength);
     server.send(200, "text/json", F("{success:true}"));
 
@@ -195,6 +198,7 @@ void updateConfig() {
 
 void setStripLength(uint16_t newStripLength) {
   stripLength = newStripLength;
+  if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
   pixels.updateLength(stripLength);
 }
 

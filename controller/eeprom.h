@@ -3,7 +3,7 @@
 
 #define EEPROM_OFFSET 10
 
-//stripLength - 1
+//stripLength - 0,1
 
 void EEPROMinit() {
   if (EEPROM.read(0) == 255) {
@@ -22,7 +22,7 @@ uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
 
 void readEEPROMAndSetPixels( void (*setStripLength)(uint16_t), void(*setPixel)(uint16_t, uint32_t, boolean) ) {
   uint16_t stripLength = EEPROM.read(0) << 8 | EEPROM.read(1);
-  // stripLength = 20;
+  if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
 
   (*setStripLength)(stripLength);
   for (int i = EEPROM_OFFSET; i < stripLength + EEPROM_OFFSET; i++) {
@@ -50,6 +50,8 @@ void commitEEPROM() {
 }
 
 void writeStripLengthToEEPROM(uint16_t stripLength) {
+  if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
+
   EEPROM.write(0, stripLength >> 8);
   EEPROM.write(1, stripLength);
   // Serial.println((stripLength >> 8),BIN);
