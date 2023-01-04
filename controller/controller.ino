@@ -7,6 +7,7 @@
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
 #define JSON_BUFFER_SIZE 31000
+#define EEPROM_SIZE 2048
 //31000 max for esp8266. 150 pixels.
 
 #ifdef ESP32
@@ -241,6 +242,7 @@ void webClientTimer() {
 }
 
 
+
 void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, 0);
@@ -255,7 +257,8 @@ void setup(void) {
   WiFi.begin(ssid, password);
   Serial.println();
   pixels.begin();
-  EEPROM.begin(2048);
+  EEPROM.begin(EEPROM_SIZE);
+  EEPROMinit();
 
   setStripLength(stripLength);
   readEEPROMAndSetPixels(setStripLength, setPixel);

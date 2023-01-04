@@ -5,6 +5,16 @@
 
 //stripLength - 1
 
+void EEPROMinit() {
+  if (EEPROM.read(0) == 255) {
+    for (int i=0; i < EEPROM_SIZE; i++) {
+      EEPROM.write(i, 0);
+    }
+    EEPROM.write(1, 20); //sets length to 20 if eeprom needs to be initialized
+    EEPROM.commit();
+  }
+}
+
 
 uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
   return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
