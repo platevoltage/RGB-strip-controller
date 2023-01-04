@@ -6,6 +6,8 @@
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
+#define JSON_BUFFER_SIZE 31000
+//31000 max for esp8266. 150 pixels.
 
 #ifdef ESP32
 
@@ -49,7 +51,7 @@ ESP8266WebServer server(80);
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-uint8_t stripLength = 32;
+uint16_t stripLength = 32;
 uint8_t groups[5][2] = {};
 uint8_t activeGroups = 0;
 uint16_t effectSpeed = 0;
@@ -94,7 +96,7 @@ void getCurrentConfig() {
 
   uint8_t currentData[stripLength][4] = {};
 
-  for (int i = 0; i < stripLength; i++) {
+  for (uint16_t i = 0; i < stripLength; i++) {
     currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
     currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
     currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
@@ -105,11 +107,11 @@ void getCurrentConfig() {
   effectSpeed = readEffectSpeedFromEEPROM();
   uint8_t dividers[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
   uint8_t numDividers = 0;
-  for (int i=0; i < sizeof(dividers); i++) {
+  for (uint16_t i=0; i < sizeof(dividers); i++) {
     if (dividers[i] != 0) numDividers++;
   }
   activeGroups = numDividers+1;
-  for (int i=0; i<numDividers+1; i++) {
+  for (uint16_t i=0; i<numDividers+1; i++) {
     if (i == 0) groups[i][0] = 1;
     else groups[i][0] = dividers[i-1]+1;
     if (i < numDividers) groups[i][1] = dividers[i];
@@ -122,8 +124,8 @@ void getCurrentConfig() {
 
 
 void updateConfig() {
-  Serial.println(ESP.getFreeHeap());
-  DynamicJsonDocument jsonBuffer(22000);
+  // Serial.println(ESP.getFreeHeap());
+  DynamicJsonDocument jsonBuffer(JSON_BUFFER_SIZE);
   
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   sendHeaders();
@@ -131,29 +133,29 @@ void updateConfig() {
   if (error) {
     server.send(200, "text/json", F("{success:false}"));
     Serial.println(error.c_str());
-    Serial.println(ESP.getFreeHeap());
+    // Serial.println(ESP.getFreeHeap());
     Serial.println(server.arg("plain"));
   }
 
   else {
     const char *status = jsonBuffer["status"];
-    uint8_t length = jsonBuffer["length"];
+    uint16_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     effectSpeed = jsonBuffer["effectSpeed"];
     
     pixels.updateLength(stripLength);
     server.send(200, "text/json", F("{success:true}"));
 
-    uint8_t dividersLength = jsonBuffer["dividers"].size();
+    uint16_t dividersLength = jsonBuffer["dividers"].size();
     // uint8_t dividers[dividersLength] = {};
-    for (int i=0; i<dividersLength; i++) {
+    for (uint16_t i=0; i<dividersLength; i++) {
       // dividers[i] = jsonBuffer["dividers"][i];
       writeDividerToEEPROM(i, jsonBuffer["dividers"][i]);
     }
     
     uint8_t currentData[stripLength][4] = {};
 
-    for (int i = 0; i < stripLength; i++) {
+    for (uint16_t i = 0; i < stripLength; i++) {
       currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
       currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
       currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
@@ -161,12 +163,12 @@ void updateConfig() {
     }
 
 
-    for (int i = 0; i < length; i++) {
+    for (uint16_t i = 0; i < length; i++) {
       uint8_t red = jsonBuffer["red"][i];
       uint8_t green = jsonBuffer["green"][i];
       uint8_t blue = jsonBuffer["blue"][i];
       uint8_t white = jsonBuffer["white"][i];
-      uint8_t position = jsonBuffer["positions"][i];
+      uint16_t position = jsonBuffer["positions"][i];
 
       currentData[position][0] = red;
       currentData[position][1] = green;
@@ -178,7 +180,7 @@ void updateConfig() {
     }
     writeEffectSpeedToEEPROM(effectSpeed);
     writeStripLengthToEEPROM(stripLength);
-    for (int i = 0; i < stripLength; i++) {
+    for (uint16_t i = 0; i < stripLength; i++) {
       uint8_t red = currentData[i][0];
       uint8_t green = currentData[i][1];
       uint8_t blue = currentData[i][2];
@@ -190,17 +192,17 @@ void updateConfig() {
   jsonBuffer.clear();
 }
 
-void setStripLength(uint8_t newStripLength) {
+void setStripLength(uint16_t newStripLength) {
   stripLength = newStripLength;
   pixels.updateLength(stripLength);
 }
 
-void setPixel(uint8_t position, uint32_t color, boolean show) {
+void setPixel(uint16_t position, uint32_t color, boolean show) {
   pixels.setPixelColor(position, color);
   if (show) pixels.show();
 }
 
-uint32_t readPixel(uint8_t position) {
+uint32_t readPixel(uint16_t position) {
   return pixels.getPixelColor(position);
 }
 
@@ -253,7 +255,7 @@ void setup(void) {
   WiFi.begin(ssid, password);
   Serial.println();
   pixels.begin();
-  EEPROM.begin(1280);
+  EEPROM.begin(2048);
 
   setStripLength(stripLength);
   readEEPROMAndSetPixels(setStripLength, setPixel);

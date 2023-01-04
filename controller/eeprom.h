@@ -6,13 +6,14 @@
 //stripLength - 1
 
 
-uint8_t readEEPROMAndReturnSubPixel(uint8_t position, uint8_t subPixel) {
+uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
   return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
 }
 
-void readEEPROMAndSetPixels( void (*setStripLength)(uint8_t), void(*setPixel)(uint8_t, uint32_t, boolean) ) {
-  uint8_t stripLength = EEPROM.read(1);
-  if (stripLength < 0 || stripLength > 255) stripLength = 255;
+void readEEPROMAndSetPixels( void (*setStripLength)(uint16_t), void(*setPixel)(uint16_t, uint32_t, boolean) ) {
+  uint16_t stripLength = EEPROM.read(0) << 8 | EEPROM.read(1);
+  // stripLength = 20;
+
   (*setStripLength)(stripLength);
   for (int i = EEPROM_OFFSET; i < stripLength + EEPROM_OFFSET; i++) {
     int x = i*4;
@@ -26,7 +27,7 @@ void readEEPROMAndSetPixels( void (*setStripLength)(uint8_t), void(*setPixel)(ui
         
 }
 
-void writePixelToEEPROM(uint8_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
+void writePixelToEEPROM(uint16_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
   int x = (position + EEPROM_OFFSET )*4;
   EEPROM.write(x, red);
   EEPROM.write(x+1, green);
@@ -38,12 +39,15 @@ void commitEEPROM() {
   EEPROM.commit();
 }
 
-void writeStripLengthToEEPROM(uint8_t stripLength) {
+void writeStripLengthToEEPROM(uint16_t stripLength) {
+  EEPROM.write(0, stripLength >> 8);
   EEPROM.write(1, stripLength);
+  // Serial.println((stripLength >> 8),BIN);
+  // Serial.println((uint8_t)stripLength, BIN);
   EEPROM.commit();
 }
 
-void writeDividerToEEPROM(uint8_t position, uint8_t divider) {
+void writeDividerToEEPROM(uint16_t position, uint8_t divider) {
   EEPROM.write(position+2, divider);
 }
 
@@ -53,7 +57,7 @@ void writeEffectSpeedToEEPROM(uint16_t effectSpeed) {
   // Serial.println((EEPROM.read(7) << 8) + EEPROM.read(8));
 }
 
-uint8_t readDividerFromEEPROM(uint8_t position) {
+uint8_t readDividerFromEEPROM(uint16_t position) {
   return EEPROM.read(position+2);
 }
 uint16_t readEffectSpeedFromEEPROM() {
