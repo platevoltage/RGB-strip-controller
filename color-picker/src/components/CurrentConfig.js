@@ -22,6 +22,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     const [colorData, setColorData] = useState([]);
     const [dividerLocations, setDividerLocations] = useState([]);
     const [tempArray, setTempArray] = useState([]);
+    const [undoArray, setUndoArray] = useState([]);
     const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
     const [mouseClick, setMouseClick] = useState(false);
     const [shiftKey, setShiftKey] = useState(false);
@@ -63,6 +64,9 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         if (e.shiftKey) setShiftKey(true);
         if (e.altKey) setAltKey(true);
         console.log("keypress");
+        if (e.key === 'z') {
+            setColorDataUnsaved([...undoArray]);
+        }
     }
     function handleKeyUp() {
         setShiftKey(false);
@@ -76,20 +80,28 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
     
     useEffect(()=>{
+        
         console.log("event listeners called")
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
         window.addEventListener("mousedown", handleMouseDown);
         window.addEventListener("mouseup", handleMouseUp);
-        getData();
+        
         return () => {
             window.removeEventListener("mousedown", handleMouseDown);
             window.removeEventListener("mouseup", handleMouseUp);
             window.removeEventListener("keyup", handleKeyUp);
             window.removeEventListener("keydown", handleKeyDown);
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    }, [undoArray]);
+
+    useEffect(()=>{
+        getData();
     }, []);
+    useEffect(()=>{
+        setUndoArray([...tempArray]);
+    },[tempArray]);
 
     const stripStyle = {
         backgroundColor: "#444444",
@@ -118,14 +130,14 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         fontSize: "60px"
     }
 
-    function update(e, index) {    
+    function update(e, index) {
         //regular
         if (!shiftKey && !altKey && (mouseClick && e.type === "mouseover")) {
             for (let i = 0; i < colorDataUnsaved.length; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
             const draggedTo = index;
-            if (draggedFrom < draggedTo) {
+            if (draggedFrom-1 < draggedTo) {
                 for (let i = draggedFrom; i <= draggedTo; i++) {
                     colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
                 }
@@ -138,9 +150,9 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         }
         //start regular
         else if (!shiftKey && !altKey && (e.type === "mousedown")) {
+            setTempArray([...colorDataUnsaved]);
             colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
             setDraggedFrom(index);
-            setTempArray([...colorDataUnsaved]);
         }
         //gradient    
         else if (!shiftKey && altKey && (mouseClick && e.type === "mouseover")) {
@@ -174,7 +186,9 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setDraggedFrom(index);
             setTempArray([...colorDataUnsaved]);
         }
+
         setColorDataUnsaved([...colorDataUnsaved]);  
+
     }
   
     return (
@@ -222,5 +236,5 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             </div>
         </>     
     );
+    
 }
-  
