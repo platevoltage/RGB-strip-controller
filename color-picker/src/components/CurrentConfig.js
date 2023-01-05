@@ -59,30 +59,34 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setError(true);
         }
     }
+    function handleKeyDown(e) {
+        if (e.shiftKey) setShiftKey(true);
+        if (e.altKey) setAltKey(true);
+        console.log("keypress");
+    }
+    function handleKeyUp() {
+        setShiftKey(false);
+        setAltKey(false);
+    }
+    function handleMouseDown() {
+        setMouseClick(true);
+    }
+    function handleMouseUp() {
+        setMouseClick(false);
+    }
     
     useEffect(()=>{
-        window.addEventListener("keydown", (e) => {
-            if (e.shiftKey) setShiftKey(true);
-            if (e.altKey) setAltKey(true);
-        });
-        window.addEventListener("keyup", () => {
-            setShiftKey(false);
-            setAltKey(false);
-        });
-        window.addEventListener("mousedown", () => (setMouseClick(true)));
-        window.addEventListener("mouseup", () => setMouseClick(false));
+        console.log("event listeners called")
+        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keyup", handleKeyUp);
+        window.addEventListener("mousedown", handleMouseDown);
+        window.addEventListener("mouseup", handleMouseUp);
         getData();
         return () => {
-            window.removeEventListener("mousedown", () => (setMouseClick(true)));
-            window.removeEventListener("mouseup", () => (setMouseClick(false)));
-            window.removeEventListener("keyup", () => {
-                setShiftKey(false);
-                setAltKey(false);
-            });
-            window.removeEventListener("keydown", (e) => {
-                if (e.shiftKey) setShiftKey(true);
-                if (e.altKey) setAltKey(true);
-            });
+            window.removeEventListener("mousedown", handleMouseDown);
+            window.removeEventListener("mouseup", handleMouseUp);
+            window.removeEventListener("keyup", handleKeyUp);
+            window.removeEventListener("keydown", handleKeyDown);
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
