@@ -33,6 +33,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     const [draggedFrom, setDraggedFrom] = useState(0);
     
     const getData = async () => {
+        setUndoArray([...tempArray]);
         
         try {
             window.localStorage.setItem("ip", addressTextBox);
