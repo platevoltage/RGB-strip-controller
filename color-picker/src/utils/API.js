@@ -22,7 +22,7 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
         blueArray.push(rgbwData.b);
         whiteArray.push(rgbwData.w);
     }
-
+    // console.log([...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0]);
     return fetch(`${address}/update`, {
         method: 'POST',
         headers: {

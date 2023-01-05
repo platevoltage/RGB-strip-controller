@@ -115,13 +115,34 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
 
     function update(e, index) {    
-        //gradient    
-        if (altKey && (mouseClick && e.type === "mouseover")) {
-
+        //regular
+        if (!shiftKey && !altKey && (mouseClick && e.type === "mouseover")) {
             for (let i = 0; i < colorDataUnsaved.length; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
-            
+            const draggedTo = index;
+            if (draggedFrom < draggedTo) {
+                for (let i = draggedFrom; i <= draggedTo; i++) {
+                    colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
+                }
+            } 
+            if (draggedFrom > draggedTo) {
+                for (let i = draggedTo; i <= draggedFrom; i++) {
+                    colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
+                }
+            }
+        }
+        //start regular
+        else if (!shiftKey && !altKey && (e.type === "mousedown")) {
+            colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
+            setDraggedFrom(index);
+            setTempArray([...colorDataUnsaved]);
+        }
+        //gradient    
+        else if (!shiftKey && altKey && (mouseClick && e.type === "mouseover")) {
+            for (let i = 0; i < colorDataUnsaved.length; i++) {
+                colorDataUnsaved[i] = {...tempArray[i]};
+            }
             const draggedTo = index;
             if (draggedFrom < draggedTo) {
                 const length = draggedTo - draggedFrom+1;
@@ -130,6 +151,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                     colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(i-draggedFrom)));
                     colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(i-draggedFrom)));
                     colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(i-draggedFrom)));
+                    // colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
                 }
             } 
             if (draggedFrom > draggedTo) {
@@ -139,17 +161,14 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                     colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(draggedFrom-i)));
                     colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(draggedFrom-i)));
                     colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i)));  
+                    // colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
                 }
             }
         }
         //start gradient
-        else if (altKey && (e.type === "mousedown")) {
+        else if (!shiftKey && altKey && (e.type === "mousedown")) {
             setDraggedFrom(index);
             setTempArray([...colorDataUnsaved]);
-        }
-        //regular click
-        else if (!shiftKey && ((mouseClick && e.type === "mouseover") || (e.type === "mousedown"))) {
-            colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
         }
         setColorDataUnsaved([...colorDataUnsaved]);  
     }
