@@ -33,6 +33,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     const [draggedFrom, setDraggedFrom] = useState(0);
     
     const getData = async () => {
+        document.title = `RGB strip controller - ${window.location.href.split("//")[1].split(":")[0]}`;
         setUndoArray([...tempArray]);
         
         try {
@@ -95,10 +96,12 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             window.removeEventListener("keydown", handleKeyDown);
         };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [undoArray]);
 
     useEffect(()=>{
         getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     useEffect(()=>{
         setUndoArray([...tempArray]);
