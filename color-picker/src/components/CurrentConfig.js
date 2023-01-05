@@ -52,6 +52,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setColorDataUnsaved([...colorArray]);
             setLoading(false);
 
+
         } catch (error){
             console.error(error);
             setLoading(false);

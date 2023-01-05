@@ -1,3 +1,7 @@
+//set IwIP to higher bandwidth!!!
+
+
+//user prefs------
 
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
@@ -6,6 +10,8 @@
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
+
+//--------
 
 #ifdef ESP32
 #define JSON_BUFFER_SIZE 91000
@@ -55,7 +61,7 @@ ESP8266WebServer server(80);
 const char *ssid = STASSID;
 const char *password = STAPSK;
 uint16_t stripLength = 32;
-uint8_t groups[5][2] = {};
+uint16_t groups[5][2] = {};
 uint8_t activeGroups = 0;
 uint16_t effectSpeed = 0;
 
@@ -108,20 +114,26 @@ void getCurrentConfig() {
 
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM();
-  uint8_t dividers[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
+  Serial.print("effect speed -- ");
+  Serial.println(effectSpeed);
+  uint16_t dividers[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
   uint8_t numDividers = 0;
-  for (uint16_t i=0; i < sizeof(dividers); i++) {
+  for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
+      Serial.print("index - ");
+  Serial.println(i);
+  Serial.print("divider - ");
+  Serial.println(dividers[i]);
     if (dividers[i] != 0) numDividers++;
   }
   activeGroups = numDividers+1;
-  for (uint16_t i=0; i<numDividers+1; i++) {
+  for (uint8_t i=0; i<numDividers+1; i++) {
     if (i == 0) groups[i][0] = 1;
     else groups[i][0] = dividers[i-1]+1;
     if (i < numDividers) groups[i][1] = dividers[i];
     else groups[i][1] = stripLength;
   }
 
-  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers), dividers, effectSpeed));
+  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed));
 
 }
 
@@ -213,29 +225,27 @@ uint32_t readPixel(uint16_t position) {
 
 
 
-
-unsigned long previousMillis = 0;
-
-int count = 0;
-
-void effectTimer() {
+unsigned long effectPreviousMillis = 0;
+void effectTimer(uint16_t speed) {
     unsigned long currentMillis = millis();
-    uint16_t speed = effectSpeed;
-    if (speed < 20) speed = 20;
-    if (currentMillis - previousMillis >= speed) {
-      previousMillis = currentMillis;
+
+    if (speed < 100) speed = 100;
+    if (currentMillis - effectPreviousMillis >= speed) {
+
+      effectPreviousMillis = currentMillis;
       for(int i=0; i < activeGroups; i++) {
         walk(readPixel, setPixel, groups[i][0], groups[i][1]);
       }
+     
 
     }
 }
 
-void webClientTimer() {
+unsigned long webClientPreviousMillis = 0;
+void webClientTimer(uint16_t speed) {
     unsigned long currentMillis = millis();
-    uint16_t speed = 1;
-    if (currentMillis - previousMillis >= speed) {
-      previousMillis = currentMillis;
+    if (currentMillis - webClientPreviousMillis >= speed) {
+      webClientPreviousMillis = currentMillis;
       server.handleClient();
       ArduinoOTA.handle();
 
@@ -329,8 +339,9 @@ void setup(void) {
 
 
 void loop(void) {
-  webClientTimer();
+  webClientTimer(0);
+  // effectTimer(100);
 
-  if (effectSpeed > 0) effectTimer();
+  if (effectSpeed > 0) effectTimer(effectSpeed);
 
 }

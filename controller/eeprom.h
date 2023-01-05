@@ -1,9 +1,11 @@
 #include "HardwareSerial.h"
 #include <EEPROM.h>
 
-#define EEPROM_OFFSET 10
+#define EEPROM_OFFSET 20
 
 //stripLength - 0,1
+//dividers - 2,3,4,5,6,7,8,9
+//effectSpeed - 10,11
 
 void EEPROMinit() {
   if (EEPROM.read(0) == 255) {
@@ -59,20 +61,34 @@ void writeStripLengthToEEPROM(uint16_t stripLength) {
   EEPROM.commit();
 }
 
-void writeDividerToEEPROM(uint16_t position, uint8_t divider) {
-  EEPROM.write(position+2, divider);
+void writeDividerToEEPROM(uint8_t index, uint16_t position) {
+  Serial.print("input divider - ");
+  Serial.println(position);
+    Serial.print("bit 1 - ");
+  Serial.println(position >> 8);
+    Serial.print("bit 2 - ");
+  Serial.println((uint8_t)position);
+  index *= 2;
+  EEPROM.write(index+2, position >> 8);
+  EEPROM.write(index+3, position);
 }
 
 void writeEffectSpeedToEEPROM(uint16_t effectSpeed) {
-  EEPROM.write(7, effectSpeed >> 8);
-  EEPROM.write(8, effectSpeed);
+  EEPROM.write(10, effectSpeed >> 8);
+  EEPROM.write(11, effectSpeed);
   // Serial.println((EEPROM.read(7) << 8) + EEPROM.read(8));
 }
 
-uint8_t readDividerFromEEPROM(uint16_t position) {
-  return EEPROM.read(position+2);
+uint16_t readDividerFromEEPROM(uint8_t index) {
+  // Serial.print("index - ");
+  // Serial.println(index);
+  index *= 2;
+  // Serial.print("divider - ");
+  // Serial.println(EEPROM.read(index+2) << 8 | EEPROM.read(index+3));
+  return EEPROM.read(index+2) << 8 | EEPROM.read(index+3);
+
 }
 uint16_t readEffectSpeedFromEEPROM() {
 
-  return EEPROM.read(7) << 8 | EEPROM.read(8) ;
+  return EEPROM.read(10) << 8 | EEPROM.read(11) ;
 }
