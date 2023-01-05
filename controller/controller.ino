@@ -339,8 +339,8 @@ void setup(void) {
 
 void loop(void) {
   webClientTimer(10);
-  // effectTimer(100);
+  
 
-  if (effectSpeed > 0 && millis() > 10000) effectTimer(effectSpeed);
+  if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed);
 
 }
