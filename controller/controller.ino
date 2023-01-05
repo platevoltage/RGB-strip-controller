@@ -26,7 +26,7 @@ WebServer server(80);
 //31000 max for esp8266. 150 pixels.
 #define JSON_BUFFER_SIZE 31000
 #define EEPROM_SIZE 2048
-#define MAX_PIXELS 150
+#define MAX_PIXELS 180
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
@@ -49,7 +49,7 @@ ESP8266WebServer server(80);
 
 #include "payload/manifest.json.h"
 #include "payload/static/css/main.c83abc47.css.h"
-#include "payload/static/js/main.ce60e6b3.js.h"
+#include "payload/static/js/main.9380ccec.js.h"
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 
@@ -127,12 +127,6 @@ void getCurrentConfig() {
     else groups[i][0] = dividers[i-1]+1;
     if (i < numDividers) groups[i][1] = dividers[i];
     else groups[i][1] = stripLength;
-  }
-
-  for (uint8_t i=0; i<numDividers+1; i++) {
-    Serial.print(groups[i][0]);
-    Serial.print(", ");
-    Serial.println(groups[i][1]);
   }
 
   server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed));
@@ -312,7 +306,7 @@ void setup(void) {
   server.on(F("/RGB-strip-controller/static/css/main.c83abc47.css"), []() {
     server.send_P(200, "text/css", _main_css);
   });
-  server.on(F("/RGB-strip-controller/static/js/main.ce60e6b3.js"), []() {
+  server.on(F("/RGB-strip-controller/static/js/main.9380ccec.js"), []() {
     server.send_P(200, "text/javascript", _main_js);
   });
   server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
@@ -339,7 +333,7 @@ void setup(void) {
 
 
 void loop(void) {
-  webClientTimer(0);
+  webClientTimer(10);
   // effectTimer(100);
 
   if (effectSpeed > 0) effectTimer(effectSpeed);

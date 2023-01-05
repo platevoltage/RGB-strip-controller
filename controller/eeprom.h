@@ -27,16 +27,19 @@ void readEEPROMAndSetPixels( void (*setStripLength)(uint16_t), void(*setPixel)(u
   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
 
   (*setStripLength)(stripLength);
-  for (int i = EEPROM_OFFSET; i < stripLength + EEPROM_OFFSET; i++) {
-    int x = i*4;
-    uint8_t red = EEPROM.read(x);
-    uint8_t green = EEPROM.read(x+1);             
-    uint8_t blue = EEPROM.read(x+2); 
-    uint8_t white = EEPROM.read(x+3); 
-      
-    (*setPixel)(i-EEPROM_OFFSET, Color(red, green, blue, white), i == stripLength-1);
-  }
+
+  for (int j = 100; j > 0; j--) {
+    for (int i = EEPROM_OFFSET; i < stripLength + EEPROM_OFFSET; i++) {
+      int x = i*4;
+      uint8_t red = EEPROM.read(x)/j;
+      uint8_t green = EEPROM.read(x+1)/j;             
+      uint8_t blue = EEPROM.read(x+2)/j; 
+      uint8_t white = EEPROM.read(x+3/j); 
         
+      (*setPixel)(i-EEPROM_OFFSET, Color(red, green, blue, white), i == stripLength-1);
+    }
+    delay(10);
+  }     
 }
 
 void writePixelToEEPROM(uint16_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
