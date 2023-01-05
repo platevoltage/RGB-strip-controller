@@ -32,7 +32,7 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
             "status" : "Success!",
             stripLength,
             effectSpeed,
-            "dividers": [...dividers, 0, 0, 0, 0].splice(0, 4).sort((x, y) => { return  x - y }),
+            "dividers": [...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0],
             "length" : data.changes.length,
             "positions" : data.changePositions,
             "red" : redArray,
