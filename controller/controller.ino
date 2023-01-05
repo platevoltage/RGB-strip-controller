@@ -6,7 +6,7 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "test"
+#define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -110,6 +110,10 @@ void getCurrentConfig() {
     currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
     currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
     currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
+
+    pixels.setPixelColor(i, Color(currentData[i][0], currentData[i][1], currentData[i][2], currentData[i][3]));
+    delay(10);
+    pixels.show();
   }
 
   //dividers and groups
@@ -223,7 +227,7 @@ unsigned long effectPreviousMillis = 0;
 void effectTimer(uint16_t speed) {
     unsigned long currentMillis = millis();
 
-    if (speed < 100) speed = 100;
+    if (speed < 10) speed = 10;
     if (currentMillis - effectPreviousMillis >= speed) {
 
       effectPreviousMillis = currentMillis;
@@ -268,8 +272,9 @@ void setup(void) {
   EEPROM.begin(EEPROM_SIZE);
   EEPROMinit();
 
-  setStripLength(stripLength);
-  readEEPROMAndSetPixels(setStripLength, setPixel);
+  setStripLength(readStripLengthFromEEPROM());
+  // readEEPROMAndSetPixels(setStripLength, setPixel);
+  getCurrentConfig();
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -336,6 +341,6 @@ void loop(void) {
   webClientTimer(10);
   // effectTimer(100);
 
-  if (effectSpeed > 0) effectTimer(effectSpeed);
+  if (effectSpeed > 0 && millis() > 10000) effectTimer(effectSpeed);
 
 }

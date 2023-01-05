@@ -17,30 +17,34 @@ void EEPROMinit() {
   }
 }
 
+uint16_t readStripLengthFromEEPROM() {
+  return EEPROM.read(0) << 8 | EEPROM.read(1);
+}
+
 
 uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
   return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
 }
 
-void readEEPROMAndSetPixels( void (*setStripLength)(uint16_t), void(*setPixel)(uint16_t, uint32_t, boolean) ) {
-  uint16_t stripLength = EEPROM.read(0) << 8 | EEPROM.read(1);
-  if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
+// void readEEPROMAndSetPixels( void (*setStripLength)(uint16_t), void(*setPixel)(uint16_t, uint32_t, boolean) ) {
+//   uint16_t stripLength = EEPROM.read(0) << 8 | EEPROM.read(1);
+//   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
 
-  (*setStripLength)(stripLength);
+//   (*setStripLength)(stripLength);
 
-  for (int j = 100; j > 0; j--) {
-    for (int i = EEPROM_OFFSET; i < stripLength + EEPROM_OFFSET; i++) {
-      int x = i*4;
-      uint8_t red = EEPROM.read(x)/j;
-      uint8_t green = EEPROM.read(x+1)/j;             
-      uint8_t blue = EEPROM.read(x+2)/j; 
-      uint8_t white = EEPROM.read(x+3/j); 
+//   for (int j = 100; j > 0; j--) {
+//     for (int i = EEPROM_OFFSET; i < stripLength + EEPROM_OFFSET; i++) {
+//       int x = i*4;
+//       uint8_t red = EEPROM.read(x)/j;
+//       uint8_t green = EEPROM.read(x+1)/j;             
+//       uint8_t blue = EEPROM.read(x+2)/j; 
+//       uint8_t white = EEPROM.read(x+3/j); 
         
-      (*setPixel)(i-EEPROM_OFFSET, Color(red, green, blue, white), i == stripLength-1);
-    }
-    delay(10);
-  }     
-}
+//       (*setPixel)(i-EEPROM_OFFSET, Color(red, green, blue, white), i == stripLength-1);
+//     }
+//     delay(10);
+//   }     
+// }
 
 void writePixelToEEPROM(uint16_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
   int x = (position + EEPROM_OFFSET )*4;
