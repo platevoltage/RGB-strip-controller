@@ -23,7 +23,6 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
         whiteArray.push(rgbwData.w);
     }
 
-
     return fetch(`${address}/update`, {
         method: 'POST',
         headers: {
@@ -33,7 +32,7 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
             "status" : "Success!",
             stripLength,
             effectSpeed,
-            "dividers": [...dividers, 0, 0, 0, 0].splice(0, 4),
+            "dividers": [...dividers, 0, 0, 0, 0].splice(0, 4).sort((x, y) => { return  x - y }),
             "length" : data.changes.length,
             "positions" : data.changePositions,
             "red" : redArray,

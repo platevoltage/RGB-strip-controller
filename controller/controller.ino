@@ -6,7 +6,7 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "test"
+#define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -114,15 +114,11 @@ void getCurrentConfig() {
 
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM();
-  Serial.print("effect speed -- ");
-  Serial.println(effectSpeed);
+
   uint16_t dividers[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
   uint8_t numDividers = 0;
   for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
-      Serial.print("index - ");
-  Serial.println(i);
-  Serial.print("divider - ");
-  Serial.println(dividers[i]);
+
     if (dividers[i] != 0) numDividers++;
   }
   activeGroups = numDividers+1;
@@ -131,6 +127,12 @@ void getCurrentConfig() {
     else groups[i][0] = dividers[i-1]+1;
     if (i < numDividers) groups[i][1] = dividers[i];
     else groups[i][1] = stripLength;
+  }
+
+  for (uint8_t i=0; i<numDividers+1; i++) {
+    Serial.print(groups[i][0]);
+    Serial.print(", ");
+    Serial.println(groups[i][1]);
   }
 
   server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed));
@@ -163,9 +165,7 @@ void updateConfig() {
     server.send(200, "text/json", F("{success:true}"));
 
     uint16_t dividersLength = jsonBuffer["dividers"].size();
-    // uint8_t dividers[dividersLength] = {};
     for (uint16_t i=0; i<dividersLength; i++) {
-      // dividers[i] = jsonBuffer["dividers"][i];
       writeDividerToEEPROM(i, jsonBuffer["dividers"][i]);
     }
     

@@ -56,18 +56,11 @@ void writeStripLengthToEEPROM(uint16_t stripLength) {
 
   EEPROM.write(0, stripLength >> 8);
   EEPROM.write(1, stripLength);
-  // Serial.println((stripLength >> 8),BIN);
-  // Serial.println((uint8_t)stripLength, BIN);
+
   EEPROM.commit();
 }
 
 void writeDividerToEEPROM(uint8_t index, uint16_t position) {
-  Serial.print("input divider - ");
-  Serial.println(position);
-    Serial.print("bit 1 - ");
-  Serial.println(position >> 8);
-    Serial.print("bit 2 - ");
-  Serial.println((uint8_t)position);
   index *= 2;
   EEPROM.write(index+2, position >> 8);
   EEPROM.write(index+3, position);
@@ -76,15 +69,11 @@ void writeDividerToEEPROM(uint8_t index, uint16_t position) {
 void writeEffectSpeedToEEPROM(uint16_t effectSpeed) {
   EEPROM.write(10, effectSpeed >> 8);
   EEPROM.write(11, effectSpeed);
-  // Serial.println((EEPROM.read(7) << 8) + EEPROM.read(8));
+
 }
 
 uint16_t readDividerFromEEPROM(uint8_t index) {
-  // Serial.print("index - ");
-  // Serial.println(index);
   index *= 2;
-  // Serial.print("divider - ");
-  // Serial.println(EEPROM.read(index+2) << 8 | EEPROM.read(index+3));
   return EEPROM.read(index+2) << 8 | EEPROM.read(index+3);
 
 }
