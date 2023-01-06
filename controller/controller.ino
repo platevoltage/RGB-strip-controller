@@ -49,7 +49,7 @@ ESP8266WebServer server(80);
 
 #include "payload/manifest.json.h"
 #include "payload/static/css/main.c83abc47.css.h"
-#include "payload/static/js/main.9380ccec.js.h"
+#include "payload/static/js/main.d107deda.js.h"
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 
@@ -246,7 +246,14 @@ void webClientTimer(uint16_t speed) {
       webClientPreviousMillis = currentMillis;
       server.handleClient();
       ArduinoOTA.handle();
-
+      delay(1);
+      Serial.print(server.client());
+      Serial.print(" - ");
+      Serial.print(millis());
+      Serial.print(" - ");
+      Serial.print(ESP.getFreeHeap());
+      Serial.print(" - ");
+      Serial.println(ESP.getHeapFragmentation());
       #ifdef WS2801
         Serial.print("-");  //solves bug with ws2801, investigating.
       #endif
@@ -311,7 +318,7 @@ void setup(void) {
   server.on(F("/RGB-strip-controller/static/css/main.c83abc47.css"), []() {
     server.send_P(200, "text/css", _main_css);
   });
-  server.on(F("/RGB-strip-controller/static/js/main.9380ccec.js"), []() {
+  server.on(F("/RGB-strip-controller/static/js/main.d107deda.js"), []() {
     server.send_P(200, "text/javascript", _main_js);
   });
   server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
