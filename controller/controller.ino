@@ -185,13 +185,13 @@ void updateConfig() {
   
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   sendHeaders();
-
+  Serial.println(server.arg("plain"));
   if (error) {
     server.send(200, "text/json", F("{success:false}"));
     Serial.println(error.c_str());
     jsonBuffer.clear();
-    // Serial.println(ESP.getFreeHeap());
-    // Serial.println(server.arg("plain"));
+    Serial.println(ESP.getFreeHeap());
+    
   }
 
   else {
@@ -233,25 +233,25 @@ void updateConfig() {
       // uint8_t green = jsonBuffer["green"][i];
       // uint8_t blue = jsonBuffer["blue"][i];
       // uint8_t white = jsonBuffer["white"][i];
-      uint32_t color = jsonBuffer["color"][i];
       uint16_t position = jsonBuffer["positions"][i];
+      uint32_t color = jsonBuffer["color"][position];
 
       // currentData[position][0] = red;
       // currentData[position][1] = green;
       // currentData[position][2] = blue;
       // currentData[position][3] = white;
       currentData[i] = color;
-      pixels.setPixelColor(i, color);
     }
 
 
-    // for (uint16_t i = 0; i < stripLength; i++) {
-    //   uint8_t red = currentData[i][0];
-    //   uint8_t green = currentData[i][1];
-    //   uint8_t blue = currentData[i][2];
-    //   uint8_t white = currentData[i][3];
-    //   pixels.setPixelColor(i, Color(red, green, blue, white));
-    // }
+    for (uint16_t i = 0; i < stripLength; i++) {
+      // uint8_t red = currentData[i][0];
+      // uint8_t green = currentData[i][1];
+      // uint8_t blue = currentData[i][2];
+      // uint8_t white = currentData[i][3];
+      // pixels.setPixelColor(i, Color(red, green, blue, white));
+      pixels.setPixelColor(i, currentData[i]);
+    }
     pixels.show();
 
     writeDividersToEEPROM(dividers, dividersLength);
