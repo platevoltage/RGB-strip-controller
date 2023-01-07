@@ -73,7 +73,7 @@ static uint16_t effectSpeed = 0;
 Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CLK_PIN);
 #else
 #include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_WBGR + NEO_KHZ800);
+Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 #endif
 
 void handleNotFound() {

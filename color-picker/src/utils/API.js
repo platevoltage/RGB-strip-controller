@@ -22,7 +22,7 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
         // greenArray.push(rgbwData.g);
         // blueArray.push(rgbwData.b);
         // whiteArray.push(rgbwData.w);
-        colorArray.push(((rgbwData.r << 24) | (rgbwData.g << 16) | (rgbwData.b << 8) | rgbwData.w) >>> 0);
+        colorArray.push(((rgbwData.w << 24) | (rgbwData.r << 16) | (rgbwData.g << 8) | rgbwData.b) >>> 0);
     }
     // console.log([...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0]);
     return fetch(`${address}/update`, {
