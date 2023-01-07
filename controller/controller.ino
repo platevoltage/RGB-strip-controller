@@ -117,20 +117,37 @@ String getValue(String data, char separator, int index) {
     return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
+//turns 32 bit unsigned int from string to number. Built in method doesn't work.
+uint32_t toInt32(String numberString) {
+  if (numberString.length() == 9) {
+    uint8_t straggler = (numberString[0] - '0');
+    return numberString.substring(1, numberString.length()).toInt() + straggler*100000000;
+  }
+  if (numberString.length() == 10) {
+    uint8_t straggler = ((numberString[0] - '0')*10 + (numberString[1] - '0'));
+    return numberString.substring(2, numberString.length()).toInt() + straggler*100000000;
+  }
+  else return numberString.toInt();
+}
+
 
 void getCurrentConfig() {
   // readFile("/pixel.txt");
   sendHeaders();
 
   uint8_t currentData[stripLength][4] = {};
-
+  String pixelData = readPixelsFromEEPROM();
+  Serial.println(pixelData);
   for (uint16_t i = 0; i < stripLength; i++) {
-    currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
-    currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
-    currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
-    currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
+    uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
+    currentData[i][0] = (uint8_t)(singlePixel >> 24);
+    currentData[i][1] = (uint8_t)(singlePixel >> 16);
+    currentData[i][2] = (uint8_t)(singlePixel >> 8);
+    currentData[i][3] = (uint8_t)(singlePixel);
+    Serial.print(getValue(pixelData, '\n', i) + " - ");
+    Serial.println(toInt32(getValue(pixelData, '\n', i)));
 
-    pixels.setPixelColor(i, Color(currentData[i][0], currentData[i][1], currentData[i][2], currentData[i][3]));
+    pixels.setPixelColor(i, singlePixel);
     delay(10);
     pixels.show();
   }
@@ -219,10 +236,11 @@ void updateConfig() {
       currentData[position][2] = blue;
       currentData[position][3] = white;
 
-      writePixelToEEPROM(position, red, green, blue, white);
+      // writePixelToEEPROM(position, red, green, blue, white);
       // commitEEPROM();
     }
 
+    writePixelsToEEPROM(currentData, stripLength);
     writeEffectSpeedToEEPROM(effectSpeed);
     writeStripLengthToEEPROM(stripLength);
     for (uint16_t i = 0; i < stripLength; i++) {

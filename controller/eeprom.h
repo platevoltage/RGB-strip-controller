@@ -68,7 +68,7 @@ String readFile(const char * path) {
 
     // Serial.write(file.read());
   }
-  Serial.println(data);
+  // Serial.println(data);
   file.close();
   return data;
 }
@@ -138,7 +138,6 @@ void EEPROMinit() {
 
 uint16_t readStripLengthFromEEPROM() {
   String string = readFile("/stripLength.txt");
-  // return EEPROM.read(0) << 8 | EEPROM.read(1);
   return string.toInt();
 }
 
@@ -149,12 +148,45 @@ uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
 
 
 
-void writePixelToEEPROM(uint16_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
-  int x = (position + EEPROM_OFFSET )*4;
-  EEPROM.write(x, red);
-  EEPROM.write(x+1, green);
-  EEPROM.write(x+2, blue);
-  EEPROM.write(x+3, white);
+void writePixelsToEEPROM(uint8_t currentData[][4], size_t length) {
+  String message;
+  for (int i=0; i < length; i++) {
+    uint32_t color = currentData[i][0];
+    for (int j=1; j < 4; j++) {
+      color = color << 8 | currentData[i][j];
+    }
+    message += String(color);
+    if(i < length-1) message += '\n';
+    // message += "4278255360\n";
+  }
+  writeFile("pixels.txt", message);
+
+  // String message;
+  // for (int i=0; i < length; i++) {
+  //   for (int j=0; j < 4; j++) {
+  //     String byte = String(currentData[i][j], HEX);
+  //     if (byte.length() < 1) {
+  //       message += "0";
+  //     }
+  //     if (byte.length() < 2) {
+  //       message += "0";
+  //     }
+  //     message += byte;
+  //   }
+  //   message += '\n';
+  // }
+
+  // Serial.println(message);
+  // int x = (position + EEPROM_OFFSET )*4;
+  // EEPROM.write(x, red);
+  // EEPROM.write(x+1, green);
+  // EEPROM.write(x+2, blue);
+  // EEPROM.write(x+3, white);
+}
+
+String readPixelsFromEEPROM() {
+  String message = readFile("/pixels.txt");
+  return message;
 }
 
 
