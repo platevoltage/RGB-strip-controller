@@ -10,17 +10,19 @@ export const getCurrentConfig = (address) => {
 
 export const writeChanges = (stripLength, oldData, newData, address, dividers, effectSpeed) => {
     const data = compare(oldData, newData);
-    const redArray = [];
-    const greenArray = [];
-    const blueArray = [];
-    const whiteArray = [];
+    // const redArray = [];
+    // const greenArray = [];
+    // const blueArray = [];
+    // const whiteArray = [];
+    const colorArray = [];
 
     for (let i of data.changes) {
         let rgbwData = i;
-        redArray.push(rgbwData.r);
-        greenArray.push(rgbwData.g);
-        blueArray.push(rgbwData.b);
-        whiteArray.push(rgbwData.w);
+        // redArray.push(rgbwData.r);
+        // greenArray.push(rgbwData.g);
+        // blueArray.push(rgbwData.b);
+        // whiteArray.push(rgbwData.w);
+        colorArray.push(((rgbwData.r << 24) | (rgbwData.g << 16) | (rgbwData.b << 8) | rgbwData.w) >>> 0);
     }
     // console.log([...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0]);
     return fetch(`${address}/update`, {
@@ -35,10 +37,11 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
             "dividers": [...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0],
             "length" : data.changes.length,
             "positions" : data.changePositions,
-            "red" : redArray,
-            "green" : greenArray,
-            "blue" : blueArray,
-            "white" : whiteArray
+            // "red" : redArray,
+            // "green" : greenArray,
+            // "blue" : blueArray,
+            // "white" : whiteArray,
+            "color" : colorArray
             
         })
     });

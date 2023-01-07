@@ -130,13 +130,13 @@ uint16_t readStripLengthFromEEPROM() {
 
 
 
-void writePixelsToEEPROM(uint8_t currentData[][4], size_t length) {
+void writePixelsToEEPROM(uint32_t currentData[], size_t length) {
   String message;
   for (int i=0; i < length; i++) {
-    uint32_t color = currentData[i][0];
-    for (int j=1; j < 4; j++) {
-      color = color << 8 | currentData[i][j];
-    }
+    uint32_t color = currentData[i];
+    // for (int j=1; j < 4; j++) {
+    //   color = color << 8 | currentData[i][j];
+    // }
     message += String(color);
     if(i < length-1) message += '\n';
   }

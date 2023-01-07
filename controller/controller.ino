@@ -59,21 +59,21 @@ ESP8266WebServer server(80);
 
 //----end generated includes and wifi definitions
 
-const char *ssid = STASSID;
-const char *password = STAPSK;
+static const char *ssid = STASSID;
+static const char *password = STAPSK;
 // const char *ssid = APSSID;
 // const char *password = APPSK;
-uint16_t stripLength = 32;
-uint16_t groups[5][2] = {};
-uint8_t activeGroups = 0;
-uint16_t effectSpeed = 0;
+static uint16_t stripLength = 32;
+static uint16_t groups[5][2] = {};
+static uint8_t activeGroups = 0;
+static uint16_t effectSpeed = 0;
 
 #ifdef WS2801
 #include <Adafruit_WS2801.h>
 Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CLK_PIN);
 #else
 #include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
+Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_WBGR + NEO_KHZ800);
 #endif
 
 void handleNotFound() {
@@ -209,61 +209,57 @@ void updateConfig() {
       // writeDividerToEEPROM(i, jsonBuffer["dividers"][i]);
       dividers[i] = jsonBuffer["dividers"][i];
     }
-    writeDividersToEEPROM(dividers, dividersLength);
     
-    uint8_t currentData[stripLength][4] = {};
+    
+    // uint8_t currentData[stripLength][4] = {};
+    uint32_t currentData[stripLength];
 
     String pixelData = readPixelsFromEEPROM();
+
     for (uint16_t i = 0; i < stripLength; i++) {
       uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
-      currentData[i][0] = (uint8_t)(singlePixel >> 24);
-      currentData[i][1] = (uint8_t)(singlePixel >> 16);
-      currentData[i][2] = (uint8_t)(singlePixel >> 8);
-      currentData[i][3] = (uint8_t)(singlePixel);
-
-      pixels.setPixelColor(i, singlePixel);
-      delay(10);
-      pixels.show();
+      currentData[i] = singlePixel;
+      // currentData[i][0] = (uint8_t)(singlePixel >> 24);
+      // currentData[i][1] = (uint8_t)(singlePixel >> 16);
+      // currentData[i][2] = (uint8_t)(singlePixel >> 8);
+      // currentData[i][3] = (uint8_t)(singlePixel >> 0);
+      // pixels.setPixelColor(i, singlePixel);
+      // delay(10);
+      // pixels.show();
     }
-
-    // for (uint16_t i = 0; i < stripLength; i++) {
-    //   currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
-    //   currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
-    //   currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
-    //   currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
-    // }
-
-
     for (uint16_t i = 0; i < length; i++) {
-      uint8_t red = jsonBuffer["red"][i];
-      uint8_t green = jsonBuffer["green"][i];
-      uint8_t blue = jsonBuffer["blue"][i];
-      uint8_t white = jsonBuffer["white"][i];
+      // uint8_t red = jsonBuffer["red"][i];
+      // uint8_t green = jsonBuffer["green"][i];
+      // uint8_t blue = jsonBuffer["blue"][i];
+      // uint8_t white = jsonBuffer["white"][i];
+      uint32_t color = jsonBuffer["color"][i];
       uint16_t position = jsonBuffer["positions"][i];
 
-      currentData[position][0] = red;
-      currentData[position][1] = green;
-      currentData[position][2] = blue;
-      currentData[position][3] = white;
-
-      // writePixelToEEPROM(position, red, green, blue, white);
-      // commitEEPROM();
+      // currentData[position][0] = red;
+      // currentData[position][1] = green;
+      // currentData[position][2] = blue;
+      // currentData[position][3] = white;
+      currentData[i] = color;
+      pixels.setPixelColor(i, color);
     }
 
+
+    // for (uint16_t i = 0; i < stripLength; i++) {
+    //   uint8_t red = currentData[i][0];
+    //   uint8_t green = currentData[i][1];
+    //   uint8_t blue = currentData[i][2];
+    //   uint8_t white = currentData[i][3];
+    //   pixels.setPixelColor(i, Color(red, green, blue, white));
+    // }
+    pixels.show();
+
+    writeDividersToEEPROM(dividers, dividersLength);
     writePixelsToEEPROM(currentData, stripLength);
     writeEffectSpeedToEEPROM(effectSpeed);
     writeStripLengthToEEPROM(stripLength);
-    for (uint16_t i = 0; i < stripLength; i++) {
-      uint8_t red = currentData[i][0];
-      uint8_t green = currentData[i][1];
-      uint8_t blue = currentData[i][2];
-      uint8_t white = currentData[i][3];
-      pixels.setPixelColor(i, Color(red, green, blue, white));
-    }
-    pixels.show();
-    Serial.println(ESP.getFreeHeap());
+
     jsonBuffer.clear();
-    Serial.println(ESP.getFreeHeap());
+
   }
   jsonBuffer.clear();
 }
@@ -291,7 +287,13 @@ void effectTimer(uint16_t speed) {
 
     if (speed < 10) speed = 10;
     if (currentMillis - effectPreviousMillis >= speed) {
-
+      Serial.print(server.client());
+      Serial.print(" - ");
+      Serial.print(millis());
+      Serial.print(" - ");
+      Serial.print(ESP.getFreeHeap());
+      Serial.print(" - ");
+      Serial.println(ESP.getHeapFragmentation());
       effectPreviousMillis = currentMillis;
       for(int i=0; i < activeGroups; i++) {
         walk(readPixel, setPixel, groups[i][0], groups[i][1]);
