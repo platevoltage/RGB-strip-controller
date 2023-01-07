@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "test"
+#define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -135,14 +135,15 @@ void getCurrentConfig() {
   // readFile("/pixel.txt");
   sendHeaders();
 
-  uint8_t currentData[stripLength][4] = {};
+  uint32_t currentData[stripLength] = {};
   String pixelData = readPixelsFromEEPROM();
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
-    currentData[i][0] = (uint8_t)(singlePixel >> 24);
-    currentData[i][1] = (uint8_t)(singlePixel >> 16);
-    currentData[i][2] = (uint8_t)(singlePixel >> 8);
-    currentData[i][3] = (uint8_t)(singlePixel);
+    // currentData[i][0] = (uint8_t)(singlePixel >> 24);
+    // currentData[i][1] = (uint8_t)(singlePixel >> 16);
+    // currentData[i][2] = (uint8_t)(singlePixel >> 8);
+    // currentData[i][3] = (uint8_t)(singlePixel);
+    currentData[i] = singlePixel;
 
     pixels.setPixelColor(i, singlePixel);
     delay(10);

@@ -44,7 +44,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             let colorArray = [];
 
             for (let i of result.pixels) {
-                const colorObject = {r:i[0], g:i[1], b:i[2], w:i[3]};
+                const colorObject = {r:(i >> 24)& 0xFF, g:(i >> 16)& 0xFF, b:(i >> 8)& 0xFF, w:(i)& 0xFF};
                 colorArray.push(colorObject);
             }
 
