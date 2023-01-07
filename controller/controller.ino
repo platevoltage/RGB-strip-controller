@@ -51,7 +51,7 @@ ESP8266WebServer server(80);
 
 #include "payload/manifest.json.h"
 #include "payload/static/css/main.c83abc47.css.h"
-#include "payload/static/js/main.d107deda.js.h"
+#include "payload/static/js/main.ad3e66b4.js.h"
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 
@@ -392,7 +392,7 @@ void setup(void) {
   server.on(F("/RGB-strip-controller/static/css/main.c83abc47.css"), []() {
     server.send_P(200, "text/css", _main_css);
   });
-  server.on(F("/RGB-strip-controller/static/js/main.d107deda.js"), []() {
+  server.on(F("/RGB-strip-controller/static/js/main.ad3e66b4.js"), []() {
     server.send_P(200, "text/javascript", _main_js);
   });
   server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
