@@ -2,6 +2,8 @@
 #include "ArduinoJson/Document/DynamicJsonDocument.hpp"
 #include <ArduinoJson.h>
 
+
+
 String jsonStringify(uint16_t length, uint8_t currentData[][4], size_t dividersSize, uint16_t dividers[], uint16_t effectSpeed) {
     Serial.println(ESP.getFreeHeap());
     DynamicJsonDocument pixelBuffer(JSON_BUFFER_SIZE);

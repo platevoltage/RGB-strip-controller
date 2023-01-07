@@ -6,7 +6,9 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "lamp"
+// #define APSSID "ESPap"
+// #define APPSK  "thereisnospoon"
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -57,9 +59,10 @@ ESP8266WebServer server(80);
 
 //----end generated includes and wifi definitions
 
-
 const char *ssid = STASSID;
 const char *password = STAPSK;
+// const char *ssid = APSSID;
+// const char *password = APPSK;
 uint16_t stripLength = 32;
 uint16_t groups[5][2] = {};
 uint8_t activeGroups = 0;
@@ -99,8 +102,24 @@ void sendHeaders() {
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
 }
 
+String getValue(String data, char separator, int index) {
+    int found = 0;
+    int strIndex[] = { 0, -1 };
+    int maxIndex = data.length() - 1;
+
+    for (int i = 0; i <= maxIndex && found <= index; i++) {
+        if (data.charAt(i) == separator || i == maxIndex) {
+            found++;
+            strIndex[0] = strIndex[1] + 1;
+            strIndex[1] = (i == maxIndex) ? i+1 : i;
+        }
+    }
+    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
 
 void getCurrentConfig() {
+  // readFile("/pixel.txt");
   sendHeaders();
 
   uint8_t currentData[stripLength][4] = {};
@@ -119,7 +138,12 @@ void getCurrentConfig() {
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM();
 
-  uint16_t dividers[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
+  uint16_t dividers[4];
+  String dividerString = readDividersFromEEPROM();
+  for (int i=0; i < 4; i++) {
+    dividers[i] = getValue(dividerString, '\n', i).toInt();
+  }
+
   uint8_t numDividers = 0;
   for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
 
@@ -133,13 +157,15 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed));
+  String message = jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed);
+
+
+  server.send(200, "text/json", message);
 
 }
 
 
 void updateConfig() {
-  // Serial.println(ESP.getFreeHeap());
   DynamicJsonDocument jsonBuffer(JSON_BUFFER_SIZE);
   
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
@@ -148,8 +174,9 @@ void updateConfig() {
   if (error) {
     server.send(200, "text/json", F("{success:false}"));
     Serial.println(error.c_str());
+    jsonBuffer.clear();
     // Serial.println(ESP.getFreeHeap());
-    Serial.println(server.arg("plain"));
+    // Serial.println(server.arg("plain"));
   }
 
   else {
@@ -163,9 +190,12 @@ void updateConfig() {
     server.send(200, "text/json", F("{success:true}"));
 
     uint16_t dividersLength = jsonBuffer["dividers"].size();
+    uint16_t dividers[dividersLength];
     for (uint16_t i=0; i<dividersLength; i++) {
-      writeDividerToEEPROM(i, jsonBuffer["dividers"][i]);
+      // writeDividerToEEPROM(i, jsonBuffer["dividers"][i]);
+      dividers[i] = jsonBuffer["dividers"][i];
     }
+    writeDividersToEEPROM(dividers, dividersLength);
     
     uint8_t currentData[stripLength][4] = {};
 
@@ -192,6 +222,7 @@ void updateConfig() {
       writePixelToEEPROM(position, red, green, blue, white);
       // commitEEPROM();
     }
+
     writeEffectSpeedToEEPROM(effectSpeed);
     writeStripLengthToEEPROM(stripLength);
     for (uint16_t i = 0; i < stripLength; i++) {
@@ -202,6 +233,9 @@ void updateConfig() {
       pixels.setPixelColor(i, Color(red, green, blue, white));
     }
     pixels.show();
+    Serial.println(ESP.getFreeHeap());
+    jsonBuffer.clear();
+    Serial.println(ESP.getFreeHeap());
   }
   jsonBuffer.clear();
 }
@@ -246,14 +280,14 @@ void webClientTimer(uint16_t speed) {
       webClientPreviousMillis = currentMillis;
       server.handleClient();
       ArduinoOTA.handle();
-      delay(1);
-      Serial.print(server.client());
-      Serial.print(" - ");
-      Serial.print(millis());
-      Serial.print(" - ");
-      Serial.print(ESP.getFreeHeap());
-      Serial.print(" - ");
-      Serial.println(ESP.getHeapFragmentation());
+      yield();
+      // Serial.print(server.client());
+      // Serial.print(" - ");
+      // Serial.print(millis());
+      // Serial.print(" - ");
+      // Serial.print(ESP.getFreeHeap());
+      // Serial.print(" - ");
+      // Serial.println(ESP.getHeapFragmentation());
       #ifdef WS2801
         Serial.print("-");  //solves bug with ws2801, investigating.
       #endif
@@ -274,10 +308,20 @@ void setup(void) {
   hostname.concat(BONJOURNAME);
   WiFi.hostname(hostname.c_str());
   WiFi.begin(ssid, password);
+  // WiFi.softAP(ssid, password);
+  // IPAddress myIP = WiFi.softAPIP();
+
+
   Serial.println();
   pixels.begin();
   EEPROM.begin(EEPROM_SIZE);
   EEPROMinit();
+  // LittleFS.format();
+  Serial.println("Mount LittleFS");
+  if (!LittleFS.begin()) {
+    Serial.println("LittleFS mount failed");
+    return;
+  }
 
   setStripLength(readStripLengthFromEEPROM());
   // readEEPROMAndSetPixels(setStripLength, setPixel);
@@ -346,7 +390,7 @@ void setup(void) {
 
 void loop(void) {
   webClientTimer(10);
-  
+  // server.handleClient();
 
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed);
 
