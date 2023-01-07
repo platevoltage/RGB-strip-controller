@@ -137,15 +137,12 @@ void getCurrentConfig() {
 
   uint8_t currentData[stripLength][4] = {};
   String pixelData = readPixelsFromEEPROM();
-  Serial.println(pixelData);
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
     currentData[i][0] = (uint8_t)(singlePixel >> 24);
     currentData[i][1] = (uint8_t)(singlePixel >> 16);
     currentData[i][2] = (uint8_t)(singlePixel >> 8);
     currentData[i][3] = (uint8_t)(singlePixel);
-    Serial.print(getValue(pixelData, '\n', i) + " - ");
-    Serial.println(toInt32(getValue(pixelData, '\n', i)));
 
     pixels.setPixelColor(i, singlePixel);
     delay(10);
@@ -216,12 +213,25 @@ void updateConfig() {
     
     uint8_t currentData[stripLength][4] = {};
 
+    String pixelData = readPixelsFromEEPROM();
     for (uint16_t i = 0; i < stripLength; i++) {
-      currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
-      currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
-      currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
-      currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
+      uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
+      currentData[i][0] = (uint8_t)(singlePixel >> 24);
+      currentData[i][1] = (uint8_t)(singlePixel >> 16);
+      currentData[i][2] = (uint8_t)(singlePixel >> 8);
+      currentData[i][3] = (uint8_t)(singlePixel);
+
+      pixels.setPixelColor(i, singlePixel);
+      delay(10);
+      pixels.show();
     }
+
+    // for (uint16_t i = 0; i < stripLength; i++) {
+    //   currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
+    //   currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
+    //   currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
+    //   currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
+    // }
 
 
     for (uint16_t i = 0; i < length; i++) {
@@ -332,8 +342,7 @@ void setup(void) {
 
   Serial.println();
   pixels.begin();
-  EEPROM.begin(EEPROM_SIZE);
-  EEPROMinit();
+
   // LittleFS.format();
   Serial.println("Mount LittleFS");
   if (!LittleFS.begin()) {

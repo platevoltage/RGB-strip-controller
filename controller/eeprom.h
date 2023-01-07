@@ -1,13 +1,7 @@
-#include "HardwareSerial.h"
-#include <EEPROM.h>
 #include <LittleFS.h>
 #include <FS.h>
 
-#define EEPROM_OFFSET 20
 
-//stripLength - 0,1
-//dividers - 2,3,4,5,6,7,8,9
-//effectSpeed - 10,11
 void listDir(const char * dirname) {
   Serial.printf("Listing directory: %s\n", dirname);
 
@@ -124,27 +118,15 @@ void deleteFile(const char * path) {
   }
 }
 
-
-
-void EEPROMinit() {
-  if (EEPROM.read(0) == 255) {
-    for (int i=0; i < EEPROM_SIZE; i++) {
-      EEPROM.write(i, 0);
-    }
-    EEPROM.write(1, 20); //sets length to 20 if eeprom needs to be initialized
-    EEPROM.commit();
-  }
-}
-
 uint16_t readStripLengthFromEEPROM() {
   String string = readFile("/stripLength.txt");
   return string.toInt();
 }
 
 
-uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
-  return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
-}
+// uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
+//   return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
+// }
 
 
 
@@ -157,31 +139,8 @@ void writePixelsToEEPROM(uint8_t currentData[][4], size_t length) {
     }
     message += String(color);
     if(i < length-1) message += '\n';
-    // message += "4278255360\n";
   }
   writeFile("pixels.txt", message);
-
-  // String message;
-  // for (int i=0; i < length; i++) {
-  //   for (int j=0; j < 4; j++) {
-  //     String byte = String(currentData[i][j], HEX);
-  //     if (byte.length() < 1) {
-  //       message += "0";
-  //     }
-  //     if (byte.length() < 2) {
-  //       message += "0";
-  //     }
-  //     message += byte;
-  //   }
-  //   message += '\n';
-  // }
-
-  // Serial.println(message);
-  // int x = (position + EEPROM_OFFSET )*4;
-  // EEPROM.write(x, red);
-  // EEPROM.write(x+1, green);
-  // EEPROM.write(x+2, blue);
-  // EEPROM.write(x+3, white);
 }
 
 String readPixelsFromEEPROM() {
@@ -193,7 +152,7 @@ String readPixelsFromEEPROM() {
 void writeStripLengthToEEPROM(uint16_t stripLength) {
   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
 
-  EEPROM.commit();
+  // EEPROM.commit();
   writeFile("stripLength.txt", String(stripLength));
 }
 
