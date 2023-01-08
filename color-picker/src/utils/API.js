@@ -1,5 +1,3 @@
-import { compare } from './conversion';
-
 export const getCurrentConfig = (address) => {
     return fetch(`${address}/current`, {
         headers: {
@@ -8,14 +6,13 @@ export const getCurrentConfig = (address) => {
     });
 }
 
-export const writeChanges = (stripLength, oldData, newData, address, dividers, effectSpeed) => {
-    console.log(newData);
-    const data = compare(oldData, newData);
-    const colorArray = [];
+export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed) => {
 
-    for (let i of newData) {
+    const pixelsArray = [];
+
+    for (let i of pixels) {
         let rgbwData = i;
-        colorArray.push(((rgbwData.w << 24) | (rgbwData.r << 16) | (rgbwData.g << 8) | rgbwData.b) >>> 0);
+        pixelsArray.push(((rgbwData.w << 24) | (rgbwData.r << 16) | (rgbwData.g << 8) | rgbwData.b) >>> 0);
     }
     return fetch(`${address}/update`, {
         method: 'POST',
@@ -29,7 +26,7 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
             "dividers": [...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0],
             // "length" : stripLength,
             // "positions" : data.changePositions,
-            "color" : colorArray
+            "color" : pixelsArray
             
         })
     });

@@ -32,6 +32,24 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
 
     const [draggedFrom, setDraggedFrom] = useState(0);
     
+
+    const verifySave = async () => {
+        try {
+            const response = await getCurrentConfig(addressTextBox);
+            const result = await response.json();
+            let colorArray = [];
+
+            for (let i of result.pixels) {
+                const colorObject = { w:(i >> 24)& 0xFF, r:(i >> 16)& 0xFF, g:(i >> 8)& 0xFF, b:(i >> 0)& 0xFF };
+                colorArray.push(colorObject);
+            }
+            result.pixels = colorArray;
+            return result;
+        } catch (error){
+            console.error(error);
+        }
+        
+    }
     const getData = async () => {
         document.title = `RGB strip controller - ${window.location.href.split("//")[1].split(":")[0]}`;
         setUndoArray([...tempArray]);
@@ -44,7 +62,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             let colorArray = [];
 
             for (let i of result.pixels) {
-                const colorObject = {w:(i >> 24)& 0xFF, r:(i >> 16)& 0xFF, g:(i >> 8)& 0xFF, b:(i >> 0)& 0xFF, };
+                const colorObject = { w:(i >> 24)& 0xFF, r:(i >> 16)& 0xFF, g:(i >> 8)& 0xFF, b:(i >> 0)& 0xFF };
                 colorArray.push(colorObject);
             }
 
@@ -232,7 +250,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} getData={getData} dividers={dividerLocations} effectSpeed={effectSpeedTextBox}/>
+                <SubmitButton length={lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} verifySave={verifySave} dividers={dividerLocations} effectSpeed={effectSpeedTextBox}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />

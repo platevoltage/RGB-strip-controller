@@ -1,5 +1,4 @@
 #ifdef WS2801
-
 uint32_t colorMod(uint32_t input) {
   uint8_t w = input >> 24;
   uint8_t r = input >> 16;
@@ -10,10 +9,12 @@ uint32_t colorMod(uint32_t input) {
 
   return output;
 }
-#else
 
+#else
 uint32_t colorMod(uint32_t input) {
   return input;
 }
+
+
 
 #endif
