@@ -27,14 +27,15 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
             setSaveError(false);
             
             try {
+                pixels = pixels.slice(0, length);
                 const submittedData  = {pixels, dividers, effectSpeed};
                 console.log(submittedData);
-                await writeChanges(length, pixels, address, dividers, effectSpeed);
+                await writeChanges(length, pixels.slice(0, length), address, dividers, effectSpeed);
                 setLoadingParent(false);
                 setError(false);
                 setLoading(false);
                 const verification = await verifySave();
-                setSaveError(!verification);
+                setSaveError(!deepEqual(submittedData, verification));
                 console.log(verification);
                 console.log(deepEqual(submittedData, verification));
             }
