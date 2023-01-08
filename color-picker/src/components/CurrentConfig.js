@@ -101,7 +101,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
     
     useEffect(()=>{
-        
+        console.log(dividerLocations);
         console.log("event listeners called")
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
@@ -246,7 +246,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                                     <Tile index={index} color={color} shiftKey={shiftKey}/>
                                 </div>
                             </>}
-                            <div onMouseDown={(e) => {
+                            <div style={{display: 'flex'}} onMouseDown={(e) => {
                                 const indexClicked = dividerLocations.indexOf(index+1);
                                 if (indexClicked === -1) {
                                     setDividerLocations([...dividerLocations.filter(x => x !== 0), index+1]);
@@ -254,7 +254,14 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                                     setDividerLocations(dividerLocations.filter(x => x !== index+1));
                                 }
                             }}>
-                                { (index !== colorData.length) && <Divider exists={dividerLocations.includes(index+1)} outOfRange={index > +lengthTextBox-2}/> }   
+                                {(index === +lengthTextBox) && (dividerLocations.includes(index+1)) && <div style={{width: "24px"}}></div> }
+                                { /*(index !== +lengthTextBox) && */
+                                    <Divider 
+                                        previous={(index>+lengthTextBox-1)? `${(index>+lengthTextBox-1) ? "..." : ""}${index+1}` : ""} 
+                                        next={(index!==dividerLocations[dividerLocations.length-1]-1) ? `${index+2}...` : ""}  exists={dividerLocations.includes(index+1)} 
+                                        outOfRange={index > +lengthTextBox-2}   
+                                    /> 
+                                }   
                             </div>
                         </div>
                     ))}
