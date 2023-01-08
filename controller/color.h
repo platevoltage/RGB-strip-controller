@@ -1,31 +1,19 @@
 #ifdef WS2801
 
-uint32_t Color(byte r, byte g, byte b, byte w) {
-  uint32_t c;
-  
-  c = w;
-  c <<= 8;
-  c |= r;
-  c <<= 8;
-  c |= b;
-  c <<= 8;
-  c |= g;
-  return c;
-}
+uint32_t colorMod(uint32_t input) {
+  uint8_t w = input >> 24;
+  uint8_t r = input >> 16;
+  uint8_t g = input >> 8;
+  uint8_t b = input;
 
+  uint32_t output = r << 16 | b << 8 | g;
+
+  return output;
+}
 #else
 
-uint32_t Color(byte r, byte g, byte b, byte w) {
-  uint32_t c;
-  
-  c = w;
-  c <<= 8;
-  c |= r;
-  c <<= 8;
-  c |= g;
-  c <<= 8;
-  c |= b;
-  return c;
+uint32_t colorMod(uint32_t input) {
+  return input;
 }
 
 #endif

@@ -3,12 +3,12 @@
 
 //user prefs------
 
-// #define WS2801 // uncomment for ws2801
+#define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "test"
+#define BONJOURNAME "pipe"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -51,7 +51,7 @@ ESP8266WebServer server(80);
 
 #include "payload/manifest.json.h"
 #include "payload/static/css/main.c83abc47.css.h"
-#include "payload/static/js/main.ad3e66b4.js.h"
+#include "payload/static/js/main.0226deb7.js.h"
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 
@@ -132,20 +132,15 @@ uint32_t toInt32(String numberString) {
 
 
 void getCurrentConfig() {
-  // readFile("/pixel.txt");
-  sendHeaders();
 
+  sendHeaders();
   uint32_t currentData[stripLength] = {};
+
   String pixelData = readPixelsFromEEPROM();
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
-    // currentData[i][0] = (uint8_t)(singlePixel >> 24);
-    // currentData[i][1] = (uint8_t)(singlePixel >> 16);
-    // currentData[i][2] = (uint8_t)(singlePixel >> 8);
-    // currentData[i][3] = (uint8_t)(singlePixel);
     currentData[i] = singlePixel;
-
-    pixels.setPixelColor(i, singlePixel);
+    pixels.setPixelColor(i, colorMod(singlePixel));
     delay(10);
     pixels.show();
   }
@@ -161,9 +156,9 @@ void getCurrentConfig() {
 
   uint8_t numDividers = 0;
   for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
-
     if (dividers[i] != 0) numDividers++;
   }
+
   activeGroups = numDividers+1;
   for (uint8_t i=0; i<numDividers+1; i++) {
     if (i == 0) groups[i][0] = 1;
@@ -173,7 +168,6 @@ void getCurrentConfig() {
   }
 
   String message = jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed);
-
 
   server.send(200, "text/json", message);
 
@@ -207,50 +201,20 @@ void updateConfig() {
     uint16_t dividersLength = jsonBuffer["dividers"].size();
     uint16_t dividers[dividersLength];
     for (uint16_t i=0; i<dividersLength; i++) {
-      // writeDividerToEEPROM(i, jsonBuffer["dividers"][i]);
       dividers[i] = jsonBuffer["dividers"][i];
     }
     
-    
-    // uint8_t currentData[stripLength][4] = {};
     uint32_t currentData[stripLength];
 
     String pixelData = readPixelsFromEEPROM();
-
     for (uint16_t i = 0; i < stripLength; i++) {
       uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
       currentData[i] = singlePixel;
-      // currentData[i][0] = (uint8_t)(singlePixel >> 24);
-      // currentData[i][1] = (uint8_t)(singlePixel >> 16);
-      // currentData[i][2] = (uint8_t)(singlePixel >> 8);
-      // currentData[i][3] = (uint8_t)(singlePixel >> 0);
-      // pixels.setPixelColor(i, singlePixel);
-      // delay(10);
-      // pixels.show();
-    }
-    for (uint16_t i = 0; i < stripLength; i++) {
-      // uint8_t red = jsonBuffer["red"][i];
-      // uint8_t green = jsonBuffer["green"][i];
-      // uint8_t blue = jsonBuffer["blue"][i];
-      // uint8_t white = jsonBuffer["white"][i];
-      // uint16_t position = jsonBuffer["positions"][i];
-      uint32_t color = jsonBuffer["color"][i];
-
-      // currentData[position][0] = red;
-      // currentData[position][1] = green;
-      // currentData[position][2] = blue;
-      // currentData[position][3] = white;
-      currentData[i] = color;
     }
 
-
     for (uint16_t i = 0; i < stripLength; i++) {
-      // uint8_t red = currentData[i][0];
-      // uint8_t green = currentData[i][1];
-      // uint8_t blue = currentData[i][2];
-      // uint8_t white = currentData[i][3];
-      // pixels.setPixelColor(i, Color(red, green, blue, white));
-      pixels.setPixelColor(i, currentData[i]);
+      currentData[i] = jsonBuffer["color"][i];
+      pixels.setPixelColor(i, colorMod(currentData[i]));
     }
     pixels.show();
 
@@ -392,7 +356,7 @@ void setup(void) {
   server.on(F("/RGB-strip-controller/static/css/main.c83abc47.css"), []() {
     server.send_P(200, "text/css", _main_css);
   });
-  server.on(F("/RGB-strip-controller/static/js/main.ad3e66b4.js"), []() {
+  server.on(F("/RGB-strip-controller/static/js/main.0226deb7.js"), []() {
     server.send_P(200, "text/javascript", _main_js);
   });
   server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
