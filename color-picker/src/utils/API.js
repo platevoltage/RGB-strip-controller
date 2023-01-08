@@ -9,10 +9,11 @@ export const getCurrentConfig = (address) => {
 }
 
 export const writeChanges = (stripLength, oldData, newData, address, dividers, effectSpeed) => {
+    console.log(newData);
     const data = compare(oldData, newData);
     const colorArray = [];
 
-    for (let i of data.changes) {
+    for (let i of newData) {
         let rgbwData = i;
         colorArray.push(((rgbwData.w << 24) | (rgbwData.r << 16) | (rgbwData.g << 8) | rgbwData.b) >>> 0);
     }
@@ -26,8 +27,8 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
             stripLength,
             effectSpeed,
             "dividers": [...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0],
-            "length" : data.changes.length,
-            "positions" : data.changePositions,
+            // "length" : stripLength,
+            // "positions" : data.changePositions,
             "color" : colorArray
             
         })

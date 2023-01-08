@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "lamp"
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -228,13 +228,13 @@ void updateConfig() {
       // delay(10);
       // pixels.show();
     }
-    for (uint16_t i = 0; i < length; i++) {
+    for (uint16_t i = 0; i < stripLength; i++) {
       // uint8_t red = jsonBuffer["red"][i];
       // uint8_t green = jsonBuffer["green"][i];
       // uint8_t blue = jsonBuffer["blue"][i];
       // uint8_t white = jsonBuffer["white"][i];
-      uint16_t position = jsonBuffer["positions"][i];
-      uint32_t color = jsonBuffer["color"][position];
+      // uint16_t position = jsonBuffer["positions"][i];
+      uint32_t color = jsonBuffer["color"][i];
 
       // currentData[position][0] = red;
       // currentData[position][1] = green;
