@@ -1,90 +1,181 @@
-#include "HardwareSerial.h"
-#include <EEPROM.h>
+#include <LittleFS.h>
+#include <FS.h>
 
-#define EEPROM_OFFSET 20
 
-//stripLength - 0,1
-//dividers - 2,3,4,5,6,7,8,9
-//effectSpeed - 10,11
+void listDir(const char * dirname) {
+  Serial.printf("Listing directory: %s\n", dirname);
 
-void EEPROMinit() {
-  if (EEPROM.read(0) == 255) {
-    for (int i=0; i < EEPROM_SIZE; i++) {
-      EEPROM.write(i, 0);
-    }
-    EEPROM.write(1, 20); //sets length to 20 if eeprom needs to be initialized
-    EEPROM.commit();
+  Dir root = LittleFS.openDir(dirname);
+
+  while (root.next()) {
+    File file = root.openFile("r");
+    Serial.print("  FILE: ");
+    Serial.print(root.fileName());
+    Serial.print("  SIZE: ");
+    Serial.print(file.size());
+    time_t cr = file.getCreationTime();
+    time_t lw = file.getLastWrite();
+    file.close();
+    struct tm * tmstruct = localtime(&cr);
+    Serial.printf("    CREATION: %d-%02d-%02d %02d:%02d:%02d\n", (tmstruct->tm_year) + 1900, (tmstruct->tm_mon) + 1, tmstruct->tm_mday, tmstruct->tm_hour, tmstruct->tm_min, tmstruct->tm_sec);
+    tmstruct = localtime(&lw);
+    Serial.printf("  LAST WRITE: %d-%02d-%02d %02d:%02d:%02d\n", (tmstruct->tm_year) + 1900, (tmstruct->tm_mon) + 1, tmstruct->tm_mday, tmstruct->tm_hour, tmstruct->tm_min, tmstruct->tm_sec);
+  }
+}
+
+int * readLinesFromFile(const char * path, uint16_t from, uint16_t to) {
+  Serial.printf("Reading file: %s\n", path);
+
+  File file = LittleFS.open(path, "r");
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+  }
+
+  Serial.print("Read from file: ");
+  static int data[100];
+  uint16_t count = 0;
+  while (file.available()) {
+    data[count] = file.readStringUntil('\n').toInt();
+    if (count == to) break;
+    count++;
+    // Serial.write(file.read());
+  }
+
+  file.close();
+
+  return data;
+}
+
+String readFile(const char * path) {
+  Serial.printf("Reading file: %s\n", path);
+
+  File file = LittleFS.open(path, "r");
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+  }
+
+  Serial.print("Read from file: ");
+  String data;
+
+  while (file.available()) {
+    data += file.readString();
+
+    // Serial.write(file.read());
+  }
+  // Serial.println(data);
+  file.close();
+  return data;
+}
+
+void writeFile(const char * path, String message) {
+  Serial.printf("Writing file: %s\n", path);
+
+  File file = LittleFS.open(path, "w");
+  if (!file) {
+    Serial.println("Failed to open file for writing");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("File written");
+  } else {
+    Serial.println("Write failed");
+  }
+  delay(2000); // Make sure the CREATE and LASTWRITE times are different
+  file.close();
+}
+
+void appendFile(const char * path, String message) {
+  Serial.printf("Appending to file: %s\n", path);
+
+  File file = LittleFS.open(path, "a");
+  if (!file) {
+    Serial.println("Failed to open file for appending");
+    return;
+  }
+  if (file.print(message)) {
+    Serial.println("Message appended");
+  } else {
+    Serial.println("Append failed");
+  }
+  file.close();
+}
+
+void renameFile(const char * path1, const char * path2) {
+  Serial.printf("Renaming file %s to %s\n", path1, path2);
+  if (LittleFS.rename(path1, path2)) {
+    Serial.println("File renamed");
+  } else {
+    Serial.println("Rename failed");
+  }
+}
+
+void deleteFile(const char * path) {
+  Serial.printf("Deleting file: %s\n", path);
+  if (LittleFS.remove(path)) {
+    Serial.println("File deleted");
+  } else {
+    Serial.println("Delete failed");
   }
 }
 
 uint16_t readStripLengthFromEEPROM() {
-  return EEPROM.read(0) << 8 | EEPROM.read(1);
+  String string = readFile("/stripLength.txt");
+  return string.toInt();
 }
 
 
-uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
-  return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
-}
-
-// void readEEPROMAndSetPixels( void (*setStripLength)(uint16_t), void(*setPixel)(uint16_t, uint32_t, boolean) ) {
-//   uint16_t stripLength = EEPROM.read(0) << 8 | EEPROM.read(1);
-//   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
-
-//   (*setStripLength)(stripLength);
-
-//   for (int j = 100; j > 0; j--) {
-//     for (int i = EEPROM_OFFSET; i < stripLength + EEPROM_OFFSET; i++) {
-//       int x = i*4;
-//       uint8_t red = EEPROM.read(x)/j;
-//       uint8_t green = EEPROM.read(x+1)/j;             
-//       uint8_t blue = EEPROM.read(x+2)/j; 
-//       uint8_t white = EEPROM.read(x+3/j); 
-        
-//       (*setPixel)(i-EEPROM_OFFSET, Color(red, green, blue, white), i == stripLength-1);
-//     }
-//     delay(10);
-//   }     
+// uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
+//   return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
 // }
 
-void writePixelToEEPROM(uint16_t position, uint8_t red, uint8_t green, uint8_t blue, uint8_t white) {
-  int x = (position + EEPROM_OFFSET )*4;
-  EEPROM.write(x, red);
-  EEPROM.write(x+1, green);
-  EEPROM.write(x+2, blue);
-  EEPROM.write(x+3, white);
+
+
+void writePixelsToEEPROM(uint32_t currentData[], size_t length) {
+  String message;
+  for (int i=0; i < length; i++) {
+    uint32_t color = currentData[i];
+    // for (int j=1; j < 4; j++) {
+    //   color = color << 8 | currentData[i][j];
+    // }
+    message += String(color);
+    if(i < length-1) message += '\n';
+  }
+  writeFile("pixels.txt", message);
 }
 
-void commitEEPROM() {
-  EEPROM.commit();
+String readPixelsFromEEPROM() {
+  String message = readFile("/pixels.txt");
+  return message;
 }
+
 
 void writeStripLengthToEEPROM(uint16_t stripLength) {
   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
 
-  EEPROM.write(0, stripLength >> 8);
-  EEPROM.write(1, stripLength);
-
-  EEPROM.commit();
+  // EEPROM.commit();
+  writeFile("stripLength.txt", String(stripLength));
 }
 
-void writeDividerToEEPROM(uint8_t index, uint16_t position) {
-  index *= 2;
-  EEPROM.write(index+2, position >> 8);
-  EEPROM.write(index+3, position);
+void writeDividersToEEPROM(uint16_t positions[], size_t length) {
+  String message;
+  for (int i=0; i < length; i++) {
+    if (positions[i] > 0) {
+      message += positions[i];
+      message += "\n";
+    }
+  }
+  writeFile("dividers.txt", message);
 }
 
 void writeEffectSpeedToEEPROM(uint16_t effectSpeed) {
-  EEPROM.write(10, effectSpeed >> 8);
-  EEPROM.write(11, effectSpeed);
-
+  writeFile("effectSpeed.txt", String(effectSpeed));
 }
 
-uint16_t readDividerFromEEPROM(uint8_t index) {
-  index *= 2;
-  return EEPROM.read(index+2) << 8 | EEPROM.read(index+3);
-
+String readDividersFromEEPROM() {
+  String message = readFile("/dividers.txt");
+  return message;
 }
 uint16_t readEffectSpeedFromEEPROM() {
-
-  return EEPROM.read(10) << 8 | EEPROM.read(11) ;
+  String string = readFile("/effectSpeed.txt");
+  return string.toInt();
 }

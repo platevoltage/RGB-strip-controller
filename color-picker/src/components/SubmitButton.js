@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { writeChanges } from '../utils/API';
+import { deepEqual } from '../utils/conversion';
 
-export default function SubmitButton({length, oldData, newData, setLoadingParent, loadingParent, setError, error, address, getData, dividers, effectSpeed}) {
+export default function SubmitButton({length, pixels, setLoadingParent, loadingParent, setError, error, address, verifySave, dividers, effectSpeed}) {
     const [loading, setLoading] = useState(false);
+    const [saveError, setSaveError] = useState(false);
 
     const style = {
         backgroundColor: "#666666",
@@ -22,14 +24,20 @@ export default function SubmitButton({length, oldData, newData, setLoadingParent
         if (!loadingParent) {
             setLoading(true);
             setLoadingParent(true);
+            setSaveError(false);
             
             try {
-                await writeChanges(length, oldData, newData, address, dividers, effectSpeed);
+                pixels = pixels.slice(0, length);
+                const submittedData  = {pixels, dividers, effectSpeed};
+                console.log(submittedData);
+                await writeChanges(length, pixels.slice(0, length), address, dividers, effectSpeed);
                 setLoadingParent(false);
                 setError(false);
-                await getData();
                 setLoading(false);
-                setLoadingParent(false);
+                const verification = await verifySave();
+                setSaveError(!deepEqual(submittedData, verification));
+                console.log(verification);
+                console.log(deepEqual(submittedData, verification));
             }
             catch (error) {
                 console.error(error);
@@ -48,7 +56,9 @@ export default function SubmitButton({length, oldData, newData, setLoadingParent
                 : 
                 <>
                     {!error ? 
-                        <a href="#x" style={style} onClick={handleSubmit} >Sync</a> 
+                        <a href="#x" style={style} onClick={handleSubmit} >
+                            {saveError ? <>Save Failed</> : <>Sync</>}
+                        </a> 
                         : 
                         <a href="#x" style={style}>Error</a>
                     }

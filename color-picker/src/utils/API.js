@@ -1,5 +1,3 @@
-import { compare } from './conversion';
-
 export const getCurrentConfig = (address) => {
     return fetch(`${address}/current`, {
         headers: {
@@ -8,21 +6,14 @@ export const getCurrentConfig = (address) => {
     });
 }
 
-export const writeChanges = (stripLength, oldData, newData, address, dividers, effectSpeed) => {
-    const data = compare(oldData, newData);
-    const redArray = [];
-    const greenArray = [];
-    const blueArray = [];
-    const whiteArray = [];
+export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed) => {
 
-    for (let i of data.changes) {
+    const pixelsArray = [];
+
+    for (let i of pixels) {
         let rgbwData = i;
-        redArray.push(rgbwData.r);
-        greenArray.push(rgbwData.g);
-        blueArray.push(rgbwData.b);
-        whiteArray.push(rgbwData.w);
+        pixelsArray.push(((rgbwData.w << 24) | (rgbwData.r << 16) | (rgbwData.g << 8) | rgbwData.b) >>> 0);
     }
-    // console.log([...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0]);
     return fetch(`${address}/update`, {
         method: 'POST',
         headers: {
@@ -33,12 +24,9 @@ export const writeChanges = (stripLength, oldData, newData, address, dividers, e
             stripLength,
             effectSpeed,
             "dividers": [...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0],
-            "length" : data.changes.length,
-            "positions" : data.changePositions,
-            "red" : redArray,
-            "green" : greenArray,
-            "blue" : blueArray,
-            "white" : whiteArray
+            // "length" : stripLength,
+            // "positions" : data.changePositions,
+            "color" : pixelsArray
             
         })
     });

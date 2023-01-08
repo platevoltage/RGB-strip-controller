@@ -9,7 +9,7 @@ import Address from './Address';
 import EffectSpeed from './EffectSpeed';
 
 const noConnectionArray = [];
-for (let i = 0; i < 20; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
+for (let i = 0; i < 200; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
 let storedLength = window.localStorage.getItem("length");
 
 if (!storedLength) storedLength = 20;
@@ -32,6 +32,24 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
 
     const [draggedFrom, setDraggedFrom] = useState(0);
     
+
+    const verifySave = async () => {
+        try {
+            const response = await getCurrentConfig(addressTextBox);
+            const result = await response.json();
+            let colorArray = [];
+
+            for (let i of result.pixels) {
+                const colorObject = { w:(i >> 24)& 0xFF, r:(i >> 16)& 0xFF, g:(i >> 8)& 0xFF, b:(i >> 0)& 0xFF };
+                colorArray.push(colorObject);
+            }
+            result.pixels = colorArray;
+            return result;
+        } catch (error){
+            console.error(error);
+        }
+        
+    }
     const getData = async () => {
         document.title = `RGB strip controller - ${window.location.href.split("//")[1].split(":")[0]}`;
         setUndoArray([...tempArray]);
@@ -44,7 +62,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             let colorArray = [];
 
             for (let i of result.pixels) {
-                const colorObject = {r:i[0], g:i[1], b:i[2], w:i[3]};
+                const colorObject = { w:(i >> 24)& 0xFF, r:(i >> 16)& 0xFF, g:(i >> 8)& 0xFF, b:(i >> 0)& 0xFF };
                 colorArray.push(colorObject);
             }
 
@@ -52,7 +70,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setEffectSpeedTextBox(result.effectSpeed);
             setLengthTextBox(colorArray.length);
             setColorData(colorArray);
-            setColorDataUnsaved([...colorArray]);
+            setColorDataUnsaved([...colorArray, ...noConnectionArray]);
             setLoading(false);
 
 
@@ -106,6 +124,15 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     useEffect(()=>{
         setUndoArray([...tempArray]);
     },[tempArray]);
+    // useEffect(()=>{
+    //     // console.log(colorDataUnsaved);
+    //     if (+lengthTextBox > colorDataUnsaved.length ) {
+    //         console.log(lengthTextBox);
+    //         for (let i=0; i<+lengthTextBox-colorDataUnsaved.length; i++) {
+
+    //         }
+    //     }
+    // }, [lengthTextBox]);
 
     const stripStyle = {
         backgroundColor: "#444444",
@@ -137,7 +164,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     function update(e, index) {
         //regular
         if (!shiftKey && !altKey && (mouseClick && e.type === "mouseover")) {
-            for (let i = 0; i < colorDataUnsaved.length; i++) {
+            for (let i = 0; i < 20; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
             const draggedTo = index;
@@ -160,7 +187,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         }
         //gradient    
         else if (!shiftKey && altKey && (mouseClick && e.type === "mouseover")) {
-            for (let i = 0; i < colorDataUnsaved.length; i++) {
+            for (let i = 0; i < colorDataUnsaved[i].length; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
             const draggedTo = index;
@@ -206,6 +233,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                     }
                     {colorDataUnsaved.map((color, index) => (
                         <div key={index} style={{"display": "flex"}}>
+                        {(index < +lengthTextBox) && <>
                             <div onMouseDown={(e) => {
                                     update(e, index);
                                     if (shiftKey) {
@@ -225,14 +253,15 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                                     }
                                 }}>
                                 { (index !== colorData.length-1) && <Divider exists={dividerLocations.includes(index+1)}/> }   
-                            </div>
+                            </div></>}
                         </div>
-                    ))}           
+                    ))}
+
                 </div>
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={lengthTextBox} oldData={colorData} newData={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} getData={getData} dividers={dividerLocations} effectSpeed={effectSpeedTextBox}/>
+                <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} verifySave={verifySave} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />

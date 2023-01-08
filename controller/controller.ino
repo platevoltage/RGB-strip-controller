@@ -6,7 +6,9 @@
 // #define WS2801 // uncomment for ws2801
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "lamp"
+// #define APSSID "ESPap"
+// #define APPSK  "thereisnospoon"
+#define BONJOURNAME "test  "
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -49,7 +51,7 @@ ESP8266WebServer server(80);
 
 #include "payload/manifest.json.h"
 #include "payload/static/css/main.c83abc47.css.h"
-#include "payload/static/js/main.d107deda.js.h"
+#include "payload/static/js/main.0226deb7.js.h"
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 
@@ -57,13 +59,14 @@ ESP8266WebServer server(80);
 
 //----end generated includes and wifi definitions
 
-
-const char *ssid = STASSID;
-const char *password = STAPSK;
-uint16_t stripLength = 32;
-uint16_t groups[5][2] = {};
-uint8_t activeGroups = 0;
-uint16_t effectSpeed = 0;
+static const char *ssid = STASSID;
+static const char *password = STAPSK;
+// const char *ssid = APSSID;
+// const char *password = APPSK;
+static uint16_t stripLength = 32;
+static uint16_t groups[5][2] = {};
+static uint8_t activeGroups = 0;
+static uint16_t effectSpeed = 0;
 
 #ifdef WS2801
 #include <Adafruit_WS2801.h>
@@ -99,19 +102,45 @@ void sendHeaders() {
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
 }
 
+String getValue(String data, char separator, int index) {
+    int found = 0;
+    int strIndex[] = { 0, -1 };
+    int maxIndex = data.length() - 1;
+
+    for (int i = 0; i <= maxIndex && found <= index; i++) {
+        if (data.charAt(i) == separator || i == maxIndex) {
+            found++;
+            strIndex[0] = strIndex[1] + 1;
+            strIndex[1] = (i == maxIndex) ? i+1 : i;
+        }
+    }
+    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+//turns 32 bit unsigned int from string to number. Built in method doesn't work.
+uint32_t toInt32(String numberString) {
+  if (numberString.length() == 9) {
+    uint8_t straggler = (numberString[0] - '0');
+    return numberString.substring(1, numberString.length()).toInt() + straggler*100000000;
+  }
+  if (numberString.length() == 10) {
+    uint8_t straggler = ((numberString[0] - '0')*10 + (numberString[1] - '0'));
+    return numberString.substring(2, numberString.length()).toInt() + straggler*100000000;
+  }
+  else return numberString.toInt();
+}
+
 
 void getCurrentConfig() {
+
   sendHeaders();
+  uint32_t currentData[stripLength] = {};
 
-  uint8_t currentData[stripLength][4] = {};
-
+  String pixelData = readPixelsFromEEPROM();
   for (uint16_t i = 0; i < stripLength; i++) {
-    currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
-    currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
-    currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
-    currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
-
-    pixels.setPixelColor(i, Color(currentData[i][0], currentData[i][1], currentData[i][2], currentData[i][3]));
+    uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
+    currentData[i] = singlePixel;
+    pixels.setPixelColor(i, colorMod(singlePixel));
     delay(10);
     pixels.show();
   }
@@ -119,12 +148,17 @@ void getCurrentConfig() {
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM();
 
-  uint16_t dividers[4] = {readDividerFromEEPROM(0), readDividerFromEEPROM(1), readDividerFromEEPROM(2), readDividerFromEEPROM(3)};
+  uint16_t dividers[4];
+  String dividerString = readDividersFromEEPROM();
+  for (int i=0; i < 4; i++) {
+    dividers[i] = getValue(dividerString, '\n', i).toInt();
+  }
+
   uint8_t numDividers = 0;
   for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
-
     if (dividers[i] != 0) numDividers++;
   }
+
   activeGroups = numDividers+1;
   for (uint8_t i=0; i<numDividers+1; i++) {
     if (i == 0) groups[i][0] = 1;
@@ -133,23 +167,25 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  server.send(200, "text/json", jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed));
+  String message = jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed);
+
+  server.send(200, "text/json", message);
 
 }
 
 
 void updateConfig() {
-  // Serial.println(ESP.getFreeHeap());
   DynamicJsonDocument jsonBuffer(JSON_BUFFER_SIZE);
   
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   sendHeaders();
-
+  Serial.println(server.arg("plain"));
   if (error) {
     server.send(200, "text/json", F("{success:false}"));
     Serial.println(error.c_str());
-    // Serial.println(ESP.getFreeHeap());
-    Serial.println(server.arg("plain"));
+    jsonBuffer.clear();
+    Serial.println(ESP.getFreeHeap());
+    
   }
 
   else {
@@ -163,45 +199,32 @@ void updateConfig() {
     server.send(200, "text/json", F("{success:true}"));
 
     uint16_t dividersLength = jsonBuffer["dividers"].size();
+    uint16_t dividers[dividersLength];
     for (uint16_t i=0; i<dividersLength; i++) {
-      writeDividerToEEPROM(i, jsonBuffer["dividers"][i]);
+      dividers[i] = jsonBuffer["dividers"][i];
     }
     
-    uint8_t currentData[stripLength][4] = {};
+    uint32_t currentData[stripLength];
 
+    String pixelData = readPixelsFromEEPROM();
     for (uint16_t i = 0; i < stripLength; i++) {
-      currentData[i][0] = readEEPROMAndReturnSubPixel(i, 0);
-      currentData[i][1] = readEEPROMAndReturnSubPixel(i, 1);
-      currentData[i][2] = readEEPROMAndReturnSubPixel(i, 2);
-      currentData[i][3] = readEEPROMAndReturnSubPixel(i, 3);
+      uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
+      currentData[i] = singlePixel;
     }
 
-
-    for (uint16_t i = 0; i < length; i++) {
-      uint8_t red = jsonBuffer["red"][i];
-      uint8_t green = jsonBuffer["green"][i];
-      uint8_t blue = jsonBuffer["blue"][i];
-      uint8_t white = jsonBuffer["white"][i];
-      uint16_t position = jsonBuffer["positions"][i];
-
-      currentData[position][0] = red;
-      currentData[position][1] = green;
-      currentData[position][2] = blue;
-      currentData[position][3] = white;
-
-      writePixelToEEPROM(position, red, green, blue, white);
-      // commitEEPROM();
-    }
-    writeEffectSpeedToEEPROM(effectSpeed);
-    writeStripLengthToEEPROM(stripLength);
     for (uint16_t i = 0; i < stripLength; i++) {
-      uint8_t red = currentData[i][0];
-      uint8_t green = currentData[i][1];
-      uint8_t blue = currentData[i][2];
-      uint8_t white = currentData[i][3];
-      pixels.setPixelColor(i, Color(red, green, blue, white));
+      currentData[i] = jsonBuffer["color"][i];
+      pixels.setPixelColor(i, colorMod(currentData[i]));
     }
     pixels.show();
+
+    writeDividersToEEPROM(dividers, dividersLength);
+    writePixelsToEEPROM(currentData, stripLength);
+    writeEffectSpeedToEEPROM(effectSpeed);
+    writeStripLengthToEEPROM(stripLength);
+
+    jsonBuffer.clear();
+
   }
   jsonBuffer.clear();
 }
@@ -229,7 +252,13 @@ void effectTimer(uint16_t speed) {
 
     if (speed < 10) speed = 10;
     if (currentMillis - effectPreviousMillis >= speed) {
-
+      Serial.print(server.client());
+      Serial.print(" - ");
+      Serial.print(millis());
+      Serial.print(" - ");
+      Serial.print(ESP.getFreeHeap());
+      Serial.print(" - ");
+      Serial.println(ESP.getHeapFragmentation());
       effectPreviousMillis = currentMillis;
       for(int i=0; i < activeGroups; i++) {
         walk(readPixel, setPixel, groups[i][0], groups[i][1]);
@@ -246,14 +275,14 @@ void webClientTimer(uint16_t speed) {
       webClientPreviousMillis = currentMillis;
       server.handleClient();
       ArduinoOTA.handle();
-      delay(1);
-      Serial.print(server.client());
-      Serial.print(" - ");
-      Serial.print(millis());
-      Serial.print(" - ");
-      Serial.print(ESP.getFreeHeap());
-      Serial.print(" - ");
-      Serial.println(ESP.getHeapFragmentation());
+      yield();
+      // Serial.print(server.client());
+      // Serial.print(" - ");
+      // Serial.print(millis());
+      // Serial.print(" - ");
+      // Serial.print(ESP.getFreeHeap());
+      // Serial.print(" - ");
+      // Serial.println(ESP.getHeapFragmentation());
       #ifdef WS2801
         Serial.print("-");  //solves bug with ws2801, investigating.
       #endif
@@ -274,10 +303,19 @@ void setup(void) {
   hostname.concat(BONJOURNAME);
   WiFi.hostname(hostname.c_str());
   WiFi.begin(ssid, password);
+  // WiFi.softAP(ssid, password);
+  // IPAddress myIP = WiFi.softAPIP();
+
+
   Serial.println();
   pixels.begin();
-  EEPROM.begin(EEPROM_SIZE);
-  EEPROMinit();
+
+  // LittleFS.format();
+  Serial.println("Mount LittleFS");
+  if (!LittleFS.begin()) {
+    Serial.println("LittleFS mount failed");
+    return;
+  }
 
   setStripLength(readStripLengthFromEEPROM());
   // readEEPROMAndSetPixels(setStripLength, setPixel);
@@ -318,7 +356,7 @@ void setup(void) {
   server.on(F("/RGB-strip-controller/static/css/main.c83abc47.css"), []() {
     server.send_P(200, "text/css", _main_css);
   });
-  server.on(F("/RGB-strip-controller/static/js/main.d107deda.js"), []() {
+  server.on(F("/RGB-strip-controller/static/js/main.0226deb7.js"), []() {
     server.send_P(200, "text/javascript", _main_js);
   });
   server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
@@ -346,7 +384,7 @@ void setup(void) {
 
 void loop(void) {
   webClientTimer(10);
-  
+  // server.handleClient();
 
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed);
 
