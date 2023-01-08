@@ -28,7 +28,7 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
             
             try {
                 pixels = pixels.slice(0, length);
-                const submittedData  = {pixels, dividers, effectSpeed};
+                const submittedData  = {pixels, dividers: dividers.filter(x => x!==0), effectSpeed};
                 console.log(submittedData);
                 await writeChanges(length, pixels.slice(0, length), address, dividers, effectSpeed);
                 setLoadingParent(false);

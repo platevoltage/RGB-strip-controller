@@ -44,6 +44,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                 colorArray.push(colorObject);
             }
             result.pixels = colorArray;
+            result.dividers = result.dividers.filter(x => x!==0);
             return result;
         } catch (error){
             console.error(error);
