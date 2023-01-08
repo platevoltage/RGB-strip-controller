@@ -11,14 +11,7 @@ String jsonStringify(uint16_t length, uint32_t currentData[], size_t dividersSiz
     JsonArray pixelArray = pixelBuffer.to<JsonArray>();
     
     for (int i = 0; i < length; i++) {
-
-      // DynamicJsonDocument colorBuffer(256);
-      // JsonArray colors = colorBuffer.to<JsonArray>();
-      // for (int j = 0; j < 4; j++) {
-      //   colors.add(currentData[i][j]);
-      // }
       pixelArray.add(currentData[i]);
-      // colorBuffer.clear();
     }
 
     DynamicJsonDocument dividerBuffer(1000);
@@ -27,8 +20,6 @@ String jsonStringify(uint16_t length, uint32_t currentData[], size_t dividersSiz
     for (int i = 0; i < dividersSize; i++) {
       dividerArray.add(dividers[i]);
     }
-
-    
 
     String message = "{\"pixels\": ";
     serializeJson(pixelBuffer, message); 

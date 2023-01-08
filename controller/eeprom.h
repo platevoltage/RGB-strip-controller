@@ -124,12 +124,6 @@ uint16_t readStripLengthFromEEPROM() {
 }
 
 
-// uint8_t readEEPROMAndReturnSubPixel(uint16_t position, uint8_t subPixel) {
-//   return EEPROM.read((position + EEPROM_OFFSET) * 4 + subPixel);    
-// }
-
-
-
 void writePixelsToEEPROM(uint32_t currentData[], size_t length) {
   String message;
   for (int i=0; i < length; i++) {
@@ -151,8 +145,6 @@ String readPixelsFromEEPROM() {
 
 void writeStripLengthToEEPROM(uint16_t stripLength) {
   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
-
-  // EEPROM.commit();
   writeFile("stripLength.txt", String(stripLength));
 }
 

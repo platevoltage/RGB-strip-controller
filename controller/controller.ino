@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "test  "
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -44,6 +44,7 @@ ESP8266WebServer server(80);
 #include "color.h"
 #include "eeprom.h"
 #include "effects.h"
+#include "string.h"
 
 
 //----begin generated includes and wifi definitions
@@ -102,34 +103,6 @@ void sendHeaders() {
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
 }
 
-String getValue(String data, char separator, int index) {
-    int found = 0;
-    int strIndex[] = { 0, -1 };
-    int maxIndex = data.length() - 1;
-
-    for (int i = 0; i <= maxIndex && found <= index; i++) {
-        if (data.charAt(i) == separator || i == maxIndex) {
-            found++;
-            strIndex[0] = strIndex[1] + 1;
-            strIndex[1] = (i == maxIndex) ? i+1 : i;
-        }
-    }
-    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
-}
-
-//turns 32 bit unsigned int from string to number. Built in method doesn't work.
-uint32_t toInt32(String numberString) {
-  if (numberString.length() == 9) {
-    uint8_t straggler = (numberString[0] - '0');
-    return numberString.substring(1, numberString.length()).toInt() + straggler*100000000;
-  }
-  if (numberString.length() == 10) {
-    uint8_t straggler = ((numberString[0] - '0')*10 + (numberString[1] - '0'));
-    return numberString.substring(2, numberString.length()).toInt() + straggler*100000000;
-  }
-  else return numberString.toInt();
-}
-
 
 void getCurrentConfig() {
 
@@ -160,7 +133,7 @@ void getCurrentConfig() {
   }
 
   activeGroups = numDividers+1;
-  for (uint8_t i=0; i<numDividers+1; i++) {
+  for (uint8_t i=0; i<activeGroups; i++) {
     if (i == 0) groups[i][0] = 1;
     else groups[i][0] = dividers[i-1]+1;
     if (i < numDividers) groups[i][1] = dividers[i];
@@ -245,29 +218,6 @@ uint32_t readPixel(uint16_t position) {
 }
 
 
-
-unsigned long effectPreviousMillis = 0;
-void effectTimer(uint16_t speed) {
-    unsigned long currentMillis = millis();
-
-    if (speed < 10) speed = 10;
-    if (currentMillis - effectPreviousMillis >= speed) {
-      Serial.print(server.client());
-      Serial.print(" - ");
-      Serial.print(millis());
-      Serial.print(" - ");
-      Serial.print(ESP.getFreeHeap());
-      Serial.print(" - ");
-      Serial.println(ESP.getHeapFragmentation());
-      effectPreviousMillis = currentMillis;
-      for(int i=0; i < activeGroups; i++) {
-        walk(readPixel, setPixel, groups[i][0], groups[i][1]);
-      }
-     
-
-    }
-}
-
 unsigned long webClientPreviousMillis = 0;
 void webClientTimer(uint16_t speed) {
     unsigned long currentMillis = millis();
@@ -276,13 +226,7 @@ void webClientTimer(uint16_t speed) {
       server.handleClient();
       ArduinoOTA.handle();
       yield();
-      // Serial.print(server.client());
-      // Serial.print(" - ");
-      // Serial.print(millis());
-      // Serial.print(" - ");
-      // Serial.print(ESP.getFreeHeap());
-      // Serial.print(" - ");
-      // Serial.println(ESP.getHeapFragmentation());
+
       #ifdef WS2801
         Serial.print("-");  //solves bug with ws2801, investigating.
       #endif
@@ -386,6 +330,6 @@ void loop(void) {
   webClientTimer(10);
   // server.handleClient();
 
-  if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed);
+  if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
 
 }
