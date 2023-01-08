@@ -1,5 +1,3 @@
-#include "ArduinoJson/Array/JsonArray.hpp"
-#include "ArduinoJson/Document/DynamicJsonDocument.hpp"
 #include <ArduinoJson.h>
 
 

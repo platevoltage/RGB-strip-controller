@@ -14,8 +14,7 @@ void effectTimer(uint16_t speed, uint8_t activeGroups, uint16_t groups[][2], uin
 
     if (speed < 10) speed = 10;
     if (currentMillis - effectPreviousMillis >= speed) {
-      Serial.print(server.client());
-      Serial.print(" - ");
+
       Serial.print(millis());
       Serial.print(" - ");
       Serial.print(ESP.getFreeHeap());
