@@ -1,8 +1,7 @@
-export default function Divider({exists}) {
-    
+export default function Divider({exists, outOfRange}) {
     const style = {
-        display: 'flex',
-        backgroundColor: exists ? "#111111" : "#11111100",
+        display: (!exists && outOfRange) ? 'none' : 'flex',
+        backgroundColor: exists ? (outOfRange ? "#333333" : "#111111") : "#11111100",
         position: "relative",
         width: exists ? "10px" : "4px",
         height: "58px",

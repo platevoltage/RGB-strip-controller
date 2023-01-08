@@ -43,10 +43,7 @@
 
 //----end generated includes and wifi definitions
 
-static uint16_t stripLength = 32;
-static uint16_t groups[5][2] = {};
-static uint8_t activeGroups = 0;
-static uint16_t effectSpeed = 0;
+
 
 #ifdef WS2801
 #include <Adafruit_WS2801.h>
@@ -55,6 +52,9 @@ Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CL
 #include <Adafruit_NeoPixel.h>
 Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 #endif
+
+static uint16_t groups[5][2] = {};
+static uint8_t activeGroups = 0;
 
 
 void getCurrentConfig() {
@@ -93,7 +93,7 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  String message = jsonStringify(stripLength, currentData, sizeof(dividers)/2, dividers, effectSpeed);
+  String message = jsonStringify(currentData, sizeof(dividers)/2, dividers);
 
   server.send(200, "text/json", message);
 
@@ -111,9 +111,7 @@ void updateConfig() {
     Serial.println(error.c_str());
     jsonBuffer.clear();
     Serial.println(ESP.getFreeHeap());
-    
   }
-
   else {
     const char *status = jsonBuffer["status"];
     uint16_t length = jsonBuffer["length"];
@@ -188,7 +186,6 @@ void setup(void) {
   Serial.println();
   pixels.begin();
 
-  // LittleFS.format();
   Serial.println("Mount LittleFS");
   if (!LittleFS.begin()) {
     Serial.println("LittleFS mount failed");
@@ -196,9 +193,7 @@ void setup(void) {
   }
 
   setStripLength(readStripLengthFromEEPROM());
-  // readEEPROMAndSetPixels(setStripLength, setPixel);
   getCurrentConfig();
-
   
 }
 
@@ -206,7 +201,6 @@ void setup(void) {
 
 void loop(void) {
   webClientTimer(10);
-  // server.handleClient();
 
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
 

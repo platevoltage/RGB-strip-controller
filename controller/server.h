@@ -53,7 +53,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
     WiFi.mode(WIFI_STA);
     String hostname = "LED-controller-";
     hostname.concat(BONJOURNAME);
-    WiFi.hostname(hostname.c_str());
+    WiFi.hostname(hostname);
     WiFi.begin(ssid, password);
       
         // Wait for connection

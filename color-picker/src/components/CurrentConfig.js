@@ -233,27 +233,28 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                     }
                     {colorDataUnsaved.map((color, index) => (
                         <div key={index} style={{"display": "flex"}}>
-                        {(index < +lengthTextBox) && <>
+                            {(index < +lengthTextBox) && <>
+                                <div onMouseDown={(e) => {
+                                        update(e, index);
+                                        if (shiftKey) {
+                                            setPickerColor(color);
+                                            setWhiteLevel({a: color.w});
+                                        }
+                                    }} 
+                                    onMouseOver={(e) => update(e, index)}>
+                                    <Tile index={index} color={color} shiftKey={shiftKey}/>
+                                </div>
+                            </>}
                             <div onMouseDown={(e) => {
-                                    update(e, index);
-                                    if (shiftKey) {
-                                        setPickerColor(color);
-                                        setWhiteLevel({a: color.w});
-                                    }
-                                }} 
-                                onMouseOver={(e) => update(e, index)}>
-                                <Tile index={index} color={color} shiftKey={shiftKey}/>
+                                const indexClicked = dividerLocations.indexOf(index+1);
+                                if (indexClicked === -1) {
+                                    setDividerLocations([...dividerLocations.filter(x => x !== 0), index+1]);
+                                } else {
+                                    setDividerLocations(dividerLocations.filter(x => x !== index+1));
+                                }
+                            }}>
+                                { (index !== colorData.length) && <Divider exists={dividerLocations.includes(index+1)} outOfRange={index > +lengthTextBox-2}/> }   
                             </div>
-                            <div onMouseDown={(e) => {
-                                    const indexClicked = dividerLocations.indexOf(index+1);
-                                    if (indexClicked === -1) {
-                                        setDividerLocations([...dividerLocations.filter(x => x !== 0), index+1]);
-                                    } else {
-                                        setDividerLocations(dividerLocations.filter(x => x !== index+1));
-                                    }
-                                }}>
-                                { (index !== colorData.length-1) && <Divider exists={dividerLocations.includes(index+1)}/> }   
-                            </div></>}
                         </div>
                     ))}
 
