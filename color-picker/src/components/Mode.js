@@ -8,8 +8,8 @@ export default function Mode({mode, setMode}) {
     }
 
     const inputStyle = {
-        width: "70px",
-        fontSize: "1.6em"
+        width: "100px",
+        fontSize: "1.6em",
     }
   
     return (
@@ -21,7 +21,7 @@ export default function Mode({mode, setMode}) {
                 onChange={(e) => {setMode(e.target.value)}}
                 // type="text"
                 // placeholder="#"
-                // style={inputStyle}
+                style={inputStyle}
             >
                 <option value="regular">Regular</option>
                 <option value="gradient">Gradient</option>
