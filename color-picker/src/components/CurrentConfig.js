@@ -1,6 +1,6 @@
 import { getCurrentConfig } from '../utils/API';
 import { RGBToHSL, HSLtoRGB } from '../utils/conversion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Tile from './Tile';
 import Divider from './Divider';
 import SubmitButton from './SubmitButton';
@@ -8,6 +8,7 @@ import ReadButton from './ReadButton';
 import StripLength from './StripLength';
 import Address from './Address';
 import EffectSpeed from './EffectSpeed';
+import Mode from './Mode';
 
 const noConnectionArray = [];
 for (let i = 0; i < 200; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
@@ -16,7 +17,7 @@ let storedLength = window.localStorage.getItem("length");
 if (!storedLength) storedLength = 20;
 
 export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel}) {
-
+    const tilesRef = useRef(null);
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
     const [effectSpeedTextBox, setEffectSpeedTextBox] = useState("0");
@@ -28,8 +29,10 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     const [mouseClick, setMouseClick] = useState(false);
     const [shiftKey, setShiftKey] = useState(false);
     const [altKey, setAltKey] = useState(false);
+    const [ctrlKey, setCtrlKey] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [mode, setMode] = useState("regular");
 
     const [draggedFrom, setDraggedFrom] = useState(0);
     
@@ -85,39 +88,40 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     function handleKeyDown(e) {
         if (e.shiftKey) setShiftKey(true);
         if (e.altKey) setAltKey(true);
+        if (e.ctrlKey) setCtrlKey(true);
         console.log("keypress");
         if (e.key === 'z') {
             setColorDataUnsaved([...undoArray]);
         }
     }
-    function handleKeyUp() {
-        setShiftKey(false);
-        setAltKey(false);
+    function handleKeyUp(e) {
+        if (e.shiftKey) setShiftKey(false);
+        if (e.altKey) setAltKey(false);
+        if (e.ctrlKey) setCtrlKey(false);
     }
     function handleMouseDown() {
         setMouseClick(true);
     }
-    function handleMouseUp() {
+    function handleMouseUp(e) {
         setMouseClick(false);
     }
     
     useEffect(()=>{
-        console.log(dividerLocations);
-        console.log("event listeners called")
-        window.addEventListener("keydown", handleKeyDown);
-        window.addEventListener("keyup", handleKeyUp);
-        window.addEventListener("mousedown", handleMouseDown);
-        window.addEventListener("mouseup", handleMouseUp);
+        const tilesSection = tilesRef.current;
+        tilesSection.addEventListener("keydown", handleKeyDown);
+        tilesSection.addEventListener("keyup", handleKeyUp);
+        tilesSection.addEventListener("mousedown", handleMouseDown);
+        tilesSection.addEventListener("mouseup", handleMouseUp);
         
         return () => {
-            window.removeEventListener("mousedown", handleMouseDown);
-            window.removeEventListener("mouseup", handleMouseUp);
-            window.removeEventListener("keyup", handleKeyUp);
-            window.removeEventListener("keydown", handleKeyDown);
+            tilesSection.removeEventListener("mousedown", handleMouseDown);
+            tilesSection.removeEventListener("mouseup", handleMouseUp);
+            tilesSection.removeEventListener("keyup", handleKeyUp);
+            tilesSection.removeEventListener("keydown", handleKeyDown);
         };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [undoArray]);
+    }, [undoArray, mode]);
 
     useEffect(()=>{
         getData();
@@ -126,6 +130,9 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     useEffect(()=>{
         setUndoArray([...tempArray]);
     },[tempArray]);
+    useEffect(() => {
+        setMouseClick(false)
+    },[mode])
     // useEffect(()=>{
     //     // console.log(colorDataUnsaved);
     //     if (+lengthTextBox > colorDataUnsaved.length ) {
@@ -164,8 +171,10 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
 
     function update(e, index) {
+        console.log(e.type);
         //regular
-        if (!shiftKey && !altKey && (mouseClick && e.type === "mouseover")) {
+        if (mode === "regular" &&(mouseClick && e.type === "mouseover")) {
+            console.log("regular");
             for (let i = 0; i < +lengthTextBox; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
@@ -182,13 +191,14 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             }
         }
         //start regular
-        else if (!shiftKey && !altKey && (e.type === "mousedown")) {
+        if (mode === "regular" && (e.type === "mousedown")) {
+            console.log("regular");
             setTempArray([...colorDataUnsaved]);
             colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
             setDraggedFrom(index);
         }
-        //gradient    
-        else if (!shiftKey && altKey && (mouseClick && e.type === "mouseover")) {
+        //rainbow  
+        if (mode === "rainbow" && (mouseClick && e.type === "mouseover")) {
             for (let i = 0; i < +lengthTextBox; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
@@ -196,38 +206,58 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             if (draggedFrom < draggedTo) {
                 const length = draggedTo - draggedFrom+1;
                 for (let i = draggedFrom; i <= draggedTo; i++) {
-
-                 
                     const h = 360/(length/(i-draggedFrom));
                     colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
-
-                    // colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(i-draggedFrom)));
-                    // colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(i-draggedFrom)));
-                    // colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(i-draggedFrom)));
-                    // colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(i-draggedFrom)));
-                    // colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
                 }
             } 
             if (draggedFrom > draggedTo) {
                 const length =  draggedFrom - draggedTo;
                 for (let i = draggedTo; i <= draggedFrom; i++) {
-
-
-                    // const hue = RGBToHSL({r:255, g:0, b:0});
                     const h = 360/(length/(draggedFrom-i-1));
                     colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
-                    // colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(draggedFrom-i)));
-                    // colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(draggedFrom-i)));
-                    // colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(draggedFrom-i)));
-                    // colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i)));  
-                    // colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
+                }
+            }
+        }
+        //start rainbow
+        if (mode === "rainbow" && (e.type === "mousedown")) {
+            setDraggedFrom(index);
+            setTempArray([...colorDataUnsaved]);
+        }
+        //gradient  
+        if (mode === "gradient" && (mouseClick && e.type === "mouseover")) {
+            console.log("gradient");
+            for (let i = 0; i < +lengthTextBox; i++) {
+                colorDataUnsaved[i] = {...tempArray[i]};
+            }
+            const draggedTo = index;
+            if (draggedFrom < draggedTo) {
+                const length = draggedTo - draggedFrom+1;
+                for (let i = draggedFrom; i <= draggedTo; i++) {
+                    colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(i-draggedFrom)));
+                    colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(i-draggedFrom)));
+                    colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(i-draggedFrom)));
+                    colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(i-draggedFrom)));
+                }
+            } 
+            if (draggedFrom > draggedTo) {
+                const length =  draggedFrom - draggedTo;
+                for (let i = draggedTo; i <= draggedFrom; i++) {
+                    colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(draggedFrom-i)));
+                    colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(draggedFrom-i)));
+                    colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(draggedFrom-i)));
+                    colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i)));  
                 }
             }
         }
         //start gradient
-        else if (!shiftKey && altKey && (e.type === "mousedown")) {
+        if (mode === "gradient" && (e.type === "mousedown")) {
             setDraggedFrom(index);
             setTempArray([...colorDataUnsaved]);
+        }
+        //end gradient
+        if (mode === "gradient" && (e.type === "mouseup")) {
+            console.log("gradient mouseup");
+            colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
         }
 
         setColorDataUnsaved([...colorDataUnsaved]);  
@@ -236,7 +266,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
   
     return (
         <>
-            <div style={{position: "relative"}}>
+            <div style={{position: "relative"}} ref={tilesRef}>
                 <div style={stripStyle}>
                     {(loading || error) && 
                         <div style={loadingOverlayStyle}>
@@ -253,7 +283,8 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                                             setWhiteLevel({a: color.w});
                                         }
                                     }} 
-                                    onMouseOver={(e) => update(e, index)}>
+                                    onMouseOver={(e) => update(e, index)}
+                                    onMouseUp={(e) => update(e, index)}>
                                     <Tile index={index} color={color} shiftKey={shiftKey}/>
                                 </div>
                             </>}
@@ -286,6 +317,8 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
+                <Mode mode={mode} setMode={setMode}/>
+                {mode} {+mouseClick}
             </div>
         </>     
     );
