@@ -89,7 +89,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         if (e.shiftKey) setShiftKey(true);
         if (e.altKey) setAltKey(true);
         if (e.ctrlKey) setCtrlKey(true);
-        console.log("keypress");
         if (e.key === 'z') {
             setColorDataUnsaved([...undoArray]);
         }
@@ -171,10 +170,8 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
 
     function update(e, index) {
-        console.log(e.type);
         //regular
         if (mode === "regular" &&(mouseClick && e.type === "mouseover")) {
-            console.log("regular");
             for (let i = 0; i < +lengthTextBox; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
@@ -192,7 +189,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         }
         //start regular
         if (mode === "regular" && (e.type === "mousedown")) {
-            console.log("regular");
             setTempArray([...colorDataUnsaved]);
             colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
             setDraggedFrom(index);
@@ -225,7 +221,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         }
         //gradient  
         if (mode === "gradient" && (mouseClick && e.type === "mouseover")) {
-            console.log("gradient");
             for (let i = 0; i < +lengthTextBox; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
@@ -256,7 +251,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         }
         //end gradient
         if (mode === "gradient" && (e.type === "mouseup")) {
-            console.log("gradient mouseup");
             colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
         }
 
