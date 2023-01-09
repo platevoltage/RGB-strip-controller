@@ -132,15 +132,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     useEffect(() => {
         setMouseClick(false)
     },[mode])
-    // useEffect(()=>{
-    //     // console.log(colorDataUnsaved);
-    //     if (+lengthTextBox > colorDataUnsaved.length ) {
-    //         console.log(lengthTextBox);
-    //         for (let i=0; i<+lengthTextBox-colorDataUnsaved.length; i++) {
-
-    //         }
-    //     }
-    // }, [lengthTextBox]);
 
     const stripStyle = {
         backgroundColor: "#444444",
@@ -231,7 +222,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             }
 
         }
-        if (e.type === "mousedown") {
+        else if (e.type === "mousedown") {
             setTempArray([...colorDataUnsaved]);
             switch (mode) {
                 case "regular": {
@@ -245,12 +236,15 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setDraggedFrom(index);
 
         }
-        if (e.type === "mouseup") {
+        else if (e.type === "mouseup") {
+            setTempArray([...colorDataUnsaved]);
             switch (mode) {
                 case "gradient": {
                     colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
                     break;
                 }
+                case "regular":
+                case "rainbow":
                 default:
             }
         }
