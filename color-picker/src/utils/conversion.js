@@ -80,10 +80,10 @@ export const RGBToHSL = ({r, g, b}) => {
 
   export const HSLtoRGB = ({h, s, l}) => {
     // Must be fractions of 1
-    // s /= 100;
-    s = 1;
-    // l /= 100;
-    l = .5;
+    s /= 100;
+    // s = 1;
+    l /= 100;
+    // l = .5;
 
     let c = (1 - Math.abs(2 * l - 1)) * s,
         x = c * (1 - Math.abs((h / 60) % 2 - 1)),
