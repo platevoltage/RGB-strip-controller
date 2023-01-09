@@ -305,7 +305,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
                 <Mode mode={mode} setMode={setMode}/>
-                {mode} {+mouseClick}
             </div>
         </>     
     );
