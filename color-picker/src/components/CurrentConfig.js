@@ -170,92 +170,91 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
 
     function update(e, index) {
-        //regular
-        if (mode === "regular" &&(mouseClick && e.type === "mouseover")) {
+        if (mouseClick && e.type === "mouseover") {
             for (let i = 0; i < +lengthTextBox; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
             const draggedTo = index;
-            if (draggedFrom-1 < draggedTo) {
-                for (let i = draggedFrom; i <= draggedTo; i++) {
-                    colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
+            switch (mode) {
+                case "regular": {
+                    if (draggedFrom-1 < draggedTo) {
+                        for (let i = draggedFrom; i <= draggedTo; i++) {
+                            colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
+                        }
+                    } 
+                    if (draggedFrom > draggedTo) {
+                        for (let i = draggedTo; i <= draggedFrom; i++) {
+                            colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
+                        }
+                    }
+                    break;
                 }
-            } 
-            if (draggedFrom > draggedTo) {
-                for (let i = draggedTo; i <= draggedFrom; i++) {
-                    colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
+                case "gradient": {
+                    if (draggedFrom < draggedTo) {
+                        const length = draggedTo - draggedFrom+1;
+                        for (let i = draggedFrom; i <= draggedTo; i++) {
+                            colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(i-draggedFrom)));
+                            colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(i-draggedFrom)));
+                            colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(i-draggedFrom)));
+                            colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(i-draggedFrom)));
+                        }
+                    } 
+                    if (draggedFrom > draggedTo) {
+                        const length =  draggedFrom - draggedTo;
+                        for (let i = draggedTo; i <= draggedFrom; i++) {
+                            colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(draggedFrom-i)));
+                            colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(draggedFrom-i)));
+                            colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(draggedFrom-i)));
+                            colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i)));  
+                        }
+                    }
+                    break;
                 }
+                case "rainbow": {
+                    if (draggedFrom < draggedTo) {
+                        const length = draggedTo - draggedFrom+1;
+                        for (let i = draggedFrom; i <= draggedTo; i++) {
+                            const h = 360/(length/(i-draggedFrom));
+                            colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
+                        }
+                    } 
+                    if (draggedFrom > draggedTo) {
+                        const length =  draggedFrom - draggedTo+1;
+                        for (let i = draggedTo; i <= draggedFrom; i++) {
+                            const h = 360/(length/(draggedFrom-i));
+                            colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
+                        }
+                    }
+                    break;
+                }
+                default:
             }
-        }
-        //start regular
-        if (mode === "regular" && (e.type === "mousedown")) {
-            setTempArray([...colorDataUnsaved]);
-            colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
-            setDraggedFrom(index);
-        }
-        //rainbow  
-        if (mode === "rainbow" && (mouseClick && e.type === "mouseover")) {
-            for (let i = 0; i < +lengthTextBox; i++) {
-                colorDataUnsaved[i] = {...tempArray[i]};
-            }
-            const draggedTo = index;
-            if (draggedFrom < draggedTo) {
-                const length = draggedTo - draggedFrom+1;
-                for (let i = draggedFrom; i <= draggedTo; i++) {
-                    const h = 360/(length/(i-draggedFrom));
-                    colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
-                }
-            } 
-            if (draggedFrom > draggedTo) {
-                const length =  draggedFrom - draggedTo;
-                for (let i = draggedTo; i <= draggedFrom; i++) {
-                    const h = 360/(length/(draggedFrom-i-1));
-                    colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
-                }
-            }
-        }
-        //start rainbow
-        if (mode === "rainbow" && (e.type === "mousedown")) {
-            setDraggedFrom(index);
-            setTempArray([...colorDataUnsaved]);
-        }
-        //gradient  
-        if (mode === "gradient" && (mouseClick && e.type === "mouseover")) {
-            for (let i = 0; i < +lengthTextBox; i++) {
-                colorDataUnsaved[i] = {...tempArray[i]};
-            }
-            const draggedTo = index;
-            if (draggedFrom < draggedTo) {
-                const length = draggedTo - draggedFrom+1;
-                for (let i = draggedFrom; i <= draggedTo; i++) {
-                    colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(i-draggedFrom)));
-                    colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(i-draggedFrom)));
-                    colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(i-draggedFrom)));
-                    colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(i-draggedFrom)));
-                }
-            } 
-            if (draggedFrom > draggedTo) {
-                const length =  draggedFrom - draggedTo;
-                for (let i = draggedTo; i <= draggedFrom; i++) {
-                    colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(draggedFrom-i)));
-                    colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(draggedFrom-i)));
-                    colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(draggedFrom-i)));
-                    colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i)));  
-                }
-            }
-        }
-        //start gradient
-        if (mode === "gradient" && (e.type === "mousedown")) {
-            setDraggedFrom(index);
-            setTempArray([...colorDataUnsaved]);
-        }
-        //end gradient
-        if (mode === "gradient" && (e.type === "mouseup")) {
-            colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
-        }
 
+        }
+        if (e.type === "mousedown") {
+            setTempArray([...colorDataUnsaved]);
+            switch (mode) {
+                case "regular": {
+                    colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
+                    break;
+                }
+                case "gradient":
+                case "rainbow":
+                default:
+            }
+            setDraggedFrom(index);
+
+        }
+        if (e.type === "mouseup") {
+            switch (mode) {
+                case "gradient": {
+                    colorDataUnsaved[index] = {r:pickerColor.r*saturation, g:pickerColor.g*saturation, b:pickerColor.b*saturation, w: whiteLevel};
+                    break;
+                }
+                default:
+            }
+        }
         setColorDataUnsaved([...colorDataUnsaved]);  
-
     }
   
     return (
