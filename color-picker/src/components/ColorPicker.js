@@ -1,9 +1,10 @@
-import { Hue, Alpha } from 'react-color/lib/components/common';
+import { Hue, Alpha, Saturation } from 'react-color/lib/components/common';
 import { RGBToHSL, HSLtoRGB } from '../utils/conversion';
 
 export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor, setSaturation, saturation, whiteLevel, mode }) {
 
-    const saturationSlider = {...pickerColor, a: saturation};
+
+    const saturationSlider = mode==="rainbow" ? {r:0,g:0,b:0, a: saturation} : {...pickerColor, a: saturation};
     const whiteSlider = {r:255, g:255, b:255, a: whiteLevel.a};
     const sliderStyle = {
         backgroundColor: "#000000",
@@ -45,8 +46,10 @@ export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor,
                         <Hue hsl={ RGBToHSL(pickerColor) }  onChange={ (color) => setPickerColor(HSLtoRGB(color)) } />
                     </div>
                     <span>Saturation</span>
-                    <div style={sliderStyle}>
-                        <Alpha rgb={ saturationSlider } hsl={ {h:0,s:0,l:0} } onChange={ (color) => setSaturation(color.a) } />
+                    <div style={(mode === "rainbow") ? {...sliderStyle, transform: "rotateY(180deg)"} : sliderStyle}>
+                        {mode === "rainbow" ? <><div style={{pointerEvents: "none", width: "100%", height: "100%", position: "absolute", backgroundImage: `linear-gradient(0deg, rgb(255,0,0), rgb(255,255,0), rgb(0,255,255), rgb(0,0,255), rgb(255,0,255))`}}></div>
+                        <Alpha rgb={ {...saturationSlider, a:1-saturationSlider.a} } hsl={ {h:0,s:0,l:0} } onChange={ (color) => setSaturation(color.a) } /></> :
+                        <Alpha rgb={ saturationSlider } hsl={ {h:0,s:0,l:0} } onChange={ (color) => setSaturation(color.a) } />}
                     </div>
                     <span>White Level</span>
                     <div style={sliderStyle}>
