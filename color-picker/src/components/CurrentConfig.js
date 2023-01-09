@@ -1,4 +1,5 @@
 import { getCurrentConfig } from '../utils/API';
+import { RGBToHSL, HSLtoRGB } from '../utils/conversion';
 import { useState, useEffect } from 'react';
 import Tile from './Tile';
 import Divider from './Divider';
@@ -165,7 +166,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     function update(e, index) {
         //regular
         if (!shiftKey && !altKey && (mouseClick && e.type === "mouseover")) {
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < +lengthTextBox; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
             const draggedTo = index;
@@ -188,27 +189,37 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         }
         //gradient    
         else if (!shiftKey && altKey && (mouseClick && e.type === "mouseover")) {
-            for (let i = 0; i < colorDataUnsaved[i].length; i++) {
+            for (let i = 0; i < +lengthTextBox; i++) {
                 colorDataUnsaved[i] = {...tempArray[i]};
             }
             const draggedTo = index;
             if (draggedFrom < draggedTo) {
                 const length = draggedTo - draggedFrom+1;
                 for (let i = draggedFrom; i <= draggedTo; i++) {
-                    colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(i-draggedFrom)));
-                    colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(i-draggedFrom)));
-                    colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(i-draggedFrom)));
-                    colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(i-draggedFrom)));
+
+                 
+                    const h = 360/(length/(i-draggedFrom));
+                    colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
+
+                    // colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(i-draggedFrom)));
+                    // colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(i-draggedFrom)));
+                    // colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(i-draggedFrom)));
+                    // colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(i-draggedFrom)));
                     // colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
                 }
             } 
             if (draggedFrom > draggedTo) {
                 const length =  draggedFrom - draggedTo;
                 for (let i = draggedTo; i <= draggedFrom; i++) {
-                    colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(draggedFrom-i)));
-                    colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(draggedFrom-i)));
-                    colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(draggedFrom-i)));
-                    colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i)));  
+
+
+                    // const hue = RGBToHSL({r:255, g:0, b:0});
+                    const h = 360/(length/(draggedFrom-i-1));
+                    colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
+                    // colorDataUnsaved[i].r = Math.floor(tempArray[draggedFrom].r + (pickerColor.r*saturation - tempArray[draggedFrom].r)/(length/(draggedFrom-i)));
+                    // colorDataUnsaved[i].g = Math.floor(tempArray[draggedFrom].g + (pickerColor.g*saturation - tempArray[draggedFrom].g)/(length/(draggedFrom-i)));
+                    // colorDataUnsaved[i].b = Math.floor(tempArray[draggedFrom].b + (pickerColor.b*saturation - tempArray[draggedFrom].b)/(length/(draggedFrom-i)));
+                    // colorDataUnsaved[i].w = Math.floor(tempArray[draggedFrom].w + (whiteLevel - tempArray[draggedFrom].w)/(length/(draggedFrom-i)));  
                     // colorDataUnsaved[i] = {r: pickerColor.r*saturation, g: pickerColor.g*saturation, b: pickerColor.b*saturation, w: whiteLevel}
                 }
             }

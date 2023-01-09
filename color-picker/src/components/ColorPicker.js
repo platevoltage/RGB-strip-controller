@@ -38,6 +38,7 @@ export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor,
     return (
         <div style={{display: 'flex', position: 'relative'}}>
             <div style={{margin: "30px", width: "calc(100% - 200px)"}}>
+        <p>{(((pickerColor.r << 16) | (pickerColor.g << 8) | (pickerColor.b)) >>> 0)}</p><br></br>
                 <div>
                     <span>Hue</span>
                     <div style={sliderStyle}>
