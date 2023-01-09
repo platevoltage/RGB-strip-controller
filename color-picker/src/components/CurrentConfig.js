@@ -205,14 +205,14 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                         const length = draggedTo - draggedFrom+1;
                         for (let i = draggedFrom; i <= draggedTo; i++) {
                             const h = 360/(length/(i-draggedFrom));
-                            colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
+                            colorDataUnsaved[i] = {...HSLtoRGB({h, s:100, v:50}), w: whiteLevel};
                         }
                     } 
                     if (draggedFrom > draggedTo) {
                         const length =  draggedFrom - draggedTo+1;
                         for (let i = draggedTo; i <= draggedFrom; i++) {
                             const h = 360/(length/(draggedFrom-i));
-                            colorDataUnsaved[i] = HSLtoRGB({h, s:100, v:50});
+                            colorDataUnsaved[i] = {...HSLtoRGB({h, s:100, v:50}), w: whiteLevel};
                         }
                     }
                     break;
