@@ -16,7 +16,7 @@ let storedLength = window.localStorage.getItem("length");
 
 if (!storedLength) storedLength = 20;
 
-export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel}) {
+export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode}) {
     const tilesRef = useRef(null);
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
@@ -32,7 +32,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     const [ctrlKey, setCtrlKey] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [mode, setMode] = useState("regular");
 
     const [draggedFrom, setDraggedFrom] = useState(0);
     

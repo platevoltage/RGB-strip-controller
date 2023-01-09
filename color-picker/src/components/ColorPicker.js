@@ -1,7 +1,7 @@
 import { Hue, Alpha } from 'react-color/lib/components/common';
 import { RGBToHSL, HSLtoRGB } from '../utils/conversion';
 
-export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor, setSaturation, saturation, whiteLevel }) {
+export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor, setSaturation, saturation, whiteLevel, mode }) {
 
     const saturationSlider = {...pickerColor, a: saturation};
     const whiteSlider = {r:255, g:255, b:255, a: whiteLevel.a};
@@ -27,6 +27,7 @@ export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor,
     const colorStyle = {
         width: "100%", height: "100%", 
         backgroundColor: `rgba(${saturationSlider.r}, ${saturationSlider.g}, ${saturationSlider.b}, ${saturationSlider.a})`, 
+        backgroundImage: (mode === "rainbow") ? "linear-gradient(90deg, red, orange, yellow, green, blue, indigo, purple)" : "none",
         borderRadius: "4px", 
         position: "relative", 
         boxShadow: "inset 2px 2px 2px #00000044", 
