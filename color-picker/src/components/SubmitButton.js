@@ -28,6 +28,12 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
             
             try {
                 pixels = pixels.slice(0, length);
+                for (let pixel of pixels) {
+                    pixel.r = Math.floor(pixel.r);
+                    pixel.g = Math.floor(pixel.g);
+                    pixel.b = Math.floor(pixel.b);
+                    pixel.w = Math.floor(pixel.w);
+                }
                 const submittedData  = {pixels, dividers: dividers.filter(x => x!==0), effectSpeed, profile};
                 console.log(submittedData);
                 await writeChanges(length, pixels.slice(0, length), address, dividers, effectSpeed, profile);

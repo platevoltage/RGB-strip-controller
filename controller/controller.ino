@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "test"
+#define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
