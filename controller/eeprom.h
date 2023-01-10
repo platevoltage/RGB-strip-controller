@@ -1,51 +1,8 @@
 #include <sys/types.h>
 #include <LittleFS.h>
-#include <FS.h>
+#include "FS.h"
 
 
-void listDir(const char * dirname) {
-  Serial.printf("Listing directory: %s\n", dirname);
-
-  Dir root = LittleFS.openDir(dirname);
-
-  while (root.next()) {
-    File file = root.openFile("r");
-    Serial.print("  FILE: ");
-    Serial.print(root.fileName());
-    Serial.print("  SIZE: ");
-    Serial.print(file.size());
-    time_t cr = file.getCreationTime();
-    time_t lw = file.getLastWrite();
-    file.close();
-    struct tm * tmstruct = localtime(&cr);
-    Serial.printf("    CREATION: %d-%02d-%02d %02d:%02d:%02d\n", (tmstruct->tm_year) + 1900, (tmstruct->tm_mon) + 1, tmstruct->tm_mday, tmstruct->tm_hour, tmstruct->tm_min, tmstruct->tm_sec);
-    tmstruct = localtime(&lw);
-    Serial.printf("  LAST WRITE: %d-%02d-%02d %02d:%02d:%02d\n", (tmstruct->tm_year) + 1900, (tmstruct->tm_mon) + 1, tmstruct->tm_mday, tmstruct->tm_hour, tmstruct->tm_min, tmstruct->tm_sec);
-  }
-}
-
-int * readLinesFromFile(const char * path, uint16_t from, uint16_t to) {
-  Serial.printf("Reading file: %s\n", path);
-
-  File file = LittleFS.open(path, "r");
-  if (!file) {
-    Serial.println("Failed to open file for reading");
-  }
-
-  Serial.print("Read from file: ");
-  static int data[100];
-  uint16_t count = 0;
-  while (file.available()) {
-    data[count] = file.readStringUntil('\n').toInt();
-    if (count == to) break;
-    count++;
-    // Serial.write(file.read());
-  }
-
-  file.close();
-
-  return data;
-}
 
 String readFile(const char * path) {
   Serial.printf("Reading file: %s\n", path);
@@ -67,6 +24,16 @@ String readFile(const char * path) {
   file.close();
   return data;
 }
+void createDir(const char * path){
+    Serial.printf("Creating Dir: %s\n", path);
+    if(LittleFS.mkdir(path)){
+        Serial.println("Dir created");
+    } else {
+        Serial.println("mkdir failed");
+    }
+}
+
+
 
 void writeFile(const char * path, String message) {
   Serial.printf("Writing file: %s\n", path);
@@ -84,6 +51,8 @@ void writeFile(const char * path, String message) {
   delay(2000); // Make sure the CREATE and LASTWRITE times are different
   file.close();
 }
+
+
 
 void appendFile(const char * path, String message) {
   Serial.printf("Appending to file: %s\n", path);
@@ -120,7 +89,7 @@ void deleteFile(const char * path) {
 }
 
 uint16_t readStripLengthFromEEPROM() {
-  String string = readFile("/stripLength.txt");
+  String string = readFile( "/stripLength.txt");
   return string.toInt();
 }
 
@@ -133,12 +102,12 @@ void writePixelsToEEPROM(uint32_t currentData[], size_t length, uint8_t profile)
     message += String(color);
     if(i < length-1) message += '\n';
   }
-  writeFile(((String)profile + "/pixels.txt").c_str(), message);
+  writeFile( ("/" + (String)profile + "/pixels.txt").c_str(), message);
   // writeFile("0/pixels.txt", message);
 }
 
 String readPixelsFromEEPROM(uint8_t profile) {
-  String message = readFile(("/" + (String)profile + "/pixels.txt").c_str());
+  String message = readFile( ("/" + (String)profile + "/pixels.txt").c_str());
   // String message = readFile("/0/pixels.txt");
   return message;
 }
@@ -146,7 +115,7 @@ String readPixelsFromEEPROM(uint8_t profile) {
 
 void writeStripLengthToEEPROM(uint16_t stripLength) {
   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
-  writeFile("stripLength.txt", String(stripLength));
+  writeFile( "/stripLength.txt", String(stripLength));
 }
 
 void writeDividersToEEPROM(uint16_t positions[], size_t length) {
@@ -157,28 +126,30 @@ void writeDividersToEEPROM(uint16_t positions[], size_t length) {
       message += "\n";
     }
   }
-  writeFile("dividers.txt", message);
+  writeFile( "/dividers.txt", message);
 }
 
 void writeEffectSpeedToEEPROM(uint16_t effectSpeed, uint8_t profile) {
   // writeFile("effectSpeed.txt", String(effectSpeed));
-  writeFile(((String)profile + "/effectSpeed.txt").c_str(), String(effectSpeed));
+  writeFile( ("/" + (String)profile + "/effectSpeed.txt").c_str(), String(effectSpeed));
 }
 void writeCurrentProfileToEEPROM(uint8_t profile) {
-  writeFile("profile.txt", String(profile));
+  writeFile( "/profile.txt", String(profile));
 }
 
 String readDividersFromEEPROM() {
-  String message = readFile("/dividers.txt");
+  String message = readFile( "/dividers.txt");
   return message;
 }
 uint16_t readEffectSpeedFromEEPROM(uint8_t profile) {
   // String string = readFile("/effectSpeed.txt");
-  String message = readFile(("/" + (String)profile + "/effectSpeed.txt").c_str());
+  String message = readFile(( "/" + (String)profile + "/effectSpeed.txt").c_str());
 
   return message.toInt();
 }
 uint8_t readCurrentProfileFromEEPROM() {
-  String string = readFile("/profile.txt");
+  String string = readFile( "/profile.txt");
   return string.toInt();
 }
+
+

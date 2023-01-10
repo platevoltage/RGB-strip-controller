@@ -28,7 +28,7 @@ static const char *password = STAPSK;
 
 
 void handleNotFound() {
-  digitalWrite(LED_BUILTIN, 1);
+  // digitalWrite(LED_BUILTIN, 1);
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -43,7 +43,7 @@ void handleNotFound() {
   }
 
   server.send(404, "text/plain", message);
-  digitalWrite(LED_BUILTIN, 0);
+  // digitalWrite(LED_BUILTIN, 0);
 }
 
 

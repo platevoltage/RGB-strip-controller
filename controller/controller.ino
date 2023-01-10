@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "lamp"
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -19,6 +19,7 @@
 #define JSON_BUFFER_SIZE 91000
 #define EEPROM_SIZE 3000
 #define MAX_PIXELS 700
+#define FORMAT_LITTLEFS_IF_FAILED true
 
 #else
 //31000 max for esp8266. 150 pixels.
@@ -181,8 +182,8 @@ uint32_t readPixel(uint16_t position) {
 
 
 void setup(void) {
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, 0);
+  // pinMode(LED_BUILTIN, OUTPUT);
+  // digitalWrite(LED_BUILTIN, 0);
   Serial.begin(115200);
 
   serverStart(updateConfig, getCurrentConfig);
@@ -195,11 +196,13 @@ void setup(void) {
   pixels.begin();
 
   Serial.println("Mount LittleFS");
-  if (!LittleFS.begin()) {
-    Serial.println("LittleFS mount failed");
-    return;
+  if(!LittleFS.begin()){
+        Serial.println("LittleFS Mount Failed");
+        return;
   }
-
+  createDir("/0");
+  createDir("/1");
+  createDir("/2");
   setStripLength(readStripLengthFromEEPROM());
   getCurrentConfig();
   

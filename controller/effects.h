@@ -19,7 +19,7 @@ void effectTimer(uint16_t speed, uint8_t activeGroups, uint16_t groups[][2], uin
       Serial.print(" - ");
       Serial.print(ESP.getFreeHeap());
       Serial.print(" - ");
-      Serial.println(ESP.getHeapFragmentation());
+      // Serial.println(ESP.getHeapFragmentation());
       effectPreviousMillis = currentMillis;
       for(int i=0; i < activeGroups; i++) {
         walk(readPixel, setPixel, groups[i][0], groups[i][1]);
