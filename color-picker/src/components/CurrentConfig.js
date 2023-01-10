@@ -308,7 +308,6 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
                 <Mode mode={mode} setMode={setMode}/>
                 <Profile profile={profile} setProfile={setProfile} getData={getData} setLoadingParent={setLoading} setError={setError} />
-                {profile}
             </div>
         </>     
     );

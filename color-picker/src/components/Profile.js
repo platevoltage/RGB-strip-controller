@@ -31,7 +31,7 @@ export default function Profile({profile, setProfile, getData, setLoadingParent,
   
     return (
         <div style={style}>
-            <span>Mode:</span>
+            <span>Profile:</span>
             <select
                 // value={textBox}
                 // name="effect-speed"
