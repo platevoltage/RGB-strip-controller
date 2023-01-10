@@ -40,7 +40,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
 
     const verifySave = async () => {
         try {
-            const response = await getCurrentConfig(addressTextBox);
+            const response = await getCurrentConfig(addressTextBox, profile);
             const result = await response.json();
             let colorArray = [];
 
@@ -56,14 +56,14 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         }
         
     }
-    const getData = async () => {
+    const getData = async (_profile) => {
         document.title = `RGB strip controller - ${window.location.href.split("//")[1].split(":")[0]}`;
         setUndoArray([...tempArray]);
         
         try {
             window.localStorage.setItem("ip", addressTextBox);
 
-            const response = await getCurrentConfig(addressTextBox);
+            const response = await getCurrentConfig(addressTextBox, _profile);
             const result = await response.json();
             let colorArray = [];
 
@@ -75,7 +75,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setDividerLocations(result.dividers);
             setEffectSpeedTextBox(result.effectSpeed);
             setLengthTextBox(colorArray.length);
-            setProfile(+result.profile);
+            // setProfile(+result.profile);
             setColorData(colorArray);
             setColorDataUnsaved([...colorArray, ...noConnectionArray]);
             setLoading(false);
@@ -125,7 +125,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }, [undoArray, mode]);
 
     useEffect(()=>{
-        getData();
+        getData(profile);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     useEffect(()=>{
@@ -307,7 +307,8 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
                 <Mode mode={mode} setMode={setMode}/>
-                <Profile profile={profile} setProfile={setProfile} />
+                <Profile profile={profile} setProfile={setProfile} getData={getData} setLoadingParent={setLoading} setError={setError} />
+                {profile}
             </div>
         </>     
     );

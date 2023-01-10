@@ -1,5 +1,5 @@
-export const getCurrentConfig = (address) => {
-    return fetch(`${address}/current`, {
+export const getCurrentConfig = (address, profile) => {
+    return fetch(`${address}/current?profile=${profile}`, {
         headers: {
             'Content-Type': 'application/json',
         }

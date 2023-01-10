@@ -1,3 +1,4 @@
+#include <sys/types.h>
 #include <LittleFS.h>
 #include <FS.h>
 
@@ -124,7 +125,7 @@ uint16_t readStripLengthFromEEPROM() {
 }
 
 
-void writePixelsToEEPROM(uint32_t currentData[], size_t length) {
+void writePixelsToEEPROM(uint32_t currentData[], size_t length, uint8_t profile) {
   String message;
   for (int i=0; i < length; i++) {
     uint32_t color = currentData[i];
@@ -134,11 +135,13 @@ void writePixelsToEEPROM(uint32_t currentData[], size_t length) {
     message += String(color);
     if(i < length-1) message += '\n';
   }
-  writeFile("pixels.txt", message);
+  writeFile(((String)profile + "/pixels.txt").c_str(), message);
+  // writeFile("0/pixels.txt", message);
 }
 
-String readPixelsFromEEPROM() {
-  String message = readFile("/pixels.txt");
+String readPixelsFromEEPROM(uint8_t profile) {
+  String message = readFile(("/" + (String)profile + "/pixels.txt").c_str());
+  // String message = readFile("/0/pixels.txt");
   return message;
 }
 

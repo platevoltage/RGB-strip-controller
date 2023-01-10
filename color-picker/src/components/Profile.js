@@ -1,4 +1,21 @@
-export default function Profile({profile, setProfile}) {
+export default function Profile({profile, setProfile, getData, setLoadingParent, setError}) {
+    const handleSubmit = async (e) => {
+        setProfile(e.target.value);
+        // setLoading(true);
+        setLoadingParent(true);
+        setError(false);
+        try {
+            await getData(e.target.value);
+            // setLoading(false);
+            setLoadingParent(false);
+        }
+        catch (error) {
+            console.error(error);
+            // setLoading(false);
+            setLoadingParent(false);
+            setError(true);
+        }
+    }
 
     const style = {
         display: 'flex',
@@ -18,7 +35,7 @@ export default function Profile({profile, setProfile}) {
             <select
                 // value={textBox}
                 // name="effect-speed"
-                onChange={(e) => {setProfile(e.target.value)}}
+                onChange={handleSubmit}
                 // type="text"
                 // placeholder="#"
                 style={inputStyle}

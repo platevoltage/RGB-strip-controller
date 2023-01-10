@@ -59,11 +59,13 @@ static uint8_t profile = 0;
 
 
 void getCurrentConfig() {
-
+  const uint8_t profileArg = server.arg(0).toInt();
+  Serial.print("args - ");
+  Serial.println(server.arg(0));
   sendHeaders();
   uint32_t currentData[stripLength] = {};
 
-  String pixelData = readPixelsFromEEPROM();
+  String pixelData = readPixelsFromEEPROM(profileArg);
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
     currentData[i] = singlePixel;
@@ -135,7 +137,7 @@ void updateConfig() {
     
     uint32_t currentData[stripLength];
 
-    String pixelData = readPixelsFromEEPROM();
+    String pixelData = readPixelsFromEEPROM(profile);
     for (uint16_t i = 0; i < stripLength; i++) {
       uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
       currentData[i] = singlePixel;
@@ -148,7 +150,7 @@ void updateConfig() {
     pixels.show();
 
     writeDividersToEEPROM(dividers, dividersLength);
-    writePixelsToEEPROM(currentData, stripLength);
+    writePixelsToEEPROM(currentData, stripLength, profile);
     writeEffectSpeedToEEPROM(effectSpeed);
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
