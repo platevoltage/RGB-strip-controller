@@ -34,6 +34,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [profile, setProfile] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
 
     const [draggedFrom, setDraggedFrom] = useState(0);
     
@@ -50,6 +51,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             }
             result.pixels = colorArray;
             result.dividers = result.dividers.filter(x => x!==0);
+            delete result["time"]; 
             return result;
         } catch (error){
             console.error(error);
@@ -75,6 +77,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setDividerLocations(result.dividers);
             setEffectSpeedTextBox(result.effectSpeed);
             setLengthTextBox(colorArray.length);
+            setCurrentTime(result.time);
             // setProfile(+result.profile);
             setColorData(colorArray);
             setColorDataUnsaved([...colorArray, ...noConnectionArray]);
@@ -106,6 +109,10 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     function handleMouseUp(e) {
         setMouseClick(false);
     }
+    function tick() {
+        let time = currentTime + (Math.floor(new Date().getTime()/1000) - currentTime);
+        setCurrentTime(time);
+    }
     
     useEffect(()=>{
         const tilesSection = tilesRef.current;
@@ -113,12 +120,14 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
         tilesSection.addEventListener("keyup", handleKeyUp);
         tilesSection.addEventListener("mousedown", handleMouseDown);
         tilesSection.addEventListener("mouseup", handleMouseUp);
+        setInterval(tick, 1000);
         
         return () => {
             tilesSection.removeEventListener("mousedown", handleMouseDown);
             tilesSection.removeEventListener("mouseup", handleMouseUp);
             tilesSection.removeEventListener("keyup", handleKeyUp);
             tilesSection.removeEventListener("keydown", handleKeyDown);
+            clearInterval(tick);
         };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -309,6 +318,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                 <Mode mode={mode} setMode={setMode}/>
                 <Profile profile={profile} setProfile={setProfile} getData={getData} setLoadingParent={setLoading} setError={setError} />
             </div>
+                 {new Date(currentTime*1000).toLocaleString()}
         </>     
     );
     

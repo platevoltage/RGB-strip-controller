@@ -5,6 +5,8 @@
 #include "payload/index.html.h"
 #include <WiFiClient.h>
 #include <WiFiUdp.h>
+#include "ntp.h"
+
 
 #ifdef ESP32
 #include <WiFi.h>
@@ -26,6 +28,7 @@ static const char *password = STAPSK;
 static String bonjourName = "";
 // const char *ssid = APSSID;
 // const char *password = APPSK;
+
 
 
 void handleNotFound() {
@@ -53,7 +56,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
     WiFi.persistent(true);
     WiFi.mode(WIFI_STA);
     String hostname = "LED-controller-";
-    hostname.concat(BONJOURNAME);
+    hostname.concat(bonjourName);
     WiFi.hostname(hostname);
     WiFi.begin(ssid, password);
       
@@ -78,6 +81,8 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
       Serial.println(F("MDNS responder started"));
       Serial.println(bonjourName);
     }
+
+    startNTP();
 
     server.on(F("/"), []() {
       server.send(200, "text/html", _index_html);
@@ -112,6 +117,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
     server.enableCORS(true);
     server.begin();
     Serial.println(F("HTTP server started"));
+    // getTime();
 }
 
 
@@ -121,6 +127,8 @@ void sendHeaders() {
 
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
 }
+
+
 
 
 unsigned long webClientPreviousMillis = 0;
@@ -137,4 +145,7 @@ void webClientTimer(uint16_t speed) {
       #endif
     }
 }
+
+
+
 
