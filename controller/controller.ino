@@ -78,7 +78,7 @@ void getCurrentConfig() {
   profile = readCurrentProfileFromEEPROM();
 
   //dividers and groups
-  effectSpeed = readEffectSpeedFromEEPROM();
+  effectSpeed = readEffectSpeedFromEEPROM(profileArg);
 
   uint16_t dividers[4];
   String dividerString = readDividersFromEEPROM();
@@ -151,7 +151,7 @@ void updateConfig() {
 
     writeDividersToEEPROM(dividers, dividersLength);
     writePixelsToEEPROM(currentData, stripLength, profile);
-    writeEffectSpeedToEEPROM(effectSpeed);
+    writeEffectSpeedToEEPROM(effectSpeed, profile);
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
 
