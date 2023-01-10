@@ -4,8 +4,9 @@ static const char* ntpServerName = "time.nist.gov";
 const int NTP_PACKET_SIZE = 48;  // NTP time stamp is in the first 48 bytes of the message
 WiFiUDP udp;
 
-byte packetBuffer[NTP_PACKET_SIZE]; 
+static uint32_t epoch = 0;
 
+byte packetBuffer[NTP_PACKET_SIZE]; 
 
 void startNTP() {
     Serial.println("Starting UDP");
@@ -44,7 +45,7 @@ uint32_t getTime() {
 
   sendNTPpacket(timeServerIP);  // send an NTP packet to a time server
   // wait to see if a reply is available
-  delay(100);
+  delay(500);
 
   int cb = udp.parsePacket();
   if (!cb) {
@@ -108,3 +109,12 @@ void NTPTimer() {
     }
 }
 
+unsigned long clockTickPreviousMillis = 0;
+void clockTick() {
+    unsigned long currentMillis = millis();
+    if (currentMillis - clockTickPreviousMillis >= 1000) {
+      clockTickPreviousMillis = currentMillis;
+        epoch++;
+        Serial.println(epoch);
+    }  
+}

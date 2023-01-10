@@ -56,7 +56,7 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
 static uint8_t profile = 0;
-static uint32_t epoch = 0;
+
 
 
 void getCurrentConfig() {
@@ -105,7 +105,7 @@ void getCurrentConfig() {
   }
 
   String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profile);
-
+  if (millis() > 10000) epoch = getTime();
   server.send(200, "text/json", message);
 
 }
@@ -205,7 +205,8 @@ void setup(void) {
   }
 
   getCurrentConfig(); 
-
+  serverStart(updateConfig, getCurrentConfig);
+  epoch = getTime();
 
   if (readBonjourNameFromEEPROM().length() == 0) {
     // bonjourName = BONJOURNAME;
@@ -217,14 +218,15 @@ void setup(void) {
     Serial.println(bonjourName);
 
   }
+  
   startOTA(bonjourName.c_str());
   createDir("/0");
   createDir("/1");
   createDir("/2");
   setStripLength(readStripLengthFromEEPROM());
 
-  serverStart(updateConfig, getCurrentConfig);
-  epoch = getTime();
+  
+  
   
   
 }
@@ -235,5 +237,6 @@ void loop(void) {
   webClientTimer(10);
   NTPTimer();
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
+  clockTick();
 
 }
