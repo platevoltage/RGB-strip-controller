@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "testx"
+// #define BONJOURNAME "testxxx"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -56,6 +56,7 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
 static uint8_t profile = 0;
+static uint32_t epoch = 0;
 
 
 void getCurrentConfig() {
@@ -103,7 +104,7 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  String message = jsonStringify(currentData, sizeof(dividers)/2, dividers, profile);
+  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profile);
 
   server.send(200, "text/json", message);
 
@@ -203,21 +204,28 @@ void setup(void) {
         return;
   }
 
-
-  Serial.print("bonjour - ");
-  Serial.println(readBonjourNameFromEEPROM().length());
-
-  if (readBonjourNameFromEEPROM().length() == 0) writeBonjourNameToEEPROM(BONJOURNAME);
+  getCurrentConfig(); 
 
 
+  if (readBonjourNameFromEEPROM().length() == 0) {
+    // bonjourName = BONJOURNAME;
+    // Serial.print("BONJOUR TAKEN FROM SKETCH - ");
+    // writeBonjourNameToEEPROM(BONJOURNAME);
+  } else {
+    bonjourName = readBonjourNameFromEEPROM();
+    Serial.print("BONJOUR TAKEN FROM MEMORY - ");
+    Serial.println(bonjourName);
 
-  serverStart(updateConfig, getCurrentConfig);
-  startOTA();
+  }
+  startOTA(bonjourName.c_str());
   createDir("/0");
   createDir("/1");
   createDir("/2");
   setStripLength(readStripLengthFromEEPROM());
-  getCurrentConfig();
+
+  serverStart(updateConfig, getCurrentConfig);
+  epoch = getTime();
+  
   
 }
 
@@ -225,7 +233,7 @@ void setup(void) {
 
 void loop(void) {
   webClientTimer(10);
-
+  NTPTimer();
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
 
 }

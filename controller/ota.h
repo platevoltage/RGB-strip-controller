@@ -1,6 +1,6 @@
 #include <ArduinoOTA.h>
 
-void startOTA() {
+void startOTA(const char * bonjourName) {
     ArduinoOTA.onStart([]() {
       String type;
       if (ArduinoOTA.getCommand() == U_FLASH)
@@ -25,6 +25,6 @@ void startOTA() {
       else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
       else if (error == OTA_END_ERROR) Serial.println("End Failed");
     });
-  ArduinoOTA.setHostname(BONJOURNAME); //fixed bug with example code
+  ArduinoOTA.setHostname(bonjourName); //fixed bug with example code
   ArduinoOTA.begin();
 }
