@@ -28,13 +28,13 @@
 
 #endif
 
-#include "ota.h"
-#include "json.h"
-#include "color.h"
-#include "eeprom.h"
-#include "effects.h"
-#include "string.h"
-#include "server.h"
+#include "ota.hpp"
+#include "json.hpp"
+#include "color.hpp"
+#include "eeprom.hpp"
+#include "effects.hpp"
+#include "string.hpp"
+#include "server.hpp"
 
 
 //----begin generated includes and wifi definitions

@@ -5,7 +5,7 @@
 #include "payload/index.html.h"
 #include <WiFiClient.h>
 #include <WiFiUdp.h>
-#include "ntp.h"
+#include "ntp.hpp"
 
 
 #ifdef ESP32
