@@ -46,8 +46,9 @@ export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor,
                         <Hue hsl={ RGBToHSL(pickerColor) }  onChange={ (color) => setPickerColor(HSLtoRGB(color)) } />
                     </div>
                     <span>Saturation</span>
-                    <div style={(mode === "rainbow") ? {...sliderStyle, transform: "rotateY(180deg)"} : sliderStyle}>
-                        {mode === "rainbow" ? <><div style={{pointerEvents: "none", width: "100%", height: "100%", position: "absolute", backgroundImage: `linear-gradient(0deg, rgb(255,0,0), rgb(255,255,0), rgb(0,255,255), rgb(0,0,255), rgb(255,0,255))`}}></div>
+                    <div style={(mode === "rainbow") ? {...sliderStyle, transform: "rotateY(180deg)", backgroundColor: "#ffff00"} : sliderStyle}>
+                        {mode === "rainbow" ? <>
+                        <div style={{pointerEvents: "none", width: "100%", height: "100%", position: "absolute", backgroundImage: `linear-gradient(0deg, rgb(255,0,0), rgb(255,255,0), rgb(0,255,255), rgb(0,0,255), rgb(255,0,255))`}}></div>
                         <Alpha rgb={ {...saturationSlider, a:1-saturationSlider.a} } hsl={ {h:0,s:0,l:0} } onChange={ (color) => setSaturation(color.a) } /></> :
                         <Alpha rgb={ saturationSlider } hsl={ {h:0,s:0,l:0} } onChange={ (color) => setSaturation(color.a) } />}
                     </div>
