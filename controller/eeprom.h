@@ -1,3 +1,4 @@
+#include <sys/types.h>
 #include <LittleFS.h>
 #include <FS.h>
 
@@ -124,21 +125,21 @@ uint16_t readStripLengthFromEEPROM() {
 }
 
 
-void writePixelsToEEPROM(uint32_t currentData[], size_t length) {
+void writePixelsToEEPROM(uint32_t currentData[], size_t length, uint8_t profile) {
   String message;
   for (int i=0; i < length; i++) {
     uint32_t color = currentData[i];
-    // for (int j=1; j < 4; j++) {
-    //   color = color << 8 | currentData[i][j];
-    // }
+
     message += String(color);
     if(i < length-1) message += '\n';
   }
-  writeFile("pixels.txt", message);
+  writeFile(((String)profile + "/pixels.txt").c_str(), message);
+  // writeFile("0/pixels.txt", message);
 }
 
-String readPixelsFromEEPROM() {
-  String message = readFile("/pixels.txt");
+String readPixelsFromEEPROM(uint8_t profile) {
+  String message = readFile(("/" + (String)profile + "/pixels.txt").c_str());
+  // String message = readFile("/0/pixels.txt");
   return message;
 }
 
@@ -159,15 +160,25 @@ void writeDividersToEEPROM(uint16_t positions[], size_t length) {
   writeFile("dividers.txt", message);
 }
 
-void writeEffectSpeedToEEPROM(uint16_t effectSpeed) {
-  writeFile("effectSpeed.txt", String(effectSpeed));
+void writeEffectSpeedToEEPROM(uint16_t effectSpeed, uint8_t profile) {
+  // writeFile("effectSpeed.txt", String(effectSpeed));
+  writeFile(((String)profile + "/effectSpeed.txt").c_str(), String(effectSpeed));
+}
+void writeCurrentProfileToEEPROM(uint8_t profile) {
+  writeFile("profile.txt", String(profile));
 }
 
 String readDividersFromEEPROM() {
   String message = readFile("/dividers.txt");
   return message;
 }
-uint16_t readEffectSpeedFromEEPROM() {
-  String string = readFile("/effectSpeed.txt");
+uint16_t readEffectSpeedFromEEPROM(uint8_t profile) {
+  // String string = readFile("/effectSpeed.txt");
+  String message = readFile(("/" + (String)profile + "/effectSpeed.txt").c_str());
+
+  return message.toInt();
+}
+uint8_t readCurrentProfileFromEEPROM() {
+  String string = readFile("/profile.txt");
   return string.toInt();
 }

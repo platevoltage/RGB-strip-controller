@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "test"
+#define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -55,14 +55,17 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
+static uint8_t profile = 0;
 
 
 void getCurrentConfig() {
-
+  const uint8_t profileArg = server.arg(0).toInt();
+  Serial.print("args - ");
+  Serial.println(server.arg(0));
   sendHeaders();
   uint32_t currentData[stripLength] = {};
 
-  String pixelData = readPixelsFromEEPROM();
+  String pixelData = readPixelsFromEEPROM(profileArg);
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
     currentData[i] = singlePixel;
@@ -71,8 +74,11 @@ void getCurrentConfig() {
     pixels.show();
   }
 
+  //profile
+  profile = readCurrentProfileFromEEPROM();
+
   //dividers and groups
-  effectSpeed = readEffectSpeedFromEEPROM();
+  effectSpeed = readEffectSpeedFromEEPROM(profileArg);
 
   uint16_t dividers[4];
   String dividerString = readDividersFromEEPROM();
@@ -93,7 +99,7 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  String message = jsonStringify(currentData, sizeof(dividers)/2, dividers);
+  String message = jsonStringify(currentData, sizeof(dividers)/2, dividers, profile);
 
   server.send(200, "text/json", message);
 
@@ -117,6 +123,7 @@ void updateConfig() {
     uint16_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     effectSpeed = jsonBuffer["effectSpeed"];
+    profile = jsonBuffer["profile"];
     
     if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
     pixels.updateLength(stripLength);
@@ -130,7 +137,7 @@ void updateConfig() {
     
     uint32_t currentData[stripLength];
 
-    String pixelData = readPixelsFromEEPROM();
+    String pixelData = readPixelsFromEEPROM(profile);
     for (uint16_t i = 0; i < stripLength; i++) {
       uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
       currentData[i] = singlePixel;
@@ -143,9 +150,10 @@ void updateConfig() {
     pixels.show();
 
     writeDividersToEEPROM(dividers, dividersLength);
-    writePixelsToEEPROM(currentData, stripLength);
-    writeEffectSpeedToEEPROM(effectSpeed);
+    writePixelsToEEPROM(currentData, stripLength, profile);
+    writeEffectSpeedToEEPROM(effectSpeed, profile);
     writeStripLengthToEEPROM(stripLength);
+    writeCurrentProfileToEEPROM(profile);
 
     jsonBuffer.clear();
 

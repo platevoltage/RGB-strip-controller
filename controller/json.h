@@ -5,7 +5,7 @@ static uint16_t effectSpeed = 0;
 
 
 
-String jsonStringify(uint32_t currentData[], size_t dividersSize, uint16_t dividers[]) {
+String jsonStringify(uint32_t currentData[], size_t dividersSize, uint16_t dividers[], uint8_t profile) {
     Serial.println(ESP.getFreeHeap());
     DynamicJsonDocument pixelBuffer(JSON_BUFFER_SIZE);
     Serial.println(ESP.getFreeHeap());
@@ -28,6 +28,8 @@ String jsonStringify(uint32_t currentData[], size_t dividersSize, uint16_t divid
     serializeJson(dividerBuffer, message);
     message += ", \"effectSpeed\": ";
     message += String(effectSpeed);
+    message += ", \"profile\": ";
+    message += String(profile);
     message += "}";
 
     // Serial.println(message);
