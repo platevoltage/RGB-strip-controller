@@ -59,11 +59,16 @@ static uint8_t profile = 0;
 
 
 void getCurrentConfig() {
-  const uint8_t profileArg = server.arg(0).toInt();
+  uint8_t profileArg = server.arg(0).toInt();
   Serial.print("args - ");
   Serial.println(server.arg(0));
   sendHeaders();
   uint32_t currentData[stripLength] = {};
+
+  //profile
+  profile = readCurrentProfileFromEEPROM();
+  if (!profileArg) profileArg = profile;
+
 
   String pixelData = readPixelsFromEEPROM(profileArg);
   for (uint16_t i = 0; i < stripLength; i++) {
@@ -74,8 +79,7 @@ void getCurrentConfig() {
     pixels.show();
   }
 
-  //profile
-  profile = readCurrentProfileFromEEPROM();
+
 
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM(profileArg);
