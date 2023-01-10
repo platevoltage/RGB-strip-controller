@@ -1,6 +1,6 @@
 #include "payload/manifest.json.h"
 #include "payload/static/css/main.c83abc47.css.h"
-#include "payload/static/js/main.0226deb7.js.h"
+#include "payload/static/js/main.a5f251b2.js.h"
 #include "payload/static/js/787.05b7a068.chunk.js.h"
 #include "payload/index.html.h"
 #include <WiFiClient.h>
@@ -91,7 +91,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
     server.on(F("/RGB-strip-controller/static/css/main.c83abc47.css"), []() {
       server.send_P(200, "text/css", _main_css);
     });
-    server.on(F("/RGB-strip-controller/static/js/main.0226deb7.js"), []() {
+    server.on(F("/RGB-strip-controller/static/js/main.a5f251b2.js"), []() {
       server.send_P(200, "text/javascript", _main_js);
     });
     server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
