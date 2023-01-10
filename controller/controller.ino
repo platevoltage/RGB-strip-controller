@@ -55,6 +55,7 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
+static uint8_t profile = 0;
 
 
 void getCurrentConfig() {
@@ -70,6 +71,9 @@ void getCurrentConfig() {
     delay(10);
     pixels.show();
   }
+
+  //profile
+  profile = readCurrentProfileFromEEPROM();
 
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM();
@@ -93,7 +97,7 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  String message = jsonStringify(currentData, sizeof(dividers)/2, dividers);
+  String message = jsonStringify(currentData, sizeof(dividers)/2, dividers, profile);
 
   server.send(200, "text/json", message);
 
@@ -117,6 +121,7 @@ void updateConfig() {
     uint16_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     effectSpeed = jsonBuffer["effectSpeed"];
+    profile = jsonBuffer["profile"];
     
     if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
     pixels.updateLength(stripLength);
@@ -146,6 +151,7 @@ void updateConfig() {
     writePixelsToEEPROM(currentData, stripLength);
     writeEffectSpeedToEEPROM(effectSpeed);
     writeStripLengthToEEPROM(stripLength);
+    writeCurrentProfileToEEPROM(profile);
 
     jsonBuffer.clear();
 

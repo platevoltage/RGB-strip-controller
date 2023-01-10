@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { writeChanges } from '../utils/API';
 import { deepEqual } from '../utils/conversion';
 
-export default function SubmitButton({length, pixels, setLoadingParent, loadingParent, setError, error, address, verifySave, dividers, effectSpeed}) {
+export default function SubmitButton({length, pixels, setLoadingParent, loadingParent, setError, error, address, verifySave, dividers, effectSpeed, profile}) {
     const [loading, setLoading] = useState(false);
     const [saveError, setSaveError] = useState(false);
 
@@ -28,9 +28,9 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
             
             try {
                 pixels = pixels.slice(0, length);
-                const submittedData  = {pixels, dividers: dividers.filter(x => x!==0), effectSpeed};
+                const submittedData  = {pixels, dividers: dividers.filter(x => x!==0), effectSpeed, profile};
                 console.log(submittedData);
-                await writeChanges(length, pixels.slice(0, length), address, dividers, effectSpeed);
+                await writeChanges(length, pixels.slice(0, length), address, dividers, effectSpeed, profile);
                 setLoadingParent(false);
                 setError(false);
                 setLoading(false);

@@ -162,6 +162,9 @@ void writeDividersToEEPROM(uint16_t positions[], size_t length) {
 void writeEffectSpeedToEEPROM(uint16_t effectSpeed) {
   writeFile("effectSpeed.txt", String(effectSpeed));
 }
+void writeCurrentProfileToEEPROM(uint8_t profile) {
+  writeFile("profile.txt", String(profile));
+}
 
 String readDividersFromEEPROM() {
   String message = readFile("/dividers.txt");
@@ -169,5 +172,9 @@ String readDividersFromEEPROM() {
 }
 uint16_t readEffectSpeedFromEEPROM() {
   String string = readFile("/effectSpeed.txt");
+  return string.toInt();
+}
+uint8_t readCurrentProfileFromEEPROM() {
+  String string = readFile("/profile.txt");
   return string.toInt();
 }

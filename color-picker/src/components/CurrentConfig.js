@@ -9,6 +9,7 @@ import StripLength from './StripLength';
 import Address from './Address';
 import EffectSpeed from './EffectSpeed';
 import Mode from './Mode';
+import Profile from './Profile';
 
 const noConnectionArray = [];
 for (let i = 0; i < 200; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
@@ -32,6 +33,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     const [ctrlKey, setCtrlKey] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [profile, setProfile] = useState(0);
 
     const [draggedFrom, setDraggedFrom] = useState(0);
     
@@ -73,6 +75,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setDividerLocations(result.dividers);
             setEffectSpeedTextBox(result.effectSpeed);
             setLengthTextBox(colorArray.length);
+            setProfile(+result.profile);
             setColorData(colorArray);
             setColorDataUnsaved([...colorArray, ...noConnectionArray]);
             setLoading(false);
@@ -298,12 +301,13 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} verifySave={verifySave} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox}/>
+                <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} verifySave={verifySave} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox} profile={+profile}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
                 <Mode mode={mode} setMode={setMode}/>
+                <Profile profile={profile} setProfile={setProfile} />
             </div>
         </>     
     );

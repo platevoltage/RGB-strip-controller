@@ -6,7 +6,7 @@ export const getCurrentConfig = (address) => {
     });
 }
 
-export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed) => {
+export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed, profile) => {
 
     const pixelsArray = [];
 
@@ -26,7 +26,8 @@ export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed
             "dividers": [...dividers.sort((x, y) => { return  x - y }).filter(x => {return x!==0 }), 0, 0, 0, 0],
             // "length" : stripLength,
             // "positions" : data.changePositions,
-            "color" : pixelsArray
+            "color" : pixelsArray,
+            profile
             
         })
     });
