@@ -23,6 +23,7 @@ ESP8266WebServer server(80);
 
 static const char *ssid = STASSID;
 static const char *password = STAPSK;
+static String bonjourName = "";
 // const char *ssid = APSSID;
 // const char *password = APPSK;
 
@@ -73,9 +74,9 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
     Serial.print(F("IP address: "));
     Serial.println(WiFi.localIP());
 
-    if (MDNS.begin(BONJOURNAME)) {
+    if (MDNS.begin(bonjourName)) {
       Serial.println(F("MDNS responder started"));
-      Serial.println(BONJOURNAME);
+      Serial.println(bonjourName);
     }
 
     server.on(F("/"), []() {

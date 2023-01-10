@@ -152,4 +152,12 @@ uint8_t readCurrentProfileFromEEPROM() {
   return string.toInt();
 }
 
+String readBonjourNameFromEEPROM() {
+  String message = readFile( "/bonjour.txt");
+  return message;
+}
+
+void writeBonjourNameToEEPROM(String bonjourName) {
+  writeFile( "/bonjour.txt", bonjourName);
+}
 

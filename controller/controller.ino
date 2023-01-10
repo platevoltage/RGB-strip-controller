@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define BONJOURNAME "test"
+#define BONJOURNAME "testx"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -79,7 +79,7 @@ void getCurrentConfig() {
     pixels.show();
   }
 
-
+  bonjourName = readBonjourNameFromEEPROM();
 
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM(profileArg);
@@ -185,12 +185,11 @@ uint32_t readPixel(uint16_t position) {
 
 
 void setup(void) {
+
   // pinMode(LED_BUILTIN, OUTPUT);
   // digitalWrite(LED_BUILTIN, 0);
   Serial.begin(115200);
 
-  serverStart(updateConfig, getCurrentConfig);
-  startOTA();
   // WiFi.softAP(ssid, password);
   // IPAddress myIP = WiFi.softAPIP();
 
@@ -203,6 +202,17 @@ void setup(void) {
         Serial.println("LittleFS Mount Failed");
         return;
   }
+
+
+  Serial.print("bonjour - ");
+  Serial.println(readBonjourNameFromEEPROM().length());
+
+  if (readBonjourNameFromEEPROM().length() == 0) writeBonjourNameToEEPROM(BONJOURNAME);
+
+
+
+  serverStart(updateConfig, getCurrentConfig);
+  startOTA();
   createDir("/0");
   createDir("/1");
   createDir("/2");
