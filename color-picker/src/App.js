@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CurrentConfig from './components/CurrentConfig';
 import ColorPicker from './components/ColorPicker';
+import Schedule from './components/Schedule';
 
 function App() {
   const [pickerColor, setPickerColor] = useState({ r: 255, g: 0, b: 0 });
@@ -24,6 +25,7 @@ function App() {
       
       <ColorPicker setPickerColor={setPickerColor} setWhiteLevel={setWhiteLevel} pickerColor={pickerColor} setSaturation={setSaturation} saturation={saturation} whiteLevel={whiteLevel} mode={mode}/>
       <CurrentConfig pickerColor={ pickerColor } setPickerColor={ setPickerColor } setSaturation={setSaturation} saturation={saturation} whiteLevel={ whiteLevel.a*255 } setWhiteLevel={ setWhiteLevel} mode={mode} setMode={setMode}/>
+      <Schedule />
      
     </div>
   );
