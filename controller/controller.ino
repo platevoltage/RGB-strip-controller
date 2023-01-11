@@ -253,4 +253,9 @@ void loop(void) {
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
   clockTick();
 
+  Serial.print(getTimeDecimal());
+  Serial.print("----");
+  Serial.println(schedule[2]);
+
+
 }

@@ -98,7 +98,11 @@ uint32_t getTime() {
   return 0;
 }
 
-
+float getTimeDecimal() {
+  float temp = (epoch % 86400L) / 3600 ;
+  float decimal = (float((epoch % 3600) / 60) / 60) ;
+  return temp + decimal;
+}
 
 unsigned long NTPPreviousMillis = 0;
 void NTPTimer() {
@@ -115,6 +119,6 @@ void clockTick() {
     if (currentMillis - clockTickPreviousMillis >= 1000) {
       clockTickPreviousMillis = currentMillis;
         epoch++;
-        Serial.println(epoch);
     }  
+
 }
