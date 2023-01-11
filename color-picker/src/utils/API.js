@@ -28,7 +28,7 @@ export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed
             // "positions" : data.changePositions,
             "color" : pixelsArray,
             profile,
-            schedule
+            schedule: schedule
             
         })
     });

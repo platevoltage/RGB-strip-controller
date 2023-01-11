@@ -55,8 +55,6 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
-static uint8_t profile = 0;
-static float schedule[3];
 
 
 
@@ -253,9 +251,9 @@ void loop(void) {
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
   clockTick();
 
-  Serial.print(getTimeDecimal());
-  Serial.print("----");
-  Serial.println(schedule[2]);
+  // Serial.print(getTimeDecimal());
+  // Serial.print("----");
+  // Serial.println(schedule[2]);
 
 
 }

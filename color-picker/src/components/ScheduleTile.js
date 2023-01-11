@@ -78,8 +78,9 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             {/* <br></br> */}
             {timePlacement > 0 && <>
                 {Math.floor(timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}<br></br>
-                {timePlacement.toFixed(2)}<br></br>
-                {gmtTime.toFixed(2)}
+                {/* {timePlacement.toFixed(2)}<br></br>
+                {gmtTime.toFixed(2)} */}
+                {index}
             </>}
 
         </div>
