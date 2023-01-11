@@ -56,6 +56,7 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
 static uint8_t profile = 0;
+static float schedule[3];
 
 
 
@@ -82,6 +83,12 @@ void getCurrentConfig() {
 
   bonjourName = readBonjourNameFromEEPROM();
 
+  String scheduleString = readScheduleFromEEPROM();
+  for (int i=0; i < 3; i++) {
+    schedule[i] = getValue(scheduleString, '\n', i).toFloat();
+  }
+
+
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM(profileArg);
 
@@ -104,7 +111,7 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profile);
+  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profile, 3, schedule);
   if (millis() > 10000) epoch = getTime();
   server.send(200, "text/json", message);
 
@@ -129,6 +136,12 @@ void updateConfig() {
     stripLength = jsonBuffer["stripLength"];
     effectSpeed = jsonBuffer["effectSpeed"];
     profile = jsonBuffer["profile"];
+    
+    uint8_t scheduleLength = jsonBuffer["schedule"].size();
+
+    for (uint16_t i=0; i<scheduleLength; i++) {
+      schedule[i] = jsonBuffer["schedule"][i];
+    }
     
     if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
     pixels.updateLength(stripLength);
@@ -155,6 +168,7 @@ void updateConfig() {
     pixels.show();
 
     writeDividersToEEPROM(dividers, dividersLength);
+    writeScheduleToEEPROM(schedule, scheduleLength);
     writePixelsToEEPROM(currentData, stripLength, profile);
     writeEffectSpeedToEEPROM(effectSpeed, profile);
     writeStripLengthToEEPROM(stripLength);

@@ -8,7 +8,7 @@ const style = {
     height: "100px"
 }
 
-export default function Schedule() {
+export default function Schedule({schedule, setSchedule}) {
     const selfRef = useRef(null);
     const timelineRef = useRef(null);
 
@@ -17,9 +17,10 @@ export default function Schedule() {
             <div ref={timelineRef} style={{position: 'absolute', right: "30px", top: "40%", width: "calc(100% - 250px)", height: "20px"}}>
                 <ScheduleTimeline />
             </div>
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={10} yOrigin={30}/>
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={70} yOrigin={30}/>
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={130} yOrigin={30}/>
+
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={10} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={0}/>
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={70} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={1}/>
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={130} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={2}/>
         </div>
     )
 }

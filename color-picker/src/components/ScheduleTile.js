@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 
-export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin}) {
+export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index}) {
     const tileRef = useRef();
     const [mouseClick, setMouseClick] = useState(false);
     const [x, setX] = useState(xOrigin);
@@ -16,7 +16,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin})
         zIndex: mouseClick ? 10 : 0
     
     }
-    const timePlacement = (((tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 ) / ( timelineRef.current.getBoundingClientRect().width  ))*24);
+    let timePlacement = (((tileRef.current?.getBoundingClientRect().x - timelineRef.current?.getBoundingClientRect().x + tileRef.current?.getBoundingClientRect().width/2 ) / ( timelineRef.current?.getBoundingClientRect().width  ))*24) || 0;
     const minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
 
     // console.log(ref.current);
@@ -38,8 +38,9 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin})
         setMouseClick(false);
     }
     function handleMouseMove(e) {
-        console.log(timelineRef.current.getBoundingClientRect().x, tileRef.current.getBoundingClientRect().x );
+        // console.log(timelineRef.current.getBoundingClientRect().x, tileRef.current.getBoundingClientRect().x );
         if (mouseClick) {
+
             setX((e.clientX - parentRef.current.getBoundingClientRect().x) - tileRef.current.getBoundingClientRect().width/2);
             setY((e.clientY - parentRef.current.getBoundingClientRect().y) - tileRef.current.getBoundingClientRect().height/2);
             // setY((e.clientY - parentRef.current.getBoundingClientRect().y));
@@ -49,6 +50,12 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin})
         }
     }
     useEffect(() => {
+
+        if (timePlacement<=0) schedule[index] = 0;
+        else schedule[index] = +timePlacement.toFixed(2);
+        setSchedule(schedule);
+        console.log(schedule);
+
         const reference = tileRef.current;
         reference.addEventListener('mousedown', handleMouseDown);
         reference.addEventListener('mouseup', handleMouseUp);
@@ -60,6 +67,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin})
             reference.removeEventListener('mouseout', handleMouseOut);
             reference.removeEventListener('mousemove', handleMouseMove);
         };
+        
     },[mouseClick])
 
     return (
@@ -67,7 +75,8 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin})
             {/* {tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x } */}
             {/* <br></br> */}
             {timePlacement > 0 && <>
-                {Math.floor(timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}
+                {Math.floor(timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}<br></br>
+                {/* {schedule[index]} */}
             </>}
 
         </div>

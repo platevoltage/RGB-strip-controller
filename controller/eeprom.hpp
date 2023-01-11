@@ -129,6 +129,20 @@ void writeDividersToEEPROM(uint16_t positions[], size_t length) {
   writeFile( "/dividers.txt", message);
 }
 
+void writeScheduleToEEPROM(float times[], size_t length) {
+  String message;
+  for (int i=0; i < length; i++) {
+      message += times[i];
+      message += "\n";
+  }
+  writeFile( "/schedule.txt", message);
+}
+
+String readScheduleFromEEPROM() {
+  String message = readFile( "/schedule.txt");
+  return message;
+}
+
 void writeEffectSpeedToEEPROM(uint16_t effectSpeed, uint8_t profile) {
   // writeFile("effectSpeed.txt", String(effectSpeed));
   writeFile( ("/" + (String)profile + "/effectSpeed.txt").c_str(), String(effectSpeed));
