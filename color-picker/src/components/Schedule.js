@@ -14,7 +14,7 @@ export default function Schedule() {
 
     return (
         <div style={style} ref={selfRef}>
-            <div ref={timelineRef} style={{position: 'absolute', right: "20px", top: "40%", width: "600px", height: "20px"}}>
+            <div ref={timelineRef} style={{position: 'absolute', right: "30px", top: "40%", width: "calc(100% - 250px)", height: "20px"}}>
                 <ScheduleTimeline />
             </div>
             <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={10} yOrigin={30}/>
