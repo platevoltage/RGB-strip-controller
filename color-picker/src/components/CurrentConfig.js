@@ -17,7 +17,7 @@ let storedLength = window.localStorage.getItem("length");
 
 if (!storedLength) storedLength = 20;
 
-export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode}) {
+export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode, schedule}) {
     const tilesRef = useRef(null);
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
@@ -51,6 +51,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             }
             result.pixels = colorArray;
             result.dividers = result.dividers.filter(x => x!==0);
+            result.schedule = result.schedule.map(x => x.toFixed(2));
             delete result["time"]; 
             return result;
         } catch (error){
@@ -310,7 +311,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} verifySave={verifySave} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox} profile={+profile}/>
+                <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} verifySave={verifySave} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox} profile={+profile} schedule={schedule}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
