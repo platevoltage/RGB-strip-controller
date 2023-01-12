@@ -5,7 +5,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     const [mouseClick, setMouseClick] = useState(false);
     const [x, setX] = useState(xOrigin);
     const [y, setY] = useState(yOrigin);
-    const [timePlacement, setTimePlacement] = useState(0);
+    let [timePlacement, setTimePlacement] = useState(0);
 
     const style = {
         position: 'absolute',
@@ -26,41 +26,74 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     
     }
 
-    useEffect(() => {
-        setTimePlacement((((tileRef.current?.getBoundingClientRect().x - timelineRef.current?.getBoundingClientRect().x + tileRef.current?.getBoundingClientRect().width/2 ) / ( timelineRef.current?.getBoundingClientRect().width  ))*24) || 0);
-    },[x,y, timelineRef])
-
-    const minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
+    let minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
     const timeOffset = (new Date().getTimezoneOffset()/60);
     const gmtTime = (timePlacement + timeOffset) - Math.floor((timePlacement + timeOffset)/24)*24;
+    const parent = {
+        x: parentRef.current?.getBoundingClientRect().x, 
+        y: parentRef.current?.getBoundingClientRect().y,
+        width: parentRef.current?.getBoundingClientRect().width, 
+        height: parentRef.current?.getBoundingClientRect().height
+    };
+    const tile = {
+        x: tileRef.current?.getBoundingClientRect().x, 
+        y: tileRef.current?.getBoundingClientRect().y, 
+        width: tileRef.current?.getBoundingClientRect().width, 
+        height: tileRef.current?.getBoundingClientRect().height
+    };
+    const timeline = {
+        x: timelineRef.current?.getBoundingClientRect().x, 
+        y: timelineRef.current?.getBoundingClientRect().y, 
+        width: timelineRef.current?.getBoundingClientRect().width, 
+        height: timelineRef.current?.getBoundingClientRect().height
+    };
+
+    useEffect(() => {
+        setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
+    },[x,y, timelineRef])
 
     // console.log(ref.current);
     function snap() {
-        if (tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 > 0) {
+        tile.x = tileRef.current?.getBoundingClientRect().x;
+        tile.y = tileRef.current?.getBoundingClientRect().y;
+
+        if (tile.x - timeline.x + tile.width/2 > -40) {
             setY(20);
-        } else {
+            if (tile.x - timeline.x + tile.width/2 <= 0) setX(timeline.x - tile.width*2);
+        } 
+        if (tile.x - timeline.x + tile.width/2 < timeline.width+40 && tile.x - timeline.x + tile.width/2 > -40) {
+            setY(20);
+            if (tile.x - timeline.x + tile.width/2 >= timeline.width) setX(timeline.x - tile.width*2 + timeline.width);
+        } 
+        else {
             setX(xOrigin);
             setY(yOrigin);
         }
     }
     function handleMouseDown(e) {
-        setMouseClick(true);
         snap();
+        setMouseClick(true);
     }
     function handleMouseUp(e) {
-        setMouseClick(false);
         snap();
+        setMouseClick(false);
     }
     function handleMouseOut(e) {
         // setMouseClick(false);
     }
+
     function handleMouseMove(e) {
+        tile.x = tileRef.current?.getBoundingClientRect().x;
+        tile.y = tileRef.current?.getBoundingClientRect().y;
         if (mouseClick) {
-            setX((e.clientX - parentRef.current.getBoundingClientRect().x) - tileRef.current.getBoundingClientRect().width/2);
-            setY((e.clientY - parentRef.current.getBoundingClientRect().y) - tileRef.current.getBoundingClientRect().height/2);
-        }
-        if (tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 > 0) {
-            setY(20);
+            setX((e.clientX - parent.x) - tile.width/2);
+            setY((e.clientY - parent.y) - tile.height/2);
+            if (tile.x - timeline.x + tile.width/2 > -40 && tile.x - timeline.x + tile.width/2 < timeline.width+40) {
+                setY(20);
+            }
+
+            
+            console.log(tile.x - timeline.x + tile.width/2)
         }
     }
     useEffect(() => {
@@ -84,18 +117,26 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         };
         
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[mouseClick])
+    },[mouseClick]);
 
+    if (timePlacement < 0) {
+        timePlacement = 0;
+        minutes = 0;
+    }
+    if (timePlacement > 24) {
+        timePlacement = 24;
+        minutes = 0;
+    }
     return (
         <div ref={tileRef} style={style}>
             <div>{index}</div>
             {/* {tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x } */}
             {/* <br></br> */}
-            {timePlacement > 0 && <>
+            {tile.x - timeline.x + tile.width/2 +20 >= 0 && <>
                 {Math.floor(timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}<br></br>
-                {/* {timePlacement.toFixed(2)}<br></br>
-                {gmtTime.toFixed(2)} */}
+        
                 
+      
             </>}
 
         </div>
