@@ -329,7 +329,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                 <Mode mode={mode} setMode={setMode}/>
                 <Profile profile={profile} setProfile={setProfile} getData={getData} setLoadingParent={setLoading} setError={setError} />
             </div>
-                 {new Date(currentTime*1000).toLocaleString()}
+                 {/* {new Date(currentTime*1000).toLocaleString()} */}
         </>     
     );
     
