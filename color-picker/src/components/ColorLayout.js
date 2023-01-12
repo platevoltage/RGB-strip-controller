@@ -10,9 +10,11 @@ let storedLength = window.localStorage.getItem("length");
 if (!storedLength) storedLength = 20;
 
 export default function ColorLayout({get, set}) {
-    const { lengthTextBox, pickerColor, colorDataUnsaved, saturation, whiteLevel, tempArray, colorData, error, loading, scheduleColors, profile, mode } = get;
-    const { setPickerColor, setWhiteLevel, setColorDataUnsaved, setScheduleColors, setTempArray} = set;
+    const { lengthTextBox, pickerColor, colorDataUnsaved, saturation, whiteLevel, tempArray, colorData, error, loading, scheduleColors, profile, mode, undoArray } = get;
+    const { setPickerColor, setWhiteLevel, setColorDataUnsaved, setScheduleColors, setTempArray, setUndoArray } = set;
+
     const tilesRef = useRef(null);
+
     const [draggedFrom, setDraggedFrom] = useState(0);
     const [mouseClick, setMouseClick] = useState(false);
     const [dividerLocations, setDividerLocations] = useState([]);
@@ -20,7 +22,7 @@ export default function ColorLayout({get, set}) {
     const [currentTime, setCurrentTime] = useState(0);
     const [altKey, setAltKey] = useState(false);
     const [ctrlKey, setCtrlKey] = useState(false);
-    const [undoArray, setUndoArray] = useState([]);
+
     const stripStyle = {
         backgroundColor: "#444444",
         display: "flex",

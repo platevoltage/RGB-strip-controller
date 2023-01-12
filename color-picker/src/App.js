@@ -19,6 +19,7 @@ function App() {
   const [profile, setProfile] = useState(0);
   const [colorData, setColorData] = useState([]);
   const [tempArray, setTempArray] = useState([]);
+  const [undoArray, setUndoArray] = useState([]);
   const [lengthTextBox, setLengthTextBox] = useState(storedLength);
   const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
   const [loading, setLoading] = useState(true);
@@ -26,6 +27,7 @@ function App() {
   const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
   const [dividerLocations, setDividerLocations] = useState([]);
   const [effectSpeedTextBox, setEffectSpeedTextBox] = useState("0");
+  const [currentTime, setCurrentTime] = useState(0);
 
   const [colors, setColors] = useState(
     [
@@ -52,7 +54,9 @@ function App() {
     setColorDataUnsaved,
     setDividerLocations,
     setEffectSpeedTextBox,
-    setScheduleColors: setColors
+    setScheduleColors: setColors,
+    setUndoArray,
+    setCurrentTime
   }
   const globalGetters = {
     pickerColor,
@@ -70,7 +74,10 @@ function App() {
     colorDataUnsaved,
     dividerLocations,
     effectSpeedTextBox,
-    scheduleColors: colors
+    scheduleColors: colors,
+    undoArray,
+    currentTime,
+    noConnectionArray
   }
 
   const style = {
@@ -90,7 +97,7 @@ function App() {
       <ColorPicker setPickerColor={setPickerColor} setWhiteLevel={setWhiteLevel} pickerColor={pickerColor} setSaturation={setSaturation} saturation={saturation} whiteLevel={whiteLevel} mode={mode} />
 
       <ColorLayout set={globalSetters} get={globalGetters}/>
-      
+
       <CurrentConfig set={globalSetters} get={globalGetters}/>
  
       <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors}/>

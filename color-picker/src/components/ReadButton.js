@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { getData } from '../utils/API'
 
-export default function ReadButton({getData, setLoadingParent, setError}) {
+export default function ReadButton({get, set, setLoadingParent}) {
+    const { setError } = set;
     const [loading, setLoading] = useState(false);
 
     const style = {
@@ -21,7 +23,7 @@ export default function ReadButton({getData, setLoadingParent, setError}) {
         setLoadingParent(true);
         setError(false);
         try {
-            await getData();
+            await getData(get.profile, get, set);
             setLoading(false);
             setLoadingParent(false);
         }

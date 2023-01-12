@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { writeChanges } from '../utils/API';
+import { writeChanges, verifySave } from '../utils/API';
 import { deepEqual } from '../utils/conversion';
 
-export default function SubmitButton({length, pixels, setLoadingParent, loadingParent, setError, error, address, verifySave, dividers, effectSpeed, profile, schedule}) {
+export default function SubmitButton({length, pixels, setLoadingParent, loadingParent, setError, error, address, dividers, effectSpeed, profile, schedule, addressTextBox}) {
     const [loading, setLoading] = useState(false);
     const [saveError, setSaveError] = useState(false);
 
@@ -41,7 +41,7 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
                 setLoadingParent(false);
                 setError(false);
                 setLoading(false);
-                const verification = await verifySave();
+                const verification = await verifySave(addressTextBox, profile);
                 setSaveError(!deepEqual(submittedData, verification));
                 console.log(verification);
                 console.log(deepEqual(submittedData, verification));
