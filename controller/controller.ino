@@ -133,7 +133,7 @@ void updateConfig() {
     uint16_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     effectSpeed = jsonBuffer["effectSpeed"];
-    profile = jsonBuffer["profile"];
+    // profile = jsonBuffer["profile"];
     
     uint8_t scheduleLength = jsonBuffer["schedule"].size();
 

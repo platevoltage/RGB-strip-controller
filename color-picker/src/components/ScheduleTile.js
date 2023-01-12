@@ -8,7 +8,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     const style = {
         position: 'absolute',
-        backgroundColor: "#000000",
+        backgroundColor: "#111111",
         height: "60px",
         width: "40px",
         left: `${x}px`,
@@ -37,7 +37,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         }
     }
     function handleMouseOut(e) {
-        setMouseClick(false);
+        // setMouseClick(false);
     }
     function handleMouseMove(e) {
         // console.log(timelineRef.current.getBoundingClientRect().x, tileRef.current.getBoundingClientRect().x );
@@ -58,16 +58,17 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         setSchedule(schedule);
         console.log(schedule);
 
-        const reference = tileRef.current;
-        reference.addEventListener('mousedown', handleMouseDown);
-        reference.addEventListener('mouseup', handleMouseUp);
-        reference.addEventListener('mouseout', handleMouseOut);
-        reference.addEventListener('mousemove', handleMouseMove);
+        const _tileRef = tileRef.current;
+        const _parentRef = parentRef.current;
+        _tileRef.addEventListener('mousedown', handleMouseDown);
+        _tileRef.addEventListener('mouseup', handleMouseUp);
+        _tileRef.addEventListener('mouseout', handleMouseOut);
+        _parentRef.addEventListener('mousemove', handleMouseMove);
         return () => {
-            reference.removeEventListener('mousedown', handleMouseDown);
-            reference.removeEventListener('mouseup', handleMouseUp);
-            reference.removeEventListener('mouseout', handleMouseOut);
-            reference.removeEventListener('mousemove', handleMouseMove);
+            _tileRef.removeEventListener('mousedown', handleMouseDown);
+            _tileRef.removeEventListener('mouseup', handleMouseUp);
+            _tileRef.removeEventListener('mouseout', handleMouseOut);
+            _parentRef.removeEventListener('mousemove', handleMouseMove);
         };
         
     },[mouseClick])
