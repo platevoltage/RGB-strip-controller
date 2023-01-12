@@ -51,7 +51,6 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     useEffect(() => {
         setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
-        console.log(timePlacement);
     },[x,y, timelineRef])
 
     // console.log(ref.current);
@@ -102,8 +101,9 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     useEffect(() => {
         // console.log(timePlacement);
-        if (timePlacement>-2 && timePlacement<=0) schedule[index] = timeOffset+.01;
-        else if (timePlacement<=-2) schedule[index] = 0;
+        if (timePlacement === 0) schedule[index] = 0;
+        else if (timePlacement>-1 && timePlacement<0) schedule[index] = timeOffset+.01;
+        else if (timePlacement<=-1) schedule[index] = 0;
         else if (timePlacement>24) schedule[index] = timeOffset;
         else schedule[index] = +gmtTime.toFixed(2);
         setSchedule(schedule);
@@ -125,23 +125,26 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[mouseClick]);
 
+    let _timePlacement = timePlacement;
     if (timePlacement<=0 && timePlacement>-1) {
-        timePlacement = 0;
+        _timePlacement = 0;
         minutes = 1;
     } 
     if (timePlacement > 24) {
+        _timePlacement = 0;
         minutes = 0;
     }
+
     return (
         <div ref={tileRef} style={style}>
             <div style={{position: 'absolute', left: 0, top: 0, fontSize: ".8em"}}>{index}</div>
             {/* {tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x } */}
             {/* <br></br> */}
-            {tile.x - timeline.x + tile.width/2 +20 >= 0 && <div style={{ height: "100%", display: "flex", justifyContent: "center", flexDirection: "column"}}>
-                <span>{Math.floor(timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}</span>
-                <span style={{fontSize: ".55em"}}>{Math.floor(timePlacement)%12 || 12}:{minutes < 10 ? "0" : ""}{minutes}{Math.floor(timePlacement)%12 > 1 ? "AM" : "PM"}</span>
+            {tile.x - timeline.x + tile.width/2 +20 >= 0 && <div style={{ height: "100%", display: "flex", justifyContent: "center", flexDirection: "column", fontSize: ".9em"}}>
+                <span>{Math.floor(_timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}</span>
+                <span style={{fontSize: ".50em"}}>{Math.floor(_timePlacement)%12 || 12}:{minutes < 10 ? "0" : ""}{minutes}{Math.floor(_timePlacement) >= 12 ? "PM" : "AM"}</span>
                 
-      
+                {/* {Math.floor(_timePlacement)%12 > 1 ? "AM" : "PM"} */}
             </div>}
   
 
