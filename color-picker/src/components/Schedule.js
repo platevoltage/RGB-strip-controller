@@ -8,7 +8,7 @@ const style = {
     height: "100px"
 }
 
-export default function Schedule({schedule, setSchedule}) {
+export default function Schedule({schedule, setSchedule, colors}) {
     const selfRef = useRef(null);
     const timelineRef = useRef(null);
 
@@ -18,9 +18,9 @@ export default function Schedule({schedule, setSchedule}) {
                 <ScheduleTimeline />
             </div>
 
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={10} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={0}/>
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={70} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={1}/>
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={130} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={2}/>
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={10} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={0} colors={colors[0]}/>
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={70} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={1} colors={colors[1]}/>
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={130} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={2} colors={colors[2]}/>
         </div>
     )
 }

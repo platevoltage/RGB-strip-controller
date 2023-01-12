@@ -17,7 +17,7 @@ let storedLength = window.localStorage.getItem("length");
 
 if (!storedLength) storedLength = 20;
 
-export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode, schedule}) {
+export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode, schedule, setScheduleColors, scheduleColors}) {
     const tilesRef = useRef(null);
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
@@ -106,6 +106,10 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
     function handleMouseDown() {
         setMouseClick(true);
+        scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
+        console.log(profile);
+        console.log(scheduleColors);
+        setScheduleColors([...scheduleColors]);
     }
     function handleMouseUp(e) {
         setMouseClick(false);

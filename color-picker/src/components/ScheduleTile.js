@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 
-export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index}) {
+export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors}) {
     const tileRef = useRef();
     const [mouseClick, setMouseClick] = useState(false);
     const [x, setX] = useState(xOrigin);
@@ -8,7 +8,14 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     const style = {
         position: 'absolute',
-        backgroundColor: "#111111",
+        backgroundImage: `linear-gradient(90deg, rgb(${colors[0].r}, ${colors[0].g}, ${colors[0].b}), rgb(${colors[1].r}, ${colors[1].g}, ${colors[1].b}), rgb(${colors[2].r}, ${colors[2].g}, ${colors[2].b})`,
+        borderRadius: "4px",
+        borderStyle: "solid",
+        borderWidth: "1px",
+        borderColor: "#555555",
+        boxShadow: " 2px 2px 2px #00000044",
+        overflow: "hidden",
+        cursor: "pointer",
         height: "60px",
         width: "40px",
         left: `${x}px`,
@@ -75,13 +82,14 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     return (
         <div ref={tileRef} style={style}>
+            <div>{index}</div>
             {/* {tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x } */}
             {/* <br></br> */}
             {timePlacement > 0 && <>
                 {Math.floor(timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}<br></br>
                 {/* {timePlacement.toFixed(2)}<br></br>
                 {gmtTime.toFixed(2)} */}
-                {index}
+                
             </>}
 
         </div>
