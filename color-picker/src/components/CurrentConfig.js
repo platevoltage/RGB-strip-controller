@@ -83,6 +83,9 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setColorData(colorArray);
             setColorDataUnsaved([...colorArray, ...noConnectionArray]);
             setLoading(false);
+            scheduleColors[profile] = [{...colorArray[0]},{...colorArray[colorArray.length/2]},{...colorArray[colorArray.length-1]}];
+            setScheduleColors([...scheduleColors]);
+            
 
 
         } catch (error){
@@ -145,9 +148,8 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     useEffect(()=>{
         setUndoArray([...tempArray]);
         scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
-        // console.log(profile);
-        // console.log(scheduleColors);
         setScheduleColors([...scheduleColors]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[tempArray]);
     useEffect(() => {
         setMouseClick(false)
