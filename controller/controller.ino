@@ -133,7 +133,7 @@ void updateConfig() {
     uint16_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     effectSpeed = jsonBuffer["effectSpeed"];
-    // profile = jsonBuffer["profile"];
+    const uint8_t _profile = jsonBuffer["profile"];
     
     uint8_t scheduleLength = jsonBuffer["schedule"].size();
 
@@ -167,8 +167,8 @@ void updateConfig() {
 
     writeDividersToEEPROM(dividers, dividersLength);
     writeScheduleToEEPROM(schedule, scheduleLength);
-    writePixelsToEEPROM(currentData, stripLength, profile);
-    writeEffectSpeedToEEPROM(effectSpeed, profile);
+    writePixelsToEEPROM(currentData, stripLength, _profile);
+    writeEffectSpeedToEEPROM(effectSpeed, _profile);
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
 
