@@ -5,6 +5,8 @@ const int NTP_PACKET_SIZE = 48;  // NTP time stamp is in the first 48 bytes of t
 WiFiUDP udp;
 
 static uint32_t epoch = 0;
+static float schedule[3];
+static uint8_t profile = 0;
 
 byte packetBuffer[NTP_PACKET_SIZE]; 
 
@@ -98,7 +100,11 @@ uint32_t getTime() {
   return 0;
 }
 
-
+float getTimeDecimal() {
+  float temp = (epoch % 86400L) / 3600 ;
+  float decimal = (float((epoch % 3600) / 60) / 60) ;
+  return temp + decimal;
+}
 
 unsigned long NTPPreviousMillis = 0;
 void NTPTimer() {
@@ -109,12 +115,58 @@ void NTPTimer() {
     }
 }
 
+
+uint8_t determineProfileUsed() {
+  float timeDecimal = getTimeDecimal();
+  Serial.print(timeDecimal);
+  Serial.print("----");
+  Serial.print(schedule[0]);
+  Serial.print(",");
+  Serial.print(schedule[1]);
+  Serial.print(",");
+  Serial.println(schedule[2]);
+  int scheduleSize = 3;
+  int _profile = 0;
+  int biggest = 0;
+  float temp = schedule[0];
+  Serial.print("biggest - ");
+  for (int i=1; i < scheduleSize; i++) {
+    if (schedule[i] > temp) {
+      temp = schedule[i];
+      biggest = i;
+    }
+  }
+  _profile = biggest;
+  Serial.println(temp);
+  temp = 0;
+  for (int i=0; i < scheduleSize; i++) {
+    bool isOn = ( schedule[i] < timeDecimal && schedule[i] > temp );
+    if (isOn) {
+      _profile = i;
+      temp = schedule[i];
+    }
+    Serial.print(isOn);
+    Serial.print(",");
+  }
+  Serial.println();
+  Serial.println(_profile);
+  return _profile;
+}
+
 unsigned long clockTickPreviousMillis = 0;
-void clockTick() {
+void clockTick(void(*updateConfig)()) {
     unsigned long currentMillis = millis();
     if (currentMillis - clockTickPreviousMillis >= 1000) {
       clockTickPreviousMillis = currentMillis;
         epoch++;
-        Serial.println(epoch);
+        uint8_t checkIfProfileChange = determineProfileUsed();
+        if (profile != checkIfProfileChange) {
+          profile = checkIfProfileChange;
+          (*updateConfig)();
+        }
+        Serial.print("profile - ");
+        Serial.println(profile);
+
     }  
+
 }

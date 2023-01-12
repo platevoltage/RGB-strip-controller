@@ -17,7 +17,7 @@ let storedLength = window.localStorage.getItem("length");
 
 if (!storedLength) storedLength = 20;
 
-export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode}) {
+export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode, schedule, setScheduleColors, scheduleColors}) {
     const tilesRef = useRef(null);
     const [lengthTextBox, setLengthTextBox] = useState(storedLength);
     const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip"));
@@ -51,6 +51,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             }
             result.pixels = colorArray;
             result.dividers = result.dividers.filter(x => x!==0);
+            result.schedule = result.schedule.map(x => x.toFixed(2));
             delete result["time"]; 
             return result;
         } catch (error){
@@ -82,6 +83,9 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             setColorData(colorArray);
             setColorDataUnsaved([...colorArray, ...noConnectionArray]);
             setLoading(false);
+            scheduleColors[profile] = [{...colorArray[0]},{...colorArray[colorArray.length/2]},{...colorArray[colorArray.length-1]}];
+            setScheduleColors([...scheduleColors]);
+            
 
 
         } catch (error){
@@ -105,6 +109,10 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
     function handleMouseDown() {
         setMouseClick(true);
+        // scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
+        // // console.log(profile);
+        // // console.log(scheduleColors);
+        // setScheduleColors([...scheduleColors]);
     }
     function handleMouseUp(e) {
         setMouseClick(false);
@@ -139,6 +147,9 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }, []);
     useEffect(()=>{
         setUndoArray([...tempArray]);
+        scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
+        setScheduleColors([...scheduleColors]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[tempArray]);
     useEffect(() => {
         setMouseClick(false)
@@ -310,7 +321,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
             </div>
 
             <div style={buttonStyle}>
-                <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} verifySave={verifySave} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox} profile={+profile}/>
+                <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} verifySave={verifySave} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox} profile={+profile} schedule={schedule}/>
                 <ReadButton getData={getData} setLoadingParent={setLoading} setError={setError}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
@@ -318,7 +329,7 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
                 <Mode mode={mode} setMode={setMode}/>
                 <Profile profile={profile} setProfile={setProfile} getData={getData} setLoadingParent={setLoading} setError={setError} />
             </div>
-                 {new Date(currentTime*1000).toLocaleString()}
+                 {/* {new Date(currentTime*1000).toLocaleString()} */}
         </>     
     );
     

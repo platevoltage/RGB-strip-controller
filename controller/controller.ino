@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-// #define BONJOURNAME "testxxx"
+// #define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -55,14 +55,13 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
-static uint8_t profile = 0;
 
 
 
 void getCurrentConfig() {
   uint8_t profileArg = server.arg(0).toInt();
-  Serial.print("args - ");
-  Serial.println(server.arg(0));
+  // Serial.print("args - ");
+  // Serial.println(server.arg(0));
   sendHeaders();
   uint32_t currentData[stripLength] = {};
 
@@ -81,6 +80,12 @@ void getCurrentConfig() {
   }
 
   bonjourName = readBonjourNameFromEEPROM();
+
+  String scheduleString = readScheduleFromEEPROM();
+  for (int i=0; i < 3; i++) {
+    schedule[i] = getValue(scheduleString, '\n', i).toFloat();
+  }
+
 
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM(profileArg);
@@ -104,7 +109,7 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profile);
+  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profile, 3, schedule);
   if (millis() > 10000) epoch = getTime();
   server.send(200, "text/json", message);
 
@@ -128,7 +133,13 @@ void updateConfig() {
     uint16_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
     effectSpeed = jsonBuffer["effectSpeed"];
-    profile = jsonBuffer["profile"];
+    // profile = jsonBuffer["profile"];
+    
+    uint8_t scheduleLength = jsonBuffer["schedule"].size();
+
+    for (uint16_t i=0; i<scheduleLength; i++) {
+      schedule[i] = jsonBuffer["schedule"][i];
+    }
     
     if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
     pixels.updateLength(stripLength);
@@ -155,6 +166,7 @@ void updateConfig() {
     pixels.show();
 
     writeDividersToEEPROM(dividers, dividersLength);
+    writeScheduleToEEPROM(schedule, scheduleLength);
     writePixelsToEEPROM(currentData, stripLength, profile);
     writeEffectSpeedToEEPROM(effectSpeed, profile);
     writeStripLengthToEEPROM(stripLength);
@@ -208,16 +220,15 @@ void setup(void) {
   serverStart(updateConfig, getCurrentConfig);
   epoch = getTime();
 
-  if (readBonjourNameFromEEPROM().length() == 0) {
-    // bonjourName = BONJOURNAME;
-    // Serial.print("BONJOUR TAKEN FROM SKETCH - ");
-    // writeBonjourNameToEEPROM(BONJOURNAME);
-  } else {
+#if BONJOURNAME
+    bonjourName = BONJOURNAME;
+    writeBonjourNameToEEPROM(BONJOURNAME);
+#else
     bonjourName = readBonjourNameFromEEPROM();
     Serial.print("BONJOUR TAKEN FROM MEMORY - ");
     Serial.println(bonjourName);
-
-  }
+#endif
+  
   
   startOTA(bonjourName.c_str());
   createDir("/0");
@@ -237,6 +248,11 @@ void loop(void) {
   webClientTimer(10);
   NTPTimer();
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
-  clockTick();
+  clockTick(updateConfig);
+
+  // Serial.print(getTimeDecimal());
+  // Serial.print("----");
+  // Serial.println(schedule[2]);
+
 
 }
