@@ -20,7 +20,8 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         width: "40px",
         left: `${x}px`,
         top: `${y}px`,
-        zIndex: mouseClick ? 10 : 0
+        zIndex: mouseClick ? 10 : 0,
+        color: (colors[0].r + colors[0].g + colors[0].b < 300) ? "#ffffff" : "#000000" ,
     
     }
     let timePlacement = (((tileRef.current?.getBoundingClientRect().x - timelineRef.current?.getBoundingClientRect().x + tileRef.current?.getBoundingClientRect().width/2 ) / ( timelineRef.current?.getBoundingClientRect().width  ))*24) || 0;
@@ -32,12 +33,18 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     function handleMouseDown(e) {
         setMouseClick(true);
+        if (tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 > 0) {
+            setY(20);
+        } else {
+            setX(xOrigin);
+            setY(yOrigin);
+        }
     }
     function handleMouseUp(e) {
         setMouseClick(false);
         // if (e.clientX - parentRef.current.getBoundingClientRect().x > timelineRef.current.getBoundingClientRect().x - tileRef.current.getBoundingClientRect().width) {
         if (tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 > 0) {
-            setY(30);
+            setY(20);
         } else {
             setX(xOrigin);
             setY(yOrigin);
@@ -55,7 +62,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             // setY((e.clientY - parentRef.current.getBoundingClientRect().y));
         }
         if (tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 > 0) {
-            setY(30);
+            setY(20);
         }
     }
     useEffect(() => {
