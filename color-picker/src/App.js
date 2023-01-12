@@ -24,6 +24,8 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
+  const [dividerLocations, setDividerLocations] = useState([]);
+  const [effectSpeedTextBox, setEffectSpeedTextBox] = useState("0");
 
   const [colors, setColors] = useState(
     [
@@ -33,6 +35,43 @@ function App() {
     ]
 
   );
+
+  const globalSetters = {
+    setPickerColor,
+    setSaturation,
+    setWhiteLevel,
+    setSchedule,
+    setMode,
+    setProfile,
+    setColorData,
+    setTempArray,
+    setLengthTextBox,
+    setAddressTextBox,
+    setLoading,
+    setError,
+    setColorDataUnsaved,
+    setDividerLocations,
+    setEffectSpeedTextBox,
+    setScheduleColors: setColors
+  }
+  const globalGetters = {
+    pickerColor,
+    saturation,
+    whiteLevel: whiteLevel.a*255,
+    schedule,
+    mode,
+    profile,
+    colorData,
+    tempArray,
+    lengthTextBox,
+    addressTextBox,
+    loading,
+    error,
+    colorDataUnsaved,
+    dividerLocations,
+    effectSpeedTextBox,
+    scheduleColors: colors
+  }
 
   const style = {
     marginTop: "100px",
@@ -50,9 +89,8 @@ function App() {
       
       <ColorPicker setPickerColor={setPickerColor} setWhiteLevel={setWhiteLevel} pickerColor={pickerColor} setSaturation={setSaturation} saturation={saturation} whiteLevel={whiteLevel} mode={mode} />
 
-      <ColorLayout pickerColor={ pickerColor } setPickerColor={ setPickerColor } setSaturation={setSaturation} saturation={saturation} whiteLevel={ whiteLevel.a*255 } setWhiteLevel={ setWhiteLevel} mode={mode} setMode={setMode} schedule={schedule} setScheduleColors={setColors} scheduleColors={colors} profile={profile} setProfile={setProfile} colorData={colorData} setColorData={setColorData} tempArray={tempArray} setTempArray={setTempArray} lengthTextBox={lengthTextBox} setLengthTextBox={setLengthTextBox} addressTextBox={addressTextBox} setAddressTextBox={setAddressTextBox} loading={loading} setLoading={setLoading} error={error} setError={setError} colorDataUnsaved={colorDataUnsaved} setColorDataUnsaved={setColorDataUnsaved}/>
-
-      <CurrentConfig pickerColor={ pickerColor } setPickerColor={ setPickerColor } setSaturation={setSaturation} saturation={saturation} whiteLevel={ whiteLevel.a*255 } setWhiteLevel={ setWhiteLevel} mode={mode} setMode={setMode} schedule={schedule} setScheduleColors={setColors} scheduleColors={colors} profile={profile} setProfile={setProfile} colorData={colorData} setColorData={setColorData} tempArray={tempArray} setTempArray={setTempArray} lengthTextBox={lengthTextBox} setLengthTextBox={setLengthTextBox} addressTextBox={addressTextBox} setAddressTextBox={setAddressTextBox} loading={loading} setLoading={setLoading} error={error} setError={setError} colorDataUnsaved={colorDataUnsaved} setColorDataUnsaved={setColorDataUnsaved}/>
+      <ColorLayout set={globalSetters} get={globalGetters}/>
+      <CurrentConfig set={globalSetters} get={globalGetters}/>
  
       <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors}/>
      
