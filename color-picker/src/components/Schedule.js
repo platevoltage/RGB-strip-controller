@@ -4,7 +4,7 @@ import ScheduleTimeline from './ScheduleTimeline';
 
 const style = {
     position: 'relative',
-    backgroundColor: "#ffffff55",
+    // backgroundColor: "#ffffff55",
     height: "100px"
 }
 

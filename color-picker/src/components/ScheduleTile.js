@@ -8,6 +8,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     let [timePlacement, setTimePlacement] = useState(0);
 
     const style = {
+        textAlign: 'center',
         position: 'absolute',
         backgroundImage: `linear-gradient(90deg, rgb(${colors[0].r}, ${colors[0].g}, ${colors[0].b}), rgb(${colors[1].r}, ${colors[1].g}, ${colors[1].b}), rgb(${colors[2].r}, ${colors[2].g}, ${colors[2].b})`,
         borderRadius: "4px",
@@ -129,15 +130,17 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     }
     return (
         <div ref={tileRef} style={style}>
-            <div>{index}</div>
+            <div style={{position: 'absolute', left: 0, top: 0, fontSize: ".8em"}}>{index}</div>
             {/* {tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x } */}
             {/* <br></br> */}
-            {tile.x - timeline.x + tile.width/2 +20 >= 0 && <>
-                {Math.floor(timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}<br></br>
-        
+            {tile.x - timeline.x + tile.width/2 +20 >= 0 && <div style={{ height: "100%", display: "flex", justifyContent: "center", flexDirection: "column"}}>
+                <span>{Math.floor(timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}</span>
+                <span style={{fontSize: ".55em"}}>{Math.floor(timePlacement)%12 || 12}:{minutes < 10 ? "0" : ""}{minutes}{Math.floor(timePlacement)%12 > 1 ? "AM" : "PM"}</span>
                 
       
-            </>}
+            </div>}
+  
+
 
         </div>
     )
