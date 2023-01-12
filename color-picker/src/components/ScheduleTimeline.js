@@ -44,9 +44,11 @@ export default function ScheduleTimeline() {
 
             <div style={hourStyle} key={index}>
                 <p style={{marginTop: "20%"}}>{index}</p>
-                {index > 12 && <div style={{...hourStyle,...twelveHourStyle}}>
-                    <p style={{marginTop: "20%"}}>{index-12}</p>
-                </div>}
+                { (index === 0 ||index > 12) && 
+                    <div style={{...hourStyle,...twelveHourStyle}}>
+                        <p style={{marginTop: "20%"}}>{Math.abs(index-12)}</p>
+                    </div>
+                }
             </div>
 
         ))}
