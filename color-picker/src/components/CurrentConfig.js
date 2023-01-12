@@ -106,10 +106,10 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }
     function handleMouseDown() {
         setMouseClick(true);
-        scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
-        console.log(profile);
-        console.log(scheduleColors);
-        setScheduleColors([...scheduleColors]);
+        // scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
+        // // console.log(profile);
+        // // console.log(scheduleColors);
+        // setScheduleColors([...scheduleColors]);
     }
     function handleMouseUp(e) {
         setMouseClick(false);
@@ -144,6 +144,10 @@ export default function CurrentConfig({pickerColor, setPickerColor, setSaturatio
     }, []);
     useEffect(()=>{
         setUndoArray([...tempArray]);
+        scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
+        // console.log(profile);
+        // console.log(scheduleColors);
+        setScheduleColors([...scheduleColors]);
     },[tempArray]);
     useEffect(() => {
         setMouseClick(false)
