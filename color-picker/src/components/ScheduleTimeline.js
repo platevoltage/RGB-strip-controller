@@ -26,13 +26,29 @@ export default function ScheduleTimeline() {
         borderRadius: "3px"
     }
 
+    const twelveHourStyle = {
+        backgroundColor: "#666666",
+        position: "absolute",
+        width: "90%",
+        height: "90%",
+        top: "108%",
+        fontSize: ".8em",
+        color: "#cccccc",
+        margin: "0 0% 0 10%",
+  
+
+    }
     return (
         <div style={style}>
         {[...Array(24)].map((_,index) => (
 
             <div style={hourStyle} key={index}>
                 <p style={{marginTop: "20%"}}>{index}</p>
+                {index > 12 && <div style={{...hourStyle,...twelveHourStyle}}>
+                    <p style={{marginTop: "20%"}}>{index-12}</p>
+                </div>}
             </div>
+
         ))}
         </div>
     )
