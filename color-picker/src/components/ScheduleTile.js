@@ -5,6 +5,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     const [mouseClick, setMouseClick] = useState(false);
     const [x, setX] = useState(xOrigin);
     const [y, setY] = useState(yOrigin);
+    const [timePlacement, setTimePlacement] = useState(0);
 
     const style = {
         position: 'absolute',
@@ -24,15 +25,17 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         color: (colors[0].r + colors[0].g + colors[0].b < 300) ? "#ffffff" : "#000000" ,
     
     }
-    let timePlacement = (((tileRef.current?.getBoundingClientRect().x - timelineRef.current?.getBoundingClientRect().x + tileRef.current?.getBoundingClientRect().width/2 ) / ( timelineRef.current?.getBoundingClientRect().width  ))*24) || 0;
+
+    useEffect(() => {
+        setTimePlacement((((tileRef.current?.getBoundingClientRect().x - timelineRef.current?.getBoundingClientRect().x + tileRef.current?.getBoundingClientRect().width/2 ) / ( timelineRef.current?.getBoundingClientRect().width  ))*24) || 0);
+    },[x,y, timelineRef])
+
     const minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
     const timeOffset = (new Date().getTimezoneOffset()/60);
     const gmtTime = (timePlacement + timeOffset) - Math.floor((timePlacement + timeOffset)/24)*24;
 
     // console.log(ref.current);
-
-    function handleMouseDown(e) {
-        setMouseClick(true);
+    function snap() {
         if (tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 > 0) {
             setY(20);
         } else {
@@ -40,33 +43,28 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             setY(yOrigin);
         }
     }
+    function handleMouseDown(e) {
+        setMouseClick(true);
+        snap();
+    }
     function handleMouseUp(e) {
         setMouseClick(false);
-        // if (e.clientX - parentRef.current.getBoundingClientRect().x > timelineRef.current.getBoundingClientRect().x - tileRef.current.getBoundingClientRect().width) {
-        if (tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 > 0) {
-            setY(20);
-        } else {
-            setX(xOrigin);
-            setY(yOrigin);
-        }
+        snap();
     }
     function handleMouseOut(e) {
         // setMouseClick(false);
     }
     function handleMouseMove(e) {
-        // console.log(timelineRef.current.getBoundingClientRect().x, tileRef.current.getBoundingClientRect().x );
         if (mouseClick) {
-
             setX((e.clientX - parentRef.current.getBoundingClientRect().x) - tileRef.current.getBoundingClientRect().width/2);
             setY((e.clientY - parentRef.current.getBoundingClientRect().y) - tileRef.current.getBoundingClientRect().height/2);
-            // setY((e.clientY - parentRef.current.getBoundingClientRect().y));
         }
         if (tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x + tileRef.current.getBoundingClientRect().width/2 > 0) {
             setY(20);
         }
     }
     useEffect(() => {
-
+        
         if (timePlacement<=0) schedule[index] = 0;
         else schedule[index] = +gmtTime.toFixed(2);
         setSchedule(schedule);
@@ -85,6 +83,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             _parentRef.removeEventListener('mousemove', handleMouseMove);
         };
         
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[mouseClick])
 
     return (
