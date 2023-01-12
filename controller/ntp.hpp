@@ -116,7 +116,7 @@ void NTPTimer() {
 }
 
 
-void determineProfileUsed() {
+uint8_t determineProfileUsed() {
   float timeDecimal = getTimeDecimal();
   Serial.print(timeDecimal);
   Serial.print("----");
@@ -125,8 +125,6 @@ void determineProfileUsed() {
   Serial.print(schedule[1]);
   Serial.print(",");
   Serial.println(schedule[2]);
-
-
   int scheduleSize = 3;
   int _profile = 0;
   int biggest = 0;
@@ -138,6 +136,7 @@ void determineProfileUsed() {
       biggest = i;
     }
   }
+  _profile = biggest;
   Serial.println(temp);
   temp = 0;
   for (int i=0; i < scheduleSize; i++) {
@@ -151,27 +150,22 @@ void determineProfileUsed() {
   }
   Serial.println();
   Serial.println(_profile);
-//   for (int i=0; i < scheduleSize-1; i++) {
-//     bool isOn = (timeDecimal > schedule[i]) && (timeDecimal < schedule[i+1]);
-//     Serial.print(isOn);
-//     Serial.print(",");
-//     if (isOn) profile = i;
-//   }
-//   bool isOn = ((timeDecimal > schedule[scheduleSize-1]) && (timeDecimal < 24)) || ((timeDecimal > 0) && (timeDecimal < schedule[0]));
-//   Serial.println(isOn);
-//   if (isOn) profile = scheduleSize-1;
-
-//   Serial.print("current profile - ");
-//   Serial.println(profile);
+  return _profile;
 }
 
 unsigned long clockTickPreviousMillis = 0;
-void clockTick() {
+void clockTick(void(*updateConfig)()) {
     unsigned long currentMillis = millis();
     if (currentMillis - clockTickPreviousMillis >= 1000) {
       clockTickPreviousMillis = currentMillis;
         epoch++;
-        determineProfileUsed();
+        uint8_t checkIfProfileChange = determineProfileUsed();
+        if (profile != checkIfProfileChange) {
+          profile = checkIfProfileChange;
+          (*updateConfig)();
+        }
+        Serial.print("profile - ");
+        Serial.println(profile);
 
     }  
 

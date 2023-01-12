@@ -8,7 +8,7 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-// #define BONJOURNAME "testxxx"
+// #define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -60,8 +60,8 @@ static uint8_t activeGroups = 0;
 
 void getCurrentConfig() {
   uint8_t profileArg = server.arg(0).toInt();
-  Serial.print("args - ");
-  Serial.println(server.arg(0));
+  // Serial.print("args - ");
+  // Serial.println(server.arg(0));
   sendHeaders();
   uint32_t currentData[stripLength] = {};
 
@@ -220,16 +220,15 @@ void setup(void) {
   serverStart(updateConfig, getCurrentConfig);
   epoch = getTime();
 
-  if (readBonjourNameFromEEPROM().length() == 0) {
-    // bonjourName = BONJOURNAME;
-    // Serial.print("BONJOUR TAKEN FROM SKETCH - ");
-    // writeBonjourNameToEEPROM(BONJOURNAME);
-  } else {
+#if BONJOURNAME
+    bonjourName = BONJOURNAME;
+    writeBonjourNameToEEPROM(BONJOURNAME);
+#else
     bonjourName = readBonjourNameFromEEPROM();
     Serial.print("BONJOUR TAKEN FROM MEMORY - ");
     Serial.println(bonjourName);
-
-  }
+#endif
+  
   
   startOTA(bonjourName.c_str());
   createDir("/0");
@@ -249,7 +248,7 @@ void loop(void) {
   webClientTimer(10);
   NTPTimer();
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
-  clockTick();
+  clockTick(updateConfig);
 
   // Serial.print(getTimeDecimal());
   // Serial.print("----");
