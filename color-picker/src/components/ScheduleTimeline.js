@@ -1,4 +1,4 @@
-import React from 'react'
+
 
 export default function ScheduleTimeline() {
     const style = {
@@ -30,7 +30,7 @@ export default function ScheduleTimeline() {
         <div style={style}>
         {[...Array(24)].map((_,index) => (
 
-            <div style={hourStyle}>
+            <div style={hourStyle} key={index}>
                 <p style={{marginTop: "20%"}}>{index}</p>
             </div>
         ))}

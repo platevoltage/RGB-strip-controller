@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 
-export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors}) {
+export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors, setOnTop, onTop}) {
     const tileRef = useRef();
     const [mouseClick, setMouseClick] = useState(false);
     const [x, setX] = useState(xOrigin);
@@ -22,7 +22,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         width: "40px",
         left: `${x}px`,
         top: `${y}px`,
-        zIndex: mouseClick ? 10 : 0,
+        zIndex: onTop===index ? 10:0,
         color: (colors[0].r + colors[0].g + colors[0].b < 300) ? "#ffffff" : "#000000" ,
     
     }
@@ -74,6 +74,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     function handleMouseDown(e) {
         snap();
         setMouseClick(true);
+        setOnTop(index);
     }
     function handleMouseUp(e) {
         snap();
