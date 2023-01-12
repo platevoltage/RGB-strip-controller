@@ -90,6 +90,7 @@ function App() {
       <ColorPicker setPickerColor={setPickerColor} setWhiteLevel={setWhiteLevel} pickerColor={pickerColor} setSaturation={setSaturation} saturation={saturation} whiteLevel={whiteLevel} mode={mode} />
 
       <ColorLayout set={globalSetters} get={globalGetters}/>
+      
       <CurrentConfig set={globalSetters} get={globalGetters}/>
  
       <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors}/>
