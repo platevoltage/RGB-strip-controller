@@ -9,7 +9,9 @@ let storedLength = window.localStorage.getItem("length");
 
 if (!storedLength) storedLength = 20;
 
-export default function ColorLayout({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode, schedule, setScheduleColors, scheduleColors, profile, setProfile, colorData, setColorData, tempArray, setTempArray, lengthTextBox, setLengthTextBox, addressTextBox, setAddressTextBox, loading, setLoading, error, setError, colorDataUnsaved, setColorDataUnsaved}) {
+export default function ColorLayout({get, set}) {
+    const { lengthTextBox, pickerColor, colorDataUnsaved, saturation, whiteLevel, tempArray, colorData, error, loading, scheduleColors, profile, mode } = get;
+    const { setPickerColor, setWhiteLevel, setColorDataUnsaved, setScheduleColors, setTempArray} = set;
     const tilesRef = useRef(null);
     const [draggedFrom, setDraggedFrom] = useState(0);
     const [mouseClick, setMouseClick] = useState(false);
@@ -46,7 +48,7 @@ export default function ColorLayout({pickerColor, setPickerColor, setSaturation,
         if (e.altKey) setAltKey(true);
         if (e.ctrlKey) setCtrlKey(true);
         if (e.key === 'z') {
-            setColorDataUnsaved([...undoArray]);
+            set.setColorDataUnsaved([...undoArray]);
         }
     }
     function handleKeyUp(e) {

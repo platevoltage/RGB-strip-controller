@@ -12,10 +12,9 @@ const noConnectionArray = [];
 for (let i = 0; i < 200; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
 
 
-export default function CurrentConfig({pickerColor, setPickerColor, setSaturation, saturation, whiteLevel, setWhiteLevel, mode, setMode, schedule, setScheduleColors, scheduleColors, profile, setProfile, colorData, setColorData, tempArray, setTempArray, lengthTextBox, setLengthTextBox, addressTextBox, setAddressTextBox, loading, setLoading, error, setError, colorDataUnsaved, setColorDataUnsaved}) {
-
-    const [effectSpeedTextBox, setEffectSpeedTextBox] = useState("0");
-    const [dividerLocations, setDividerLocations] = useState([]);
+export default function CurrentConfig({get, set}) {
+    const { lengthTextBox, colorDataUnsaved, tempArray, colorData, error, loading, scheduleColors, profile, mode, addressTextBox, dividerLocations, effectSpeedTextBox, schedule } = get;
+    const { setColorDataUnsaved, setScheduleColors, setLoading, setError, setDividerLocations, setEffectSpeedTextBox, setLengthTextBox, setColorData, setAddressTextBox, setMode, setProfile} = set;
     const [undoArray, setUndoArray] = useState([]);
     const [currentTime, setCurrentTime] = useState(0);
 
