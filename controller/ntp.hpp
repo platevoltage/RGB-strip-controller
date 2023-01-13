@@ -15,7 +15,7 @@ void startNTP() {
     Serial.println("Starting UDP");
     udp.begin(localPort);
     Serial.print("Local port: ");
-    Serial.println(udp.localPort());
+    // Serial.println(udp.localPort());
 }
 
 // send an NTP request to the time server at the given address

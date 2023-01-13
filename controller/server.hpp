@@ -77,7 +77,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
     Serial.print(F("IP address: "));
     Serial.println(WiFi.localIP());
 
-    if (MDNS.begin(bonjourName)) {
+    if (MDNS.begin(bonjourName.c_str())) {
       Serial.println(F("MDNS responder started"));
       Serial.println(bonjourName);
     }

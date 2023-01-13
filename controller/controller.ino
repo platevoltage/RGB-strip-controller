@@ -8,7 +8,8 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-// #define BONJOURNAME "lamp"
+#define OVERRIDE_BONJOUR 1
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -234,7 +235,7 @@ void setup(void) {
   epoch = getTime();
   getCurrentConfig(); 
 
-#if BONJOURNAME
+#if OVERRIDE_BONJOUR
     bonjourName = BONJOURNAME;
     writeBonjourNameToEEPROM(BONJOURNAME);
 #else
