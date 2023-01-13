@@ -81,7 +81,8 @@ export const getData = async (_profile, get, set) => {
         set.setColorData(colorArray);
         set.setColorDataUnsaved([...colorArray, ...get.noConnectionArray]);
         set.setLoading(false);
-        get.scheduleColors[get.profile] = [{...colorArray[0]},{...colorArray[colorArray.length/2]},{...colorArray[colorArray.length-1]}];
+        get.scheduleColors[_profile] = [{...colorArray[0]},{...colorArray[colorArray.length/2]},{...colorArray[colorArray.length-1]}];
+        console.log(get.scheduleColors);
         set.setScheduleColors([...get.scheduleColors]);
         
 
