@@ -49,6 +49,7 @@ export const verifySave = async (addressTextBox, profile) => {
         result.dividers = result.dividers.filter(x => x!==0);
         result.schedule = result.schedule.map(x => x.toFixed(2));
         delete result["time"]; 
+        delete result["profile"]; 
         return result;
     } catch (error){
         console.error(error);

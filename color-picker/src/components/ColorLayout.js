@@ -10,14 +10,13 @@ let storedLength = window.localStorage.getItem("length");
 if (!storedLength) storedLength = 20;
 
 export default function ColorLayout({get, set}) {
-    const { lengthTextBox, pickerColor, colorDataUnsaved, saturation, whiteLevel, tempArray, colorData, error, loading, scheduleColors, profile, mode, undoArray } = get;
-    const { setPickerColor, setWhiteLevel, setColorDataUnsaved, setScheduleColors, setTempArray, setUndoArray } = set;
+    const { lengthTextBox, pickerColor, colorDataUnsaved, saturation, whiteLevel, tempArray, colorData, error, loading, scheduleColors, profile, mode, undoArray, dividerLocations } = get;
+    const { setPickerColor, setWhiteLevel, setColorDataUnsaved, setScheduleColors, setTempArray, setUndoArray, setDividerLocations } = set;
 
     const tilesRef = useRef(null);
 
     const [draggedFrom, setDraggedFrom] = useState(0);
     const [mouseClick, setMouseClick] = useState(false);
-    const [dividerLocations, setDividerLocations] = useState([]);
     const [shiftKey, setShiftKey] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [altKey, setAltKey] = useState(false);

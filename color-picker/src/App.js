@@ -5,10 +5,10 @@ import Schedule from './components/Schedule';
 import ColorLayout from './components/ColorLayout';
 
 function App() {
+
   const noConnectionArray = [];
   for (let i = 0; i < 200; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
   let storedLength = window.localStorage.getItem("length");
-
   if (!storedLength) storedLength = 20;
 
   const [pickerColor, setPickerColor] = useState({ r: 255, g: 0, b: 0 });
@@ -35,7 +35,6 @@ function App() {
       [{r:0, g:0, b:0},{r:0, g:0, b:0},{r:0, g:0, b:0}],
       [{r:0, g:0, b:0},{r:0, g:0, b:0},{r:0, g:0, b:0}],
     ]
-
   );
 
   const globalSetters = {

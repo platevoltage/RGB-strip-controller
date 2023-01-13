@@ -35,7 +35,7 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
                     pixel.w = Math.floor(pixel.w);
                 }
                 console.log(schedule);
-                const submittedData  = {pixels, dividers: dividers.filter(x => x!==0), effectSpeed, profile, schedule: schedule.map(x => x.toFixed(2))};
+                const submittedData  = {pixels, dividers: dividers.filter(x => x!==0), effectSpeed, schedule: schedule.map(x => x.toFixed(2))};
                 console.log(submittedData);
                 await writeChanges(length, pixels.slice(0, length), address, dividers, effectSpeed, profile, schedule);
                 setLoadingParent(false);

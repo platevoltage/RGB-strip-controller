@@ -14,7 +14,7 @@ for (let i = 0; i < 200; i++) noConnectionArray.push({r: 0, g: 0, b: 0, w:0});
 
 export default function CurrentConfig({get, set}) {
     const { lengthTextBox, colorDataUnsaved, colorData, error, loading, profile, mode, addressTextBox, dividerLocations, effectSpeedTextBox, schedule, undoArray, currentTime } = get;
-    const { setLoading, setError, setEffectSpeedTextBox, setLengthTextBox, setAddressTextBox, setMode, setProfile, setCurrentTime } = set;
+    const { setLoading, setError, setEffectSpeedTextBox, setLengthTextBox, setAddressTextBox, setMode, setCurrentTime } = set;
 
 
     function tick() {
@@ -56,7 +56,7 @@ export default function CurrentConfig({get, set}) {
                 <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
                 <Mode mode={mode} setMode={setMode}/>
-                <Profile profile={profile} setProfile={setProfile} getData={getData} setLoadingParent={setLoading} setError={setError} />
+                <Profile setLoadingParent={setLoading} get={get} set={set} />
             </div>
                  {/* {new Date(currentTime*1000).toLocaleString()} */}
         </>     

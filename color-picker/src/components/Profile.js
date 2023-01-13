@@ -1,11 +1,14 @@
-export default function Profile({profile, setProfile, getData, setLoadingParent, setError}) {
+import { getData } from '../utils/API';
+
+export default function Profile({setLoadingParent, get, set}) {
+    const { setProfile, setError } = set;
     const handleSubmit = async (e) => {
         setProfile(e.target.value);
         // setLoading(true);
         setLoadingParent(true);
         setError(false);
         try {
-            await getData(e.target.value);
+            await getData(e.target.value, get, set);
             // setLoading(false);
             setLoadingParent(false);
         }
