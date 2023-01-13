@@ -82,7 +82,8 @@ void getCurrentConfig() {
   bonjourName = readBonjourNameFromEEPROM();
 
   String scheduleString = readScheduleFromEEPROM();
-  for (int i=0; i < 3; i++) {
+  Serial.println(scheduleString);
+  for (int i=0; i < scheduleLength; i++) {
     schedule[i] = getValue(scheduleString, '\n', i).toFloat();
   }
 
@@ -109,7 +110,7 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profileArg, 3, schedule);
+  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profileArg, scheduleLength, schedule);
   if (millis() > 30000) epoch = getTime();
   server.send(200, "text/json", message);
 
@@ -135,7 +136,7 @@ void updateConfig() {
     effectSpeed = jsonBuffer["effectSpeed"];
     const uint8_t _profile = jsonBuffer["profile"];
     
-    uint8_t scheduleLength = jsonBuffer["schedule"].size();
+    scheduleLength = jsonBuffer["schedule"].size();
 
     for (uint16_t i=0; i<scheduleLength; i++) {
       schedule[i] = jsonBuffer["schedule"][i];

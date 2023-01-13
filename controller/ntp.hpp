@@ -5,7 +5,8 @@ const int NTP_PACKET_SIZE = 48;  // NTP time stamp is in the first 48 bytes of t
 WiFiUDP udp;
 
 static uint32_t epoch = 0;
-static float schedule[3];
+static float schedule[10];
+uint8_t scheduleLength = 4;
 static uint8_t profile = 0;
 
 byte packetBuffer[NTP_PACKET_SIZE]; 
@@ -120,26 +121,26 @@ uint8_t determineProfileUsed() {
   float timeDecimal = getTimeDecimal();
   Serial.print(timeDecimal);
   Serial.print("----");
-  Serial.print(schedule[0]);
-  Serial.print(",");
-  Serial.print(schedule[1]);
-  Serial.print(",");
-  Serial.println(schedule[2]);
-  int scheduleSize = 3;
+
+  // int scheduleSize = 3;
   int _profile = 0;
   int biggest = 0;
   float temp = schedule[0];
-  Serial.print("biggest - ");
-  for (int i=1; i < scheduleSize; i++) {
+  Serial.print(schedule[0]);
+  for (int i=1; i < 4; i++) {
+          Serial.print(",");
+      Serial.print(schedule[i]);
     if (schedule[i] > temp) {
       temp = schedule[i];
       biggest = i;
     }
   }
+  Serial.println();
+  Serial.print("biggest - ");
   _profile = biggest;
   Serial.println(temp);
   temp = 0;
-  for (int i=0; i < scheduleSize; i++) {
+  for (int i=0; i < scheduleLength; i++) {
     bool isOn = ( schedule[i] < timeDecimal && schedule[i] > temp );
     if (isOn) {
       _profile = i;

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 
-export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors, setOnTop, onTop}) {
+export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors, setOnTop, onTop, off}) {
     const tileRef = useRef();
     const [mouseClick, setMouseClick] = useState(false);
     const [x, setX] = useState(xOrigin);
@@ -19,7 +19,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         overflow: "hidden",
         cursor: "pointer",
         height: "60px",
-        width: "40px",
+        width: off ? "25px" : "40px",
         left: `${x}px`,
         top: `${y}px`,
         zIndex: onTop===index ? 10:0,
@@ -138,14 +138,16 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     return (
         <div ref={tileRef} style={style}>
             <div style={{position: 'absolute', left: 0, top: 0, fontSize: ".8em"}}>{index}</div>
-            {/* {tileRef.current.getBoundingClientRect().x - timelineRef.current.getBoundingClientRect().x } */}
-            {/* <br></br> */}
-            {tile.x - timeline.x + tile.width/2 +20 >= 0 && <div style={{ height: "100%", display: "flex", justifyContent: "center", flexDirection: "column", fontSize: ".9em"}}>
+
+
+            {((tile.x - timeline.x + tile.width/2 +20 >= 0) && !off) ? <div style={{ height: "100%", display: "flex", justifyContent: "center", flexDirection: "column", fontSize: ".9em"}}>
                 <span>{Math.floor(_timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}</span>
                 <span style={{fontSize: ".50em"}}>{Math.floor(_timePlacement)%12 || 12}:{minutes < 10 ? "0" : ""}{minutes}{Math.floor(_timePlacement) >= 12 ? "PM" : "AM"}</span>
                 
                 {/* {Math.floor(_timePlacement)%12 > 1 ? "AM" : "PM"} */}
-            </div>}
+            </div> :
+            <>{off && <div style={{writingMode: "vertical-rl", textOrientation: "upright"}}>OFF</div>}</>
+            }
   
 
 
