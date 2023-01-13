@@ -7,7 +7,7 @@ export const getCurrentConfig = (address, profile) => {
 }
 
 export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed, profile, schedule) => {
-
+    console.log(schedule);
     const pixelsArray = [];
 
     for (let i of pixels) {

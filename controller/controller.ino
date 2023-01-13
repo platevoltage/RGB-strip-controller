@@ -246,9 +246,11 @@ void setup(void) {
   
   
   startOTA(bonjourName.c_str());
+  
   createDir("/0");
   createDir("/1");
   createDir("/2");
+  createDir("/3");
   setStripLength(readStripLengthFromEEPROM());
 
   

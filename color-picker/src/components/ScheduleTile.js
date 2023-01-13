@@ -137,19 +137,15 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     return (
         <div ref={tileRef} style={style}>
-            <div style={{position: 'absolute', left: 0, top: 0, fontSize: ".8em"}}>{index}</div>
+            {off ? <div style={{writingMode: "vertical-rl", textOrientation: "upright", fontSize: ".7em"}}>OFF</div> : <div style={{position: 'absolute', left: 0, top: 0, fontSize: ".8em"}}>{index}</div>}
 
 
-            {((tile.x - timeline.x + tile.width/2 +20 >= 0) && !off) ? <div style={{ height: "100%", display: "flex", justifyContent: "center", flexDirection: "column", fontSize: ".9em"}}>
+            {((tile.x - timeline.x + tile.width/2 +20 >= 0) && !off) && <div style={{ height: "100%", display: "flex", justifyContent: "center", flexDirection: "column", fontSize: ".9em"}}>
                 <span>{Math.floor(_timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}</span>
                 <span style={{fontSize: ".50em"}}>{Math.floor(_timePlacement)%12 || 12}:{minutes < 10 ? "0" : ""}{minutes}{Math.floor(_timePlacement) >= 12 ? "PM" : "AM"}</span>
                 
                 {/* {Math.floor(_timePlacement)%12 > 1 ? "AM" : "PM"} */}
-            </div> :
-            <>
-                {off && <div style={{writingMode: "vertical-rl", textOrientation: "upright"}}>OFF</div>}
-            </>
-            }
+            </div> }
   
 
 
