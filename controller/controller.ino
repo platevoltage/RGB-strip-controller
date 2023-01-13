@@ -74,9 +74,9 @@ void getCurrentConfig() {
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
     currentData[i] = singlePixel;
-    pixels.setPixelColor(i, colorMod(singlePixel));
+    // pixels.setPixelColor(i, colorMod(singlePixel));
     delay(10);
-    pixels.show();
+    // pixels.show();
   }
 
   bonjourName = readBonjourNameFromEEPROM();
@@ -229,9 +229,9 @@ void setup(void) {
         return;
   }
 
-  getCurrentConfig(); 
   serverStart(updateConfig, getCurrentConfig);
   epoch = getTime();
+  getCurrentConfig(); 
 
 #if BONJOURNAME
     bonjourName = BONJOURNAME;
@@ -250,7 +250,7 @@ void setup(void) {
   setStripLength(readStripLengthFromEEPROM());
 
   
-  
+  activateProfile();
   
   
 }
