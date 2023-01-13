@@ -1,4 +1,4 @@
-import { Hue, Alpha, Saturation } from 'react-color/lib/components/common';
+import { Hue, Alpha } from 'react-color/lib/components/common';
 import { RGBToHSL, HSLtoRGB } from '../utils/conversion';
 
 export default function ColorPicker({setPickerColor, setWhiteLevel, pickerColor, setSaturation, saturation, whiteLevel, mode }) {

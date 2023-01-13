@@ -48,7 +48,7 @@ export default function CurrentConfig({get, set}) {
     }
 
     return (
-        <>
+        
             <div style={buttonStyle}>
                 <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox} profile={+profile} schedule={schedule} addressTextBox={addressTextBox}/>
                 <ReadButton get={get} set={set} setLoadingParent={setLoading}/>
@@ -57,9 +57,9 @@ export default function CurrentConfig({get, set}) {
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
                 <Mode mode={mode} setMode={setMode}/>
                 <Profile setLoadingParent={setLoading} get={get} set={set} />
+                {/* {new Date(currentTime*1000).toLocaleString()} */}
             </div>
-                 {/* {new Date(currentTime*1000).toLocaleString()} */}
-        </>     
+             
     );
     
 }

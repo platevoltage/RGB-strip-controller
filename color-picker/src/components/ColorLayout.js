@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { RGBToHSL, HSLtoRGB } from '../utils/conversion';
+import { HSLtoRGB } from '../utils/conversion';
 import Tile from './Tile';
 import Divider from './Divider';
 
@@ -177,6 +177,7 @@ export default function ColorLayout({get, set}) {
     }, [undoArray, mode]);
     useEffect(()=>{
         setUndoArray([...tempArray]);
+        console.log(profile);
         scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
         setScheduleColors([...scheduleColors]);
         // eslint-disable-next-line react-hooks/exhaustive-deps

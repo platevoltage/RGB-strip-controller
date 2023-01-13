@@ -4,6 +4,7 @@ export default function Profile({setLoadingParent, get, set}) {
     const { setProfile, setError } = set;
     const handleSubmit = async (e) => {
         setProfile(e.target.value);
+        console.log(e.target.value);
         // setLoading(true);
         setLoadingParent(true);
         setError(false);

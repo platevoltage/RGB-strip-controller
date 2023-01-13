@@ -60,14 +60,14 @@ static uint8_t activeGroups = 0;
 
 void getCurrentConfig() {
   uint8_t profileArg = server.arg(0).toInt();
-  // Serial.print("args - ");
-  // Serial.println(server.arg(0));
+  Serial.print("args - ");
+  Serial.println(server.arg(0));
   sendHeaders();
   uint32_t currentData[stripLength] = {};
 
   //profile
-  profile = readCurrentProfileFromEEPROM();
-  if (!profileArg) profileArg = profile;
+  // profile = readCurrentProfileFromEEPROM();
+  // if (!profileArg) profileArg = profile;
 
 
   String pixelData = readPixelsFromEEPROM(profileArg);
@@ -109,7 +109,7 @@ void getCurrentConfig() {
     else groups[i][1] = stripLength;
   }
 
-  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profile, 3, schedule);
+  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profileArg, 3, schedule);
   if (millis() > 10000) epoch = getTime();
   server.send(200, "text/json", message);
 
