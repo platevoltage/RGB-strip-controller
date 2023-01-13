@@ -146,7 +146,9 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
                 
                 {/* {Math.floor(_timePlacement)%12 > 1 ? "AM" : "PM"} */}
             </div> :
-            <>{off && <div style={{writingMode: "vertical-rl", textOrientation: "upright"}}>OFF</div>}</>
+            <>
+                {off && <div style={{writingMode: "vertical-rl", textOrientation: "upright"}}>OFF</div>}
+            </>
             }
   
 

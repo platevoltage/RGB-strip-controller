@@ -72,11 +72,17 @@ export const getData = async (_profile, get, set) => {
             const colorObject = { w:(i >> 24)& 0xFF, r:(i >> 16)& 0xFF, g:(i >> 8)& 0xFF, b:(i >> 0)& 0xFF };
             colorArray.push(colorObject);
         }
+        let scheduleArray = [];
+        for (let i of result.schedule) {
+            scheduleArray.push(i);
+        }
+        set.setSchedule([...scheduleArray]);
 
         set.setDividerLocations(result.dividers);
         set.setEffectSpeedTextBox(result.effectSpeed);
         set.setLengthTextBox(colorArray.length);
         set.setCurrentTime(result.time);
+        // set.setSchedule([...result.schedule]);
         // setProfile(+result.profile);
         set.setColorData(colorArray);
         set.setColorDataUnsaved([...colorArray, ...get.noConnectionArray]);

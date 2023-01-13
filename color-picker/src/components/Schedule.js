@@ -17,7 +17,7 @@ export default function Schedule({schedule, setSchedule, colors}) {
     return (
         <div style={style} ref={selfRef}>
             <div ref={timelineRef} style={{position: 'absolute', right: "30px", top: "40%", width: "calc(100% - 250px)", height: "20px"}}>
-                <ScheduleTimeline />{schedule}
+                <ScheduleTimeline />
             </div>
 
             {/* { schedule.map((_, index) => (
