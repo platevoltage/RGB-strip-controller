@@ -8,8 +8,8 @@
 #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
-#define OVERRIDE_BONJOUR 1
-#define BONJOURNAME "test"
+// #define OVERRIDE_BONJOUR 1
+// #define BONJOURNAME "lamp"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13

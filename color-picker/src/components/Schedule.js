@@ -9,7 +9,7 @@ const style = {
     height: "100px"
 }
 
-export default function Schedule({schedule, setSchedule, colors}) {
+export default function Schedule({schedule, setSchedule, colors, currentTime}) {
     const selfRef = useRef(null);
     const timelineRef = useRef(null);
     const [onTop, setOnTop] = useState(0);
@@ -17,7 +17,7 @@ export default function Schedule({schedule, setSchedule, colors}) {
     return (
         <div style={style} ref={selfRef}>
             <div ref={timelineRef} style={{position: 'absolute', right: "30px", top: "40%", width: "calc(100% - 250px)", height: "20px"}}>
-                <ScheduleTimeline />
+                <ScheduleTimeline currentTime={currentTime}/>
             </div>
 
             {/* { schedule.map((_, index) => (

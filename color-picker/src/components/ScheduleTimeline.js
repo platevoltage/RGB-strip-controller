@@ -1,6 +1,6 @@
 
 
-export default function ScheduleTimeline() {
+export default function ScheduleTimeline({currentTime}) {
     const style = {
         // position: 'absolute',
         display: 'flex',
@@ -38,8 +38,11 @@ export default function ScheduleTimeline() {
   
 
     }
+    const hour = new Date(currentTime*1000).getHours();
+    // const hour = 10;
     return (
         <div style={style}>
+        <div style={{...hourStyle, position: "absolute", backgroundColor: "#aa0000", top: "-170%", width: "6%", left: `${hour*4.35-4}%`}}>Time</div>
         {[...Array(24)].map((_,index) => (
 
             <div style={hourStyle} key={index}>

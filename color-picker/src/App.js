@@ -98,7 +98,7 @@ function App() {
 
       <ColorLayout set={globalSetters} get={globalGetters}/>
 
-      <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors}/>
+      <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors} currentTime={currentTime}/>
       <CurrentConfig set={globalSetters} get={globalGetters}/>
  
      
