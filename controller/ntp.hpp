@@ -47,7 +47,7 @@ uint32_t getTime() {
 
   sendNTPpacket(timeServerIP);  // send an NTP packet to a time server
   // wait to see if a reply is available
-  delay(500);
+  delay(1000);
 
   int cb = udp.parsePacket();
   if (!cb) {
@@ -154,7 +154,7 @@ uint8_t determineProfileUsed() {
 }
 
 unsigned long clockTickPreviousMillis = 0;
-void clockTick(void(*updateConfig)()) {
+void clockTick(void(*activateProfile)()) {
     unsigned long currentMillis = millis();
     if (currentMillis - clockTickPreviousMillis >= 1000) {
       clockTickPreviousMillis = currentMillis;
@@ -162,7 +162,7 @@ void clockTick(void(*updateConfig)()) {
         uint8_t checkIfProfileChange = determineProfileUsed();
         if (profile != checkIfProfileChange) {
           profile = checkIfProfileChange;
-          (*updateConfig)();
+          (*activateProfile)();
         }
         Serial.print("profile - ");
         Serial.println(profile);

@@ -97,9 +97,9 @@ function App() {
 
       <ColorLayout set={globalSetters} get={globalGetters}/>
 
+      <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors}/>
       <CurrentConfig set={globalSetters} get={globalGetters}/>
  
-      <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors}/>
      
     </div>
   );

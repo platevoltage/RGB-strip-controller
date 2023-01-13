@@ -110,17 +110,17 @@ void getCurrentConfig() {
   }
 
   String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profileArg, 3, schedule);
-  if (millis() > 10000) epoch = getTime();
+  if (millis() > 30000) epoch = getTime();
   server.send(200, "text/json", message);
 
 }
 
 
 void updateConfig() {
-  DynamicJsonDocument jsonBuffer(JSON_BUFFER_SIZE);
-  
-  DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   sendHeaders();
+
+  DynamicJsonDocument jsonBuffer(JSON_BUFFER_SIZE);
+  DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   Serial.println(server.arg("plain"));
   if (error) {
     server.send(200, "text/json", F("{success:false}"));
@@ -151,23 +151,23 @@ void updateConfig() {
       dividers[i] = jsonBuffer["dividers"][i];
     }
     
-    uint32_t currentData[stripLength];
+    uint32_t pixelData[stripLength];
 
-    String pixelData = readPixelsFromEEPROM(profile);
-    for (uint16_t i = 0; i < stripLength; i++) {
-      uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
-      currentData[i] = singlePixel;
-    }
+    // String pixelString = readPixelsFromEEPROM(profile);
+    // for (uint16_t i = 0; i < stripLength; i++) {
+    //   uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
+    //   pixelData[i] = singlePixel;
+    // }
 
     for (uint16_t i = 0; i < stripLength; i++) {
-      currentData[i] = jsonBuffer["color"][i];
-      pixels.setPixelColor(i, colorMod(currentData[i]));
+      pixelData[i] = jsonBuffer["color"][i];
+      // pixels.setPixelColor(i, colorMod(pixelData[i]));
     }
-    pixels.show();
+    // pixels.show();
 
     writeDividersToEEPROM(dividers, dividersLength);
     writeScheduleToEEPROM(schedule, scheduleLength);
-    writePixelsToEEPROM(currentData, stripLength, _profile);
+    writePixelsToEEPROM(pixelData, stripLength, _profile);
     writeEffectSpeedToEEPROM(effectSpeed, _profile);
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
@@ -178,13 +178,26 @@ void updateConfig() {
   jsonBuffer.clear();
 }
 
+void activateProfile() {
+    uint32_t pixelData[stripLength];
+
+    String pixelString = readPixelsFromEEPROM(profile);
+    for (uint16_t i = 0; i < stripLength; i++) {
+      uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
+      pixelData[i] = singlePixel;
+      pixels.setPixelColor(i, colorMod(pixelData[i]));
+    }
+
+    pixels.show();
+}
+
 void setStripLength(uint16_t newStripLength) {
   stripLength = newStripLength;
   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
   pixels.updateLength(stripLength);
 }
 
-void setPixel(uint16_t position, uint32_t color, boolean show) {
+void setPixel(uint16_t position, uint32_t color, bool show) {
   pixels.setPixelColor(position, color);
   if (show) pixels.show();
 }
@@ -248,7 +261,7 @@ void loop(void) {
   webClientTimer(10);
   NTPTimer();
   if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
-  clockTick(updateConfig);
+  clockTick(activateProfile);
 
   // Serial.print(getTimeDecimal());
   // Serial.print("----");
