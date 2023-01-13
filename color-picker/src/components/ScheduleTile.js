@@ -27,6 +27,27 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     
     }
 
+    useEffect(() => {
+        let adjustedTime = schedule[index]-timeOffset;
+
+        if (adjustedTime < 0) adjustedTime +=24;
+        if (adjustedTime >= 24) adjustedTime -=24;
+        
+
+        console.log( schedule[index] - timeOffset );
+
+        if (schedule[index] !== 0 && schedule[index] !== undefined) {
+            if (schedule[index] - timeOffset === 0) {
+                setX( ((timeline.x - tile.width*2) + timeline.width));
+            }
+            else {
+                setX( ((timeline.x - tile.width*2) + timeline.width) - timeline.width*((24 -  adjustedTime )/24) );
+            }
+            setY(20);
+        }
+
+    }, [schedule])
+
     let minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
     const timeOffset = (new Date().getTimezoneOffset()/60);
     const gmtTime = (timePlacement + timeOffset) - Math.floor((timePlacement + timeOffset)/24)*24;
