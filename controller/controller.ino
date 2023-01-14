@@ -124,13 +124,18 @@ void activateProfile() {
     uint32_t pixelData[stripLength];
     pauseEffects = true;
     String pixelString = readPixelsFromEEPROM(profile);
+      Serial.print(".");
+
     for (uint16_t i = 0; i < stripLength; i++) {
       uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
       pixelData[i] = singlePixel;
       pixels.setPixelColor(i, colorMod(pixelData[i]));
     }
-
     pixels.show();
+
+
+    
+
     pauseEffects = false;
 }
 

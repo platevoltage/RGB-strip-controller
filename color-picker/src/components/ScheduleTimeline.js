@@ -15,7 +15,7 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
         // top: "40%"
     }
     const hourWidth = 2.4;
-    const hourMargin = .97;
+    const hourMargin = .88;
     const hourStyle = {
         color: "#ffffff",
         position: "relative",
@@ -90,7 +90,7 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
                 </div>
 
             ))}
-            <div style={{position: "absolute", bottom: "-200%", left: "3%", color: "#999999"}}>
+            <div style={{position: "absolute", bottom: "-200%", left: "3%", color: "#999999", fontSize: ".8em"}}>
                 {new Date(currentTime*1000).toString()}
             </div>
         </div>

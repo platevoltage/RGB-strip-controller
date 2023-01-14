@@ -147,6 +147,10 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     },[mouseClick]);
 
     let _timePlacement = timePlacement;
+    if (minutes === 60) {
+        minutes = 0;
+        _timePlacement++;
+    }
     if (timePlacement<=0 && timePlacement>-1) {
         _timePlacement = 0;
         minutes = 1;
