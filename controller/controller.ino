@@ -56,7 +56,7 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
-
+bool pauseEffects = false;
 
 
 void getCurrentConfig() {
@@ -64,6 +64,9 @@ void getCurrentConfig() {
   Serial.print("args - ");
   Serial.println(server.arg(0));
   sendHeaders();
+  stripLength = readStripLengthFromEEPROM();
+  Serial.print("StripLENGTH - ");
+  Serial.println(stripLength);
   uint32_t currentData[stripLength] = {};
 
   //profile
@@ -117,6 +120,19 @@ void getCurrentConfig() {
 
 }
 
+void activateProfile() {
+    uint32_t pixelData[stripLength];
+    pauseEffects = true;
+    String pixelString = readPixelsFromEEPROM(profile);
+    for (uint16_t i = 0; i < stripLength; i++) {
+      uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
+      pixelData[i] = singlePixel;
+      pixels.setPixelColor(i, colorMod(pixelData[i]));
+    }
+
+    pixels.show();
+    pauseEffects = false;
+}
 
 void updateConfig() {
   sendHeaders();
@@ -155,17 +171,11 @@ void updateConfig() {
     
     uint32_t pixelData[stripLength];
 
-    // String pixelString = readPixelsFromEEPROM(profile);
-    // for (uint16_t i = 0; i < stripLength; i++) {
-    //   uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
-    //   pixelData[i] = singlePixel;
-    // }
-
     for (uint16_t i = 0; i < stripLength; i++) {
       pixelData[i] = jsonBuffer["color"][i];
-      // pixels.setPixelColor(i, colorMod(pixelData[i]));
     }
-    // pixels.show();
+
+    activateProfile();
 
     writeDividersToEEPROM(dividers, dividersLength);
     writeScheduleToEEPROM(schedule, scheduleLength);
@@ -180,18 +190,6 @@ void updateConfig() {
   jsonBuffer.clear();
 }
 
-void activateProfile() {
-    uint32_t pixelData[stripLength];
-
-    String pixelString = readPixelsFromEEPROM(profile);
-    for (uint16_t i = 0; i < stripLength; i++) {
-      uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
-      pixelData[i] = singlePixel;
-      pixels.setPixelColor(i, colorMod(pixelData[i]));
-    }
-
-    pixels.show();
-}
 
 void setStripLength(uint16_t newStripLength) {
   stripLength = newStripLength;
@@ -264,7 +262,7 @@ void setup(void) {
 void loop(void) {
   webClientTimer(10);
   NTPTimer();
-  if (effectSpeed > 0 && millis() > 10000 && !server.client()) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
+  if (effectSpeed > 0 && millis() > 10000 && !pauseEffects) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
   clockTick(activateProfile);
 
   // Serial.print(getTimeDecimal());

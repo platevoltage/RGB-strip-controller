@@ -1,6 +1,6 @@
 #include <ArduinoJson.h>
 
-static uint16_t stripLength = 32;
+static uint16_t stripLength = 0;
 static uint16_t effectSpeed = 0;
 
 

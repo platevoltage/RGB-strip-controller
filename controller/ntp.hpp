@@ -9,6 +9,7 @@ static float schedule[10];
 uint8_t scheduleLength = 4;
 static uint8_t profile = 0;
 
+
 byte packetBuffer[NTP_PACKET_SIZE]; 
 
 void startNTP() {
@@ -119,26 +120,26 @@ void NTPTimer() {
 
 uint8_t determineProfileUsed() {
   float timeDecimal = getTimeDecimal();
-  Serial.print(timeDecimal);
-  Serial.print("----");
+  // Serial.print(timeDecimal);
+  // Serial.print("----");
 
   // int scheduleSize = 3;
   int _profile = 0;
   int biggest = 0;
   float temp = schedule[0];
-  Serial.print(schedule[0]);
+  // Serial.print(schedule[0]);
   for (int i=1; i < 4; i++) {
-          Serial.print(",");
-      Serial.print(schedule[i]);
+      //     Serial.print(",");
+      // Serial.print(schedule[i]);
     if (schedule[i] > temp) {
       temp = schedule[i];
       biggest = i;
     }
   }
-  Serial.println();
-  Serial.print("biggest - ");
+  // Serial.println();
+  // Serial.print("biggest - ");
   _profile = biggest;
-  Serial.println(temp);
+  // Serial.println(temp);
   temp = 0;
   for (int i=0; i < scheduleLength; i++) {
     bool isOn = ( schedule[i] < timeDecimal && schedule[i] > temp );
@@ -146,11 +147,11 @@ uint8_t determineProfileUsed() {
       _profile = i;
       temp = schedule[i];
     }
-    Serial.print(isOn);
-    Serial.print(",");
+    // Serial.print(isOn);
+    // Serial.print(",");
   }
-  Serial.println();
-  Serial.println(_profile);
+  // Serial.println();
+  // Serial.println(_profile);
   return _profile;
 }
 
