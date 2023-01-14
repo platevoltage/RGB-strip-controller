@@ -10,12 +10,12 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
         height: "100%",
         backgroundColor: "#888888",
         borderRadius: "3px",
-        opacity: "0.4"
+        opacity: "0.4",
         // right: "20px",
         // top: "40%"
     }
     const hourWidth = 2.4;
-    const hourMargin = .88;
+    const hourMargin = 1.76;
     const hourStyle = {
         color: "#ffffff",
         position: "relative",
@@ -24,8 +24,8 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
         minWidth: `${hourWidth}%`,
         height: "140%",
         top: "-20%",
-        left: "-2%",
-        margin: `0 ${hourMargin}% 0 ${hourMargin}%`,
+        left: "-1%",
+        margin: `0 ${hourMargin}%  0 0 `,
         textAlign: "center",
         borderRadius: "3px"
     }
@@ -54,7 +54,7 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
         backgroundColor: "#aa0000", 
         top: "-200%", 
         width: "8%", 
-        left: `${(hour+hourDecimal)*(hourWidth+hourMargin*2)-5}%`,
+        left: `${(hour+hourDecimal)*(hourWidth+hourMargin)-3.8}%`,
     }
     const downArrowStyle = {
         position: "absolute", 
