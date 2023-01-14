@@ -57,7 +57,6 @@ export default function CurrentConfig({get, set}) {
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
                 <Mode mode={mode} setMode={setMode}/>
                 <Profile setLoadingParent={setLoading} get={get} set={set} />
-                {new Date(currentTime*1000).toLocaleString()}
             </div>
              
     );
