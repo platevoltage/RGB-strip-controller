@@ -61,13 +61,15 @@ bool pauseEffects = false;
 
 void getCurrentConfig() {
   uint8_t profileArg = server.arg(0).toInt();
+  bool colorsOnly = server.arg(1).toInt();
   Serial.print("args - ");
-  Serial.println(server.arg(0));
+  Serial.println(server.arg(1));
   sendHeaders();
-  stripLength = readStripLengthFromEEPROM();
+  if (!colorsOnly) stripLength = readStripLengthFromEEPROM();
   Serial.print("StripLENGTH - ");
   Serial.println(stripLength);
   uint32_t currentData[stripLength] = {};
+  uint16_t dividers[4];
 
   //profile
   // profile = readCurrentProfileFromEEPROM();
@@ -82,7 +84,7 @@ void getCurrentConfig() {
     delay(10);
     // pixels.show();
   }
-
+  if (!colorsOnly) {
   bonjourName = readBonjourNameFromEEPROM();
 
   String scheduleString = readScheduleFromEEPROM();
@@ -90,12 +92,9 @@ void getCurrentConfig() {
   for (int i=0; i < scheduleLength; i++) {
     schedule[i] = getValue(scheduleString, '\n', i).toFloat();
   }
-
-
   //dividers and groups
   effectSpeed = readEffectSpeedFromEEPROM(profileArg);
 
-  uint16_t dividers[4];
   String dividerString = readDividersFromEEPROM();
   for (int i=0; i < 4; i++) {
     dividers[i] = getValue(dividerString, '\n', i).toInt();
@@ -112,6 +111,7 @@ void getCurrentConfig() {
     else groups[i][0] = dividers[i-1]+1;
     if (i < numDividers) groups[i][1] = dividers[i];
     else groups[i][1] = stripLength;
+  }
   }
 
   String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profileArg, scheduleLength, schedule);

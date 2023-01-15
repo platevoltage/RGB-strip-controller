@@ -34,9 +34,14 @@ export default function CurrentConfig({get, set}) {
 
     useEffect(()=>{
         getData(profile, get, set);
-        for(let i=0; i<3; i++) {
-            if (profile !== i) getData(i, get, set, true);
-        }
+        setTimeout(() => {
+            for(let i=0; i<3; i++) {
+                if (profile !== i) {
+                    getData(i, get, set, true);
+                    console.log(profile, i);
+                }
+            }
+        }, 5000)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

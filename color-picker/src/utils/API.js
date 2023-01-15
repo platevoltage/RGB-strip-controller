@@ -1,5 +1,5 @@
-export const getCurrentConfig = (address, profile) => {
-    return fetch(`${address}/current?profile=${profile}`, {
+export const getCurrentConfig = (address, profile, colorsOnly) => {
+    return fetch(`${address}/current?profile=${profile}&colorsonly=${colorsOnly ? 1:0}`, {
         headers: {
             'Content-Type': 'application/json',
         }
@@ -64,7 +64,7 @@ export const getData = async (_profile, get, set, skipSetters) => {
     try {
         window.localStorage.setItem("ip", get.addressTextBox);
         console.log(_profile);
-        const response = await getCurrentConfig(get.addressTextBox, _profile);
+        const response = await getCurrentConfig(get.addressTextBox, _profile, skipSetters);
         const result = await response.json();
         console.log(result);
         let colorArray = [];
