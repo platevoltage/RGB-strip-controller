@@ -142,7 +142,7 @@ uint8_t determineProfileUsed() {
   // Serial.println(temp);
   temp = 0;
   for (int i=0; i < scheduleLength; i++) {
-    bool isOn = ( schedule[i] < timeDecimal && schedule[i] > temp );
+    bool isOn = ( schedule[i] <= timeDecimal && schedule[i] > temp );
     if (isOn) {
       _profile = i;
       temp = schedule[i];
