@@ -177,11 +177,11 @@ export default function ColorLayout({get, set}) {
     }, [undoArray, mode]);
     useEffect(()=>{
         setUndoArray([...tempArray]);
-        console.log(profile);
+        console.log(Math.round(colorData.length/2));
         scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[Math.round(colorData.length/2)]},{...colorDataUnsaved[colorData.length-1]}];
         setScheduleColors([...scheduleColors]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[tempArray]);
+    },[tempArray, colorDataUnsaved]);
 
   return (
     <div style={{position: "relative"}} ref={tilesRef}>
