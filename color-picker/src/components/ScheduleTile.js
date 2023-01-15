@@ -6,6 +6,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     const [x, setX] = useState(xOrigin);
     const [y, setY] = useState(yOrigin);
     let [timePlacement, setTimePlacement] = useState(0);
+    const [displayedTime, setDisplayedTime] = useState(0);
 
     const style = {
         textAlign: 'center',
@@ -34,7 +35,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         if (adjustedTime < 0) adjustedTime +=24;
         if (adjustedTime >= 24) adjustedTime -=24;
         
-        if (schedule[index] !== 0 && schedule[index] !== undefined) {
+        if (schedule[index] !== 0 && schedule[index] !== undefined && !mouseClick) {
             if (schedule[index] - timeOffset === 0) {
                 setX( ((timeline.x - tile.width*2) + timeline.width));
                 setTimePlacement(0);
@@ -46,7 +47,11 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             setY(20);
         }
         
-    }, [schedule, currentTime])
+    }, [schedule]);
+
+    useEffect(() => {
+        // setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
+    }, [timelineRef, x, y])
 
     let minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
     const timeOffset = (new Date().getTimezoneOffset()/60);
@@ -70,10 +75,6 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         height: timelineRef.current?.getBoundingClientRect().height
     };
 
-    useEffect(() => {
-        setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
-    },[timelineRef, x, y])
-
     // console.log(ref.current);
     function snap() {
         tile.x = tileRef.current?.getBoundingClientRect().x;
@@ -87,13 +88,13 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             setY(20);
             if (tile.x - timeline.x + tile.width/2 >= timeline.width) setX(timeline.x - tile.width*2 + timeline.width);
         } 
-        else {
+        else if(tile.x !== undefined) {
             setX(xOrigin);
             setY(yOrigin);
         }
     }
     function handleMouseDown(e) {
-        snap();
+        // snap();
         setMouseClick(true);
         setOnTop(index);
     }
@@ -114,9 +115,6 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             if (tile.x - timeline.x + tile.width/2 > -40 && tile.x - timeline.x + tile.width/2 < timeline.width+40) {
                 setY(20);
             }
-
-            
-            // console.log(tile.x - timeline.x + tile.width/2)
         }
     }
 
