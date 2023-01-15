@@ -27,10 +27,10 @@ export default function Schedule({schedule, setSchedule, colors, currentTime}) {
                 </div>
             ))
             } */}
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={10} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={0} colors={colors[0]} setOnTop={setOnTop} onTop={onTop}/>
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={60} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={1} colors={colors[1]} setOnTop={setOnTop} onTop={onTop}/>
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={110} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={2} colors={colors[2]} setOnTop={setOnTop} onTop={onTop}/>
-            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={160} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={3} colors={colors[3]} setOnTop={setOnTop} onTop={onTop} off={true}/>
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={10} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={0} colors={colors[0]} setOnTop={setOnTop} onTop={onTop} currentTime={currentTime} />
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={60} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={1} colors={colors[1]} setOnTop={setOnTop} onTop={onTop} currentTime={currentTime}/>
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={110} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={2} colors={colors[2]} setOnTop={setOnTop} onTop={onTop} currentTime={currentTime}/>
+            <ScheduleTile parentRef={selfRef} timelineRef={timelineRef} xOrigin={160} yOrigin={30} schedule={schedule} setSchedule={setSchedule} index={3} colors={colors[3]} setOnTop={setOnTop} onTop={onTop} off={true} currentTime={currentTime}/>
         </div>
     )
 }

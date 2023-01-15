@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 
-export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors, setOnTop, onTop, off}) {
+export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors, setOnTop, onTop, off, currentTime}) {
     const tileRef = useRef();
     const [mouseClick, setMouseClick] = useState(false);
     const [x, setX] = useState(xOrigin);
@@ -72,7 +72,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     useEffect(() => {
         setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
-    },[x,y, timelineRef])
+    },[timelineRef, x, y, timePlacement])
 
     // console.log(ref.current);
     function snap() {
