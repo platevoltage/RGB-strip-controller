@@ -10,7 +10,8 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     const style = {
         textAlign: 'center',
         position: 'absolute',
-        backgroundImage: `linear-gradient(90deg, rgb(${colors[0].r}, ${colors[0].g}, ${colors[0].b}), rgb(${colors[1].r}, ${colors[1].g}, ${colors[1].b}), rgb(${colors[2].r}, ${colors[2].g}, ${colors[2].b})`,
+        backgroundColor: "#000000",
+        // backgroundImage: `linear-gradient(90deg, rgb(${colors[0].r}, ${colors[0].g}, ${colors[0].b}), rgb(${colors[1].r}, ${colors[1].g}, ${colors[1].b}), rgb(${colors[2].r}, ${colors[2].g}, ${colors[2].b})`,
         borderRadius: "4px",
         borderStyle: "solid",
         borderWidth: "1px",
@@ -23,8 +24,18 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         left: `${x}px`,
         top: `${y}px`,
         zIndex: onTop===index ? 10:0,
-        color: (colors[0].r + colors[0].g + colors[0].b < 300) ? "#ffffff" : "#000000" ,
+        // color: (colors[0].r + colors[0].g + colors[0].b < 300) ? "#ffffff" : "#000000" ,
+        color: "#ffffff"
     
+    }
+    const gradientStyle = {
+        // backgroundColor: "#444444",
+        position: "absolute",
+        backgroundImage: `linear-gradient(90deg, rgb(${colors[0].r}, ${colors[0].g}, ${colors[0].b}), rgb(${colors[1].r}, ${colors[1].g}, ${colors[1].b}), rgb(${colors[2].r}, ${colors[2].g}, ${colors[2].b})`,
+        height: "10px",
+        width: "100%",
+        bottom: 0
+
     }
 
     useEffect(() => {
@@ -173,7 +184,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
                 {/* {Math.floor(_timePlacement)%12 > 1 ? "AM" : "PM"} */}
             </div> }
   
-
+            <div style={gradientStyle}></div>
 
         </div>
     )
