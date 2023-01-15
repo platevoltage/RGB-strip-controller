@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 
-export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors, setOnTop, onTop, off, currentTime}) {
+export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, schedule, setSchedule, index, colors, setOnTop, onTop, off, currentTime, windowWidth}) {
     const tileRef = useRef();
     const [mouseClick, setMouseClick] = useState(false);
     const [x, setX] = useState(xOrigin);
@@ -46,7 +46,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             setY(20);
         }
         
-    }, [schedule])
+    }, [schedule, currentTime])
 
     let minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
     const timeOffset = (new Date().getTimezoneOffset()/60);
@@ -72,7 +72,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     useEffect(() => {
         setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
-    },[timelineRef, x, y, timePlacement])
+    },[timelineRef, x, y])
 
     // console.log(ref.current);
     function snap() {

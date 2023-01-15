@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CurrentConfig from './components/CurrentConfig';
 import ColorPicker from './components/ColorPicker';
 import Schedule from './components/Schedule';
@@ -28,6 +28,7 @@ function App() {
   const [dividerLocations, setDividerLocations] = useState([]);
   const [effectSpeedTextBox, setEffectSpeedTextBox] = useState("0");
   const [currentTime, setCurrentTime] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(0);
 
   const [colors, setColors] = useState(
     [
@@ -56,7 +57,8 @@ function App() {
     setEffectSpeedTextBox,
     setScheduleColors: setColors,
     setUndoArray,
-    setCurrentTime
+    setCurrentTime,
+    setWindowWidth
   }
   const globalGetters = {
     pickerColor,
@@ -77,7 +79,8 @@ function App() {
     scheduleColors: colors,
     undoArray,
     currentTime,
-    noConnectionArray
+    noConnectionArray,
+    windowWidth
   }
 
   const style = {
@@ -90,7 +93,16 @@ function App() {
     borderColor: "#ffffff33",
     boxShadow: "2px 2px 2px #ffffff33"
   }
-
+  function handleResize(e) {
+      console.log(windowWidth);
+      setWindowWidth(e.target.window.innerWidth)
+  }
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    }
+  }, []);
   return (
     <div className="App" style={style}>
       
@@ -98,8 +110,8 @@ function App() {
 
       <ColorLayout set={globalSetters} get={globalGetters}/>
 
-      <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors} currentTime={currentTime}/>
-      
+      <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors} currentTime={currentTime} windowWidth={windowWidth}/>
+
       <CurrentConfig set={globalSetters} get={globalGetters}/>
  
      
