@@ -88,7 +88,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             setY(20);
             if (tile.x - timeline.x + tile.width/2 >= timeline.width) setX(timeline.x - tile.width*2 + timeline.width);
         } 
-        else if(tile.x !== undefined) {
+        else if(tile.x - timeline.x + tile.width/2 <= -40) {
             setX(xOrigin);
             setY(yOrigin);
         }
