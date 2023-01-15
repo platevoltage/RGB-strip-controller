@@ -178,7 +178,7 @@ export default function ColorLayout({get, set}) {
     useEffect(()=>{
         setUndoArray([...tempArray]);
         console.log(profile);
-        scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[colorData.length/2]},{...colorDataUnsaved[colorData.length-1]}];
+        scheduleColors[profile] = [{...colorDataUnsaved[0]},{...colorDataUnsaved[Math.round(colorData.length/2)]},{...colorDataUnsaved[colorData.length-1]}];
         setScheduleColors([...scheduleColors]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[tempArray]);

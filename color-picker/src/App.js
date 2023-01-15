@@ -30,7 +30,7 @@ function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
 
-  const [colors, setColors] = useState(
+  const [scheduleColors, setScheduleColors] = useState(
     [
       [{r:0, g:0, b:0},{r:0, g:0, b:0},{r:0, g:0, b:0}],
       [{r:0, g:0, b:0},{r:0, g:0, b:0},{r:0, g:0, b:0}],
@@ -55,7 +55,7 @@ function App() {
     setColorDataUnsaved,
     setDividerLocations,
     setEffectSpeedTextBox,
-    setScheduleColors: setColors,
+    setScheduleColors,
     setUndoArray,
     setCurrentTime,
     setWindowWidth
@@ -76,7 +76,7 @@ function App() {
     colorDataUnsaved,
     dividerLocations,
     effectSpeedTextBox,
-    scheduleColors: colors,
+    scheduleColors,
     undoArray,
     currentTime,
     noConnectionArray,
@@ -110,7 +110,7 @@ function App() {
 
       <ColorLayout set={globalSetters} get={globalGetters}/>
 
-      <Schedule schedule={schedule} setSchedule={setSchedule} colors={colors} currentTime={currentTime} windowWidth={windowWidth}/>
+      <Schedule schedule={schedule} setSchedule={setSchedule} colors={scheduleColors} currentTime={currentTime} windowWidth={windowWidth}/>
 
       <CurrentConfig set={globalSetters} get={globalGetters}/>
  

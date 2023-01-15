@@ -6,7 +6,6 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     const [x, setX] = useState(xOrigin);
     const [y, setY] = useState(yOrigin);
     let [timePlacement, setTimePlacement] = useState(0);
-    const [displayedTime, setDisplayedTime] = useState(0);
 
     const style = {
         textAlign: 'center',
@@ -50,6 +49,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     }, [schedule, windowWidth]);
 
     useEffect(() => {
+        console.log(colors);
         if (mouseClick) setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
     }, [ x, y])
 
