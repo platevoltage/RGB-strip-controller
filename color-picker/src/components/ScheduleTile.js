@@ -133,12 +133,12 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         const _tileRef = tileRef.current;
         const _parentRef = parentRef.current;
         _tileRef.addEventListener('mousedown', handleMouseDown);
-        _tileRef.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('mouseup', handleMouseUp);
         _tileRef.addEventListener('mouseout', handleMouseOut);
         _parentRef.addEventListener('mousemove', handleMouseMove);
         return () => {
             _tileRef.removeEventListener('mousedown', handleMouseDown);
-            _tileRef.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('mouseup', handleMouseUp);
             _tileRef.removeEventListener('mouseout', handleMouseOut);
             _parentRef.removeEventListener('mousemove', handleMouseMove);
         };
