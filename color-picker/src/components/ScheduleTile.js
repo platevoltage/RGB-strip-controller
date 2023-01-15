@@ -46,12 +46,12 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
             }
             setY(20);
         }
-        
-    }, [schedule]);
+        console.log(schedule);
+    }, [schedule, windowWidth]);
 
     useEffect(() => {
-        // setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
-    }, [timelineRef, x, y])
+        if (mouseClick) setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
+    }, [ x, y])
 
     let minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
     const timeOffset = (new Date().getTimezoneOffset()/60);
@@ -126,7 +126,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         else if (timePlacement>24) schedule[index] = timeOffset;
         else schedule[index] = +gmtTime.toFixed(2);
         setSchedule(schedule);
-        console.log(schedule);
+        // console.log(schedule);
 
         const _tileRef = tileRef.current;
         const _parentRef = parentRef.current;
