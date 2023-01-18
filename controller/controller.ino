@@ -59,31 +59,29 @@ static uint8_t activeGroups = 0;
 bool pauseEffects = false;
 
 
+void getPreferences() {
+  sendHeaders();
+  server.send(200, "text/json", F("{pin:5, bitOrder: GRBW}"));
+}
+
 void getCurrentConfig() {
+  sendHeaders();
+
   uint8_t profileArg = server.arg(0).toInt();
   bool colorsOnly = server.arg(1).toInt();
-  Serial.print("args - ");
-  Serial.println(server.arg(1));
-  sendHeaders();
+
   if (!colorsOnly) stripLength = readStripLengthFromEEPROM();
-  Serial.print("StripLENGTH - ");
-  Serial.println(stripLength);
-  uint32_t currentData[stripLength] = {};
+
+  uint32_t pixelData[stripLength] = {};
   uint16_t dividers[4];
   uint16_t _effectSpeed;
-  //profile
-  // profile = readCurrentProfileFromEEPROM();
-  // if (!profileArg) profileArg = profile;
 
-
-  String pixelData = readPixelsFromEEPROM(profileArg);
+  String pixelString = readPixelsFromEEPROM(profileArg);
   for (uint16_t i = 0; i < stripLength; i++) {
-    uint32_t singlePixel = toInt32(getValue(pixelData, '\n', i));
-    currentData[i] = singlePixel;
-    // pixels.setPixelColor(i, colorMod(singlePixel));
-    delay(10);
-    // pixels.show();
+    uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
+    pixelData[i] = singlePixel;
   }
+
   if (!colorsOnly) {
     bonjourName = readBonjourNameFromEEPROM();
 
@@ -92,8 +90,9 @@ void getCurrentConfig() {
     for (int i=0; i < scheduleLength; i++) {
       schedule[i] = getValue(scheduleString, '\n', i).toFloat();
     }
-    //dividers and groups
     _effectSpeed = readEffectSpeedFromEEPROM(profileArg);
+
+    //dividers and groups
 
     String dividerString = readDividersFromEEPROM();
     for (int i=0; i < 4; i++) {
@@ -114,7 +113,7 @@ void getCurrentConfig() {
     }
   }
 
-  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profileArg, scheduleLength, schedule, _effectSpeed);
+  String message = jsonStringify(epoch, pixelData, sizeof(dividers)/2, dividers, profileArg, scheduleLength, schedule, _effectSpeed);
   if (millis() > 30000) epoch = getTime();
   server.send(200, "text/json", message);
 
@@ -133,9 +132,6 @@ void activateProfile() {
       pixels.setPixelColor(i, colorMod(pixelData[i]));
     }
     pixels.show();
-
-
-    
 
     pauseEffects = false;
 }
@@ -235,7 +231,7 @@ void setup(void) {
         return;
   }
 
-  serverStart(updateConfig, getCurrentConfig);
+  serverStart(updateConfig, getCurrentConfig, getPreferences);
   epoch = getTime();
   getCurrentConfig(); 
 

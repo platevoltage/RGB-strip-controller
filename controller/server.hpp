@@ -51,7 +51,7 @@ void handleNotFound() {
 }
 
 
-void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
+void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPreferences)()) {
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
     WiFi.mode(WIFI_STA);
@@ -112,6 +112,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)()) {
 
     server.on(F("/current"), *getCurrentConfig);
     server.on(F("/update"), *updateConfig);
+    server.on(F("/getprefs"), *getPreferences);
 
     server.onNotFound(handleNotFound);
     server.enableCORS(true);
