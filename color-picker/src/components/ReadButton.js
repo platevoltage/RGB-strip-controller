@@ -15,7 +15,8 @@ export default function ReadButton({get, set, setLoadingParent}) {
         borderWidth: "1px",
         borderColor: "#ffffff22",
         boxShadow: "2px 2px 2px #00000044",
-        width: "100px"
+        width: "100px",
+        fontSize: "1em"
     }
 
     const handleSubmit = async () => {
@@ -38,9 +39,9 @@ export default function ReadButton({get, set, setLoadingParent}) {
     return (
         <div style={{margin: "10px", display: "flex", justifyContent: "center", flexDirection: "column", textAlign: "center"}}>
             {loading ? 
-                <a href="#x" style={style}>Loading</a>
+                <button style={style}>Loading</button>
                 : 
-                <a href="#x" style={style} onClick={handleSubmit} >Read</a>
+                <button style={style} onClick={handleSubmit} >Read</button>
             } 
         </div>
     );

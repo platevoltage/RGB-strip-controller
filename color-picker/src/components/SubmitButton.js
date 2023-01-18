@@ -17,6 +17,7 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
         borderColor: "#ffffff22",
         boxShadow: "2px 2px 2px #00000044",
         width: "100px",
+        fontSize: "1em"
     }
 
     const handleSubmit = async () => {
@@ -63,11 +64,11 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
                 : 
                 <>
                     {!error ? 
-                        <a href="#x" style={style} onClick={handleSubmit} >
+                        <button style={style} onClick={handleSubmit} >
                             {saveError ? <>Save Failed</> : <>Sync</>}
-                        </a> 
+                        </button> 
                         : 
-                        <a href="#x" style={style}>Error</a>
+                        <button style={style}>Error</button>
                     }
                 </>
             }
