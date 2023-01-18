@@ -70,7 +70,7 @@ void getCurrentConfig() {
   Serial.println(stripLength);
   uint32_t currentData[stripLength] = {};
   uint16_t dividers[4];
-
+  uint16_t _effectSpeed;
   //profile
   // profile = readCurrentProfileFromEEPROM();
   // if (!profileArg) profileArg = profile;
@@ -85,36 +85,36 @@ void getCurrentConfig() {
     // pixels.show();
   }
   if (!colorsOnly) {
-  bonjourName = readBonjourNameFromEEPROM();
+    bonjourName = readBonjourNameFromEEPROM();
 
-  String scheduleString = readScheduleFromEEPROM();
-  Serial.println(scheduleString);
-  for (int i=0; i < scheduleLength; i++) {
-    schedule[i] = getValue(scheduleString, '\n', i).toFloat();
-  }
-  //dividers and groups
-  effectSpeed = readEffectSpeedFromEEPROM(profileArg);
+    String scheduleString = readScheduleFromEEPROM();
+    Serial.println(scheduleString);
+    for (int i=0; i < scheduleLength; i++) {
+      schedule[i] = getValue(scheduleString, '\n', i).toFloat();
+    }
+    //dividers and groups
+    _effectSpeed = readEffectSpeedFromEEPROM(profileArg);
 
-  String dividerString = readDividersFromEEPROM();
-  for (int i=0; i < 4; i++) {
-    dividers[i] = getValue(dividerString, '\n', i).toInt();
+    String dividerString = readDividersFromEEPROM();
+    for (int i=0; i < 4; i++) {
+      dividers[i] = getValue(dividerString, '\n', i).toInt();
+    }
+
+    uint8_t numDividers = 0;
+    for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
+      if (dividers[i] != 0) numDividers++;
+    }
+
+    activeGroups = numDividers+1;
+    for (uint8_t i=0; i<activeGroups; i++) {
+      if (i == 0) groups[i][0] = 1;
+      else groups[i][0] = dividers[i-1]+1;
+      if (i < numDividers) groups[i][1] = dividers[i];
+      else groups[i][1] = stripLength;
+    }
   }
 
-  uint8_t numDividers = 0;
-  for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
-    if (dividers[i] != 0) numDividers++;
-  }
-
-  activeGroups = numDividers+1;
-  for (uint8_t i=0; i<activeGroups; i++) {
-    if (i == 0) groups[i][0] = 1;
-    else groups[i][0] = dividers[i-1]+1;
-    if (i < numDividers) groups[i][1] = dividers[i];
-    else groups[i][1] = stripLength;
-  }
-  }
-
-  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profileArg, scheduleLength, schedule);
+  String message = jsonStringify(epoch, currentData, sizeof(dividers)/2, dividers, profileArg, scheduleLength, schedule, _effectSpeed);
   if (millis() > 30000) epoch = getTime();
   server.send(200, "text/json", message);
 
@@ -123,6 +123,7 @@ void getCurrentConfig() {
 void activateProfile() {
     uint32_t pixelData[stripLength];
     pauseEffects = true;
+    effectSpeed = readEffectSpeedFromEEPROM(profile);
     String pixelString = readPixelsFromEEPROM(profile);
       Serial.print(".");
 
@@ -155,7 +156,7 @@ void updateConfig() {
     const char *status = jsonBuffer["status"];
     uint16_t length = jsonBuffer["length"];
     stripLength = jsonBuffer["stripLength"];
-    effectSpeed = jsonBuffer["effectSpeed"];
+    uint16_t _effectSpeed = jsonBuffer["effectSpeed"];
     const uint8_t _profile = jsonBuffer["profile"];
     
     scheduleLength = jsonBuffer["schedule"].size();
@@ -185,7 +186,7 @@ void updateConfig() {
     writeDividersToEEPROM(dividers, dividersLength);
     writeScheduleToEEPROM(schedule, scheduleLength);
     writePixelsToEEPROM(pixelData, stripLength, _profile);
-    writeEffectSpeedToEEPROM(effectSpeed, _profile);
+    writeEffectSpeedToEEPROM(_effectSpeed, _profile);
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
 

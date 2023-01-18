@@ -15,7 +15,7 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
         // top: "40%"
     }
     const hourWidth = 2.4;
-    const hourMargin = 1.76;
+    const hourMargin = 1.77;
     const hourStyle = {
         color: "#ffffff",
         position: "relative",
