@@ -3,6 +3,7 @@ import CurrentConfig from './components/CurrentConfig';
 import ColorPicker from './components/ColorPicker';
 import Schedule from './components/Schedule';
 import ColorLayout from './components/ColorLayout';
+import Preferences from './components/Preferences';
 
 function App() {
 
@@ -105,6 +106,8 @@ function App() {
   }, []);
   return (
     <div className="App" style={style}>
+      
+      <Preferences />
       
       <ColorPicker setPickerColor={setPickerColor} setWhiteLevel={setWhiteLevel} pickerColor={pickerColor} setSaturation={setSaturation} saturation={saturation} whiteLevel={whiteLevel} mode={mode} />
 
