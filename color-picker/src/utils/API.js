@@ -6,6 +6,17 @@ export const getCurrentConfig = (address, profile, colorsOnly) => {
     });
 }
 
+export const getPreferences = async (address) => {
+    const response = await fetch(`${address}/getprefs`, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+    // console.log(address);
+    return response.json();
+
+}
+
 export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed, profile, schedule) => {
     console.log(schedule);
     const pixelsArray = [];
