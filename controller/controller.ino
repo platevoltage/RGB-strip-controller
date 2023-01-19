@@ -56,12 +56,13 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
-bool pauseEffects = false;
+static bool pauseEffects = false;
 
 
 void getPreferences() {
   sendHeaders();
-  server.send(200, "text/json", F("{pin:5, bitOrder: GRBW}"));
+  // server.send(200, "text/json", F("{success:false}"));
+  server.send(200, "text/json", F("{\"pin\":5, \"bitOrder\": \"GRBW\"}"));
 }
 
 void getCurrentConfig() {
@@ -231,18 +232,9 @@ void setup(void) {
         return;
   }
 
-  serverStart(updateConfig, getCurrentConfig, getPreferences);
   epoch = getTime();
   getCurrentConfig(); 
 
-#if OVERRIDE_BONJOUR
-    bonjourName = BONJOURNAME;
-    writeBonjourNameToEEPROM(BONJOURNAME);
-#else
-    bonjourName = readBonjourNameFromEEPROM();
-    Serial.print("BONJOUR TAKEN FROM MEMORY - ");
-    Serial.println(bonjourName);
-#endif
   
   
   startOTA(bonjourName.c_str());
@@ -256,6 +248,16 @@ void setup(void) {
   
   activateProfile();
   
+  serverStart(updateConfig, getCurrentConfig, getPreferences);
+
+  #if OVERRIDE_BONJOUR
+    bonjourName = BONJOURNAME;
+    writeBonjourNameToEEPROM(BONJOURNAME);
+  #else
+    bonjourName = readBonjourNameFromEEPROM();
+    Serial.print("BONJOUR TAKEN FROM MEMORY - ");
+    Serial.println(bonjourName);
+  #endif
   
 }
 

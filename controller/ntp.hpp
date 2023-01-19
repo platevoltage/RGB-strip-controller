@@ -6,7 +6,7 @@ WiFiUDP udp;
 
 static uint32_t epoch = 0;
 static float schedule[10];
-uint8_t scheduleLength = 4;
+static uint8_t scheduleLength = 4;
 static uint8_t profile = 0;
 
 

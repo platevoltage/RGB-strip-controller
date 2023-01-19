@@ -107,8 +107,8 @@ function App() {
   return (
     <div className="App" style={style}>
       
-      <Preferences />
-      
+      <Preferences set={globalSetters} get={globalGetters} />
+
       <ColorPicker setPickerColor={setPickerColor} setWhiteLevel={setWhiteLevel} pickerColor={pickerColor} setSaturation={setSaturation} saturation={saturation} whiteLevel={whiteLevel} mode={mode} />
 
       <ColorLayout set={globalSetters} get={globalGetters}/>

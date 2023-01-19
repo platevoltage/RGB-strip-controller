@@ -1,7 +1,7 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
+import { getPreferences } from '../utils/API'
 import { useState, useRef, useEffect } from 'react';
 
-export default function PreferencePanel() {
+export default function PreferencePanel({get, set}) {
 
     const pinRef = useRef();
     const bitOrderRef = useRef();
@@ -47,6 +47,13 @@ export default function PreferencePanel() {
     useEffect(() => {
         pinRef.current.value=pin;
         bitOrderRef.current.value=bitOrder;
+        (async () => {
+            const result = await getPreferences(get.addressTextBox);
+            setPin(result.pin);
+            setBitOrder(result.bitOrder);
+            pinRef.current.value=result.pin;
+            bitOrderRef.current.value=result.bitOrder;
+        })();
 
     },[])
     return (
@@ -115,9 +122,9 @@ export default function PreferencePanel() {
                 <option value={"GWRB"}>GWRB</option>
                 <option value={"GWBR"}>GWBR</option>
                 <option value={"GRWB"}>GRWB</option>
-                <option value={"GRBW"}>GRBW</option>
+                <option value={"GRBW"}>GRBW (most common)</option>
                 <option value={"GBWR"}>GBWR</option>
-                <option value={"GBRW"}>GBRW (most common)</option>
+                <option value={"GBRW"}>GBRW</option>
 
                 <option value={"BWRG"}>BWRG</option>
                 <option value={"BWGR"}>BWGR</option>
@@ -130,7 +137,17 @@ export default function PreferencePanel() {
 
             </select>
 
-            <button style={buttonStyle} >Save</button>
+            <button style={buttonStyle} onClick={
+                async () => {
+                    const result = await getPreferences(get.addressTextBox);
+                    setPin(result.pin);
+                    setBitOrder(result.bitOrder);
+                    pinRef.current.value=result.pin;
+                    bitOrderRef.current.value=result.bitOrder;
+
+                } 
+            }
+            >Save</button>{get.addressTextBox}
         </div>
     )
 }
