@@ -18,13 +18,11 @@
 
 #ifdef ESP32
 #define JSON_BUFFER_SIZE 91000
-#define EEPROM_SIZE 3000
 #define MAX_PIXELS 700
 
 #else
-//31000 max for esp8266. 150 pixels.
+//31000 max for esp8266. 250 pixels.
 #define JSON_BUFFER_SIZE 31000
-#define EEPROM_SIZE 2048
 #define MAX_PIXELS 250
 
 #endif
