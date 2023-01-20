@@ -113,7 +113,8 @@ void NTPTimer() {
     unsigned long currentMillis = millis();
     if (currentMillis - NTPPreviousMillis >= 3600000) {
       NTPPreviousMillis = currentMillis;
-      getTime();
+      uint32_t _epoch = getTime();
+      if (_epoch > 0) epoch = _epoch;
     }
 }
 

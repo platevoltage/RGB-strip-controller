@@ -66,15 +66,16 @@ void getPreferences() {
   server.send(200, "text/json", F("{\"pin\":5, \"bitOrder\": \"GRBW\"}"));
 }
 
-uint16_t * getDividersAndGroups() {
+uint16_t * getDividersAndGroups(uint16_t dividers[4]) {
   String dividerString = readDividersFromEEPROM();
-  static uint16_t dividers[4];
-  uint8_t numDividers = 0;  
-  for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
-    if (dividers[i] != 0) numDividers++;
-  }
+
+  // static uint16_t dividers[4];  
   for (int i=0; i < 4; i++) {
     dividers[i] = getValue(dividerString, '\n', i).toInt();
+  }
+  uint8_t numDividers = 0;  
+  for (uint8_t i=0; i < 4; i++) {
+    if (dividers[i] != 0) numDividers++;  
   }
 
   activeGroups = numDividers+1;
@@ -120,7 +121,8 @@ void getCurrentConfig() {
 
   getPixelData(profileArg);
   
-  uint16_t * dividers = getDividersAndGroups();
+  uint16_t dividersArray[4] = {};
+  uint16_t * dividers = getDividersAndGroups(dividersArray);
 
   String message = jsonStringify(epoch, pixelData, 4, dividers, profileArg, scheduleLength, schedule, _effectSpeed);
   if (millis() > 30000) epoch = getTime();
@@ -243,7 +245,8 @@ void setup(void) {
   setStripLength(readStripLengthFromEEPROM());
 
   getSchedule();
-  getDividersAndGroups();
+  uint16_t dividersArray[4] = {};
+  getDividersAndGroups(dividersArray);
   // activateProfile();
 
   serverStart(updateConfig, getCurrentConfig, getPreferences);
@@ -267,9 +270,11 @@ void loop(void) {
   if (effectSpeed > 0 && millis() > 10000 && !pauseEffects) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
   clockTick(activateProfile);
 
-  // Serial.print(getTimeDecimal());
-  // Serial.print("----");
-  // Serial.println(schedule[2]);
 
-
+  // NTP often fails on first try. Will repeat getTime for 30 seconds.
+  if (epoch < 100000 && millis() < 30000) {
+    Serial.println("NPT FAIL");
+    epoch = getTime();
+  }
+  // Serial.println(activeGroups);
 }
