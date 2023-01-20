@@ -57,7 +57,6 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
 static bool pauseEffects = false;
-static uint32_t pixelData[1000] = {};
 
 
 void getPreferences() {
@@ -68,11 +67,10 @@ void getPreferences() {
 
 uint16_t * getDividersAndGroups(uint16_t dividers[4]) {
   String dividerString = readDividersFromEEPROM();
-
-  // static uint16_t dividers[4];  
   for (int i=0; i < 4; i++) {
     dividers[i] = getValue(dividerString, '\n', i).toInt();
   }
+
   uint8_t numDividers = 0;  
   for (uint8_t i=0; i < 4; i++) {
     if (dividers[i] != 0) numDividers++;  
@@ -96,13 +94,14 @@ void getSchedule() {
   }
 }
 
-void getPixelData(uint8_t profile, bool activate = false) {
+uint32_t * getPixelData(uint32_t pixelData[1000], uint8_t profile, bool activate = false) {
   String pixelString = readPixelsFromEEPROM(profile);
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
     pixelData[i] = singlePixel;
     if (activate) pixels.setPixelColor(i, colorMod(pixelData[i]));
   }
+  return pixelData;
 }
 
 void getCurrentConfig() {
@@ -119,7 +118,8 @@ void getCurrentConfig() {
     _effectSpeed = readEffectSpeedFromEEPROM(profileArg);
   }
 
-  getPixelData(profileArg);
+  uint32_t pixelArray[stripLength];
+  uint32_t * pixelData = getPixelData(pixelArray, profileArg);
   
   uint16_t dividersArray[4] = {};
   uint16_t * dividers = getDividersAndGroups(dividersArray);
@@ -135,7 +135,9 @@ void activateProfile() {
     pauseEffects = true;
 
     effectSpeed = readEffectSpeedFromEEPROM(profile);
-    getPixelData(profile, true);
+
+    uint32_t pixelArray[stripLength];
+    getPixelData(pixelArray, profile, true);
     pixels.show();
 
     pauseEffects = false;
