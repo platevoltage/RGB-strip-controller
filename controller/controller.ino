@@ -57,6 +57,7 @@ Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
 static bool pauseEffects = false;
+static uint32_t pixelData[1000] = {};
 
 
 void getPreferences() {
@@ -65,73 +66,74 @@ void getPreferences() {
   server.send(200, "text/json", F("{\"pin\":5, \"bitOrder\": \"GRBW\"}"));
 }
 
+uint16_t * getDividersAndGroups() {
+  String dividerString = readDividersFromEEPROM();
+  static uint16_t dividers[4];
+  uint8_t numDividers = 0;  
+  for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
+    if (dividers[i] != 0) numDividers++;
+  }
+  for (int i=0; i < 4; i++) {
+    dividers[i] = getValue(dividerString, '\n', i).toInt();
+  }
+
+  activeGroups = numDividers+1;
+  for (uint8_t i=0; i<activeGroups; i++) {
+    if (i == 0) groups[i][0] = 1;
+    else groups[i][0] = dividers[i-1]+1;
+    if (i < numDividers) groups[i][1] = dividers[i];
+    else groups[i][1] = stripLength;
+  }
+  return dividers;
+}
+
+void getSchedule() {
+  String scheduleString = readScheduleFromEEPROM();
+  Serial.println(scheduleString);
+  for (int i=0; i < scheduleLength; i++) {
+    schedule[i] = getValue(scheduleString, '\n', i).toFloat();
+  }
+}
+
+void getPixelData(uint8_t profile, bool activate = false) {
+  String pixelString = readPixelsFromEEPROM(profile);
+  for (uint16_t i = 0; i < stripLength; i++) {
+    uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
+    pixelData[i] = singlePixel;
+    if (activate) pixels.setPixelColor(i, colorMod(pixelData[i]));
+  }
+}
+
 void getCurrentConfig() {
   sendHeaders();
 
   uint8_t profileArg = server.arg(0).toInt();
   bool colorsOnly = server.arg(1).toInt();
-
-  if (!colorsOnly) stripLength = readStripLengthFromEEPROM();
-
-  uint32_t pixelData[stripLength] = {};
-  uint16_t dividers[4];
   uint16_t _effectSpeed;
 
-  String pixelString = readPixelsFromEEPROM(profileArg);
-  for (uint16_t i = 0; i < stripLength; i++) {
-    uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
-    pixelData[i] = singlePixel;
-  }
-
   if (!colorsOnly) {
+    stripLength = readStripLengthFromEEPROM();
     bonjourName = readBonjourNameFromEEPROM();
-
-    String scheduleString = readScheduleFromEEPROM();
-    Serial.println(scheduleString);
-    for (int i=0; i < scheduleLength; i++) {
-      schedule[i] = getValue(scheduleString, '\n', i).toFloat();
-    }
+    getSchedule();
     _effectSpeed = readEffectSpeedFromEEPROM(profileArg);
-
-    //dividers and groups
-
-    String dividerString = readDividersFromEEPROM();
-    for (int i=0; i < 4; i++) {
-      dividers[i] = getValue(dividerString, '\n', i).toInt();
-    }
-
-    uint8_t numDividers = 0;
-    for (uint8_t i=0; i < sizeof(dividers)/2; i++) {
-      if (dividers[i] != 0) numDividers++;
-    }
-
-    activeGroups = numDividers+1;
-    for (uint8_t i=0; i<activeGroups; i++) {
-      if (i == 0) groups[i][0] = 1;
-      else groups[i][0] = dividers[i-1]+1;
-      if (i < numDividers) groups[i][1] = dividers[i];
-      else groups[i][1] = stripLength;
-    }
   }
 
-  String message = jsonStringify(epoch, pixelData, sizeof(dividers)/2, dividers, profileArg, scheduleLength, schedule, _effectSpeed);
+  getPixelData(profileArg);
+  
+  uint16_t * dividers = getDividersAndGroups();
+
+  String message = jsonStringify(epoch, pixelData, 4, dividers, profileArg, scheduleLength, schedule, _effectSpeed);
   if (millis() > 30000) epoch = getTime();
   server.send(200, "text/json", message);
 
 }
 
 void activateProfile() {
-    uint32_t pixelData[stripLength];
-    pauseEffects = true;
-    effectSpeed = readEffectSpeedFromEEPROM(profile);
-    String pixelString = readPixelsFromEEPROM(profile);
-      Serial.print(".");
 
-    for (uint16_t i = 0; i < stripLength; i++) {
-      uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
-      pixelData[i] = singlePixel;
-      pixels.setPixelColor(i, colorMod(pixelData[i]));
-    }
+    pauseEffects = true;
+
+    effectSpeed = readEffectSpeedFromEEPROM(profile);
+    getPixelData(profile, true);
     pixels.show();
 
     pauseEffects = false;
@@ -145,9 +147,7 @@ void updateConfig() {
   Serial.println(server.arg("plain"));
   if (error) {
     server.send(200, "text/json", F("{success:false}"));
-    Serial.println(error.c_str());
     jsonBuffer.clear();
-    Serial.println(ESP.getFreeHeap());
   }
   else {
     const char *status = jsonBuffer["status"];
@@ -187,10 +187,9 @@ void updateConfig() {
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
 
-    jsonBuffer.clear();
 
   }
-  jsonBuffer.clear();
+
 }
 
 
@@ -235,8 +234,6 @@ void setup(void) {
   epoch = getTime();
   getCurrentConfig(); 
 
-  
-  
   startOTA(bonjourName.c_str());
   
   createDir("/0");
@@ -245,9 +242,10 @@ void setup(void) {
   createDir("/3");
   setStripLength(readStripLengthFromEEPROM());
 
-  
-  activateProfile();
-  
+  getSchedule();
+  getDividersAndGroups();
+  // activateProfile();
+
   serverStart(updateConfig, getCurrentConfig, getPreferences);
 
   #if OVERRIDE_BONJOUR

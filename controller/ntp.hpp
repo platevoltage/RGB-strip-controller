@@ -166,8 +166,8 @@ void clockTick(void(*activateProfile)()) {
           profile = checkIfProfileChange;
           (*activateProfile)();
         }
-        Serial.print("profile - ");
-        Serial.println(profile);
+        Serial.print("HEAP - ");
+        Serial.println(ESP.getFreeHeap());
 
     }  
 
