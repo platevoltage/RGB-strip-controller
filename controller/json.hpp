@@ -5,14 +5,13 @@ static uint16_t effectSpeed = 0;
 
 
 
-String jsonStringify(uint32_t epoch, uint32_t currentData[], size_t dividersSize, uint16_t dividers[], uint8_t profile, size_t scheduleSize, float schedule[], uint16_t _effectSpeed) {
-    Serial.println(ESP.getFreeHeap());
+String jsonStringify(uint32_t epoch, uint32_t pixelData[], size_t dividersSize, uint16_t dividers[], uint8_t profile, size_t scheduleSize, float schedule[], uint16_t _effectSpeed) {
+
     DynamicJsonDocument pixelBuffer(JSON_BUFFER_SIZE);
-    Serial.println(ESP.getFreeHeap());
     JsonArray pixelArray = pixelBuffer.to<JsonArray>();
     
     for (int i = 0; i < stripLength; i++) {
-      pixelArray.add(currentData[i]);
+      pixelArray.add(pixelData[i]);
     }
 
     DynamicJsonDocument dividerBuffer(1000);
