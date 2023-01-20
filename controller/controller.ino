@@ -29,7 +29,7 @@
 
 #endif
 
-#include "ota.hpp"
+// #include "ota.hpp"
 #include "json.hpp"
 #include "color.hpp"
 #include "eeprom.hpp"
@@ -113,7 +113,7 @@ void getCurrentConfig() {
 
   if (!colorsOnly) {
     stripLength = readStripLengthFromEEPROM();
-    bonjourName = readBonjourNameFromEEPROM();
+    // bonjourName = readBonjourNameFromEEPROM();
     getSchedule();
     _effectSpeed = readEffectSpeedFromEEPROM(profileArg);
   }
@@ -238,7 +238,7 @@ void setup(void) {
   epoch = getTime();
   getCurrentConfig(); 
 
-  startOTA(bonjourName.c_str());
+  // startOTA(bonjourName.c_str());
   
   createDir("/0");
   createDir("/1");
@@ -253,14 +253,14 @@ void setup(void) {
 
   serverStart(updateConfig, getCurrentConfig, getPreferences);
 
-  #if OVERRIDE_BONJOUR
-    bonjourName = BONJOURNAME;
-    writeBonjourNameToEEPROM(BONJOURNAME);
-  #else
-    bonjourName = readBonjourNameFromEEPROM();
-    Serial.print("BONJOUR TAKEN FROM MEMORY - ");
-    Serial.println(bonjourName);
-  #endif
+  // #if OVERRIDE_BONJOUR
+  //   bonjourName = BONJOURNAME;
+  //   writeBonjourNameToEEPROM(BONJOURNAME);
+  // #else
+  //   bonjourName = readBonjourNameFromEEPROM();
+  //   Serial.print("BONJOUR TAKEN FROM MEMORY - ");
+  //   Serial.println(bonjourName);
+  // #endif
   
 }
 

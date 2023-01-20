@@ -6,6 +6,7 @@
 #include <WiFiClient.h>
 #include <WiFiUdp.h>
 #include "ntp.hpp"
+#include "ota.hpp"
 
 
 #ifdef ESP32
@@ -23,11 +24,6 @@ ESP8266WebServer server(80);
 
 #endif
 
-static const char *ssid = STASSID;
-static const char *password = STAPSK;
-static String bonjourName = "";
-// const char *ssid = APSSID;
-// const char *password = APPSK;
 
 
 
@@ -52,13 +48,20 @@ void handleNotFound() {
 
 
 void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPreferences)()) {
+    String bonjourName;;
+    #if OVERRIDE_BONJOUR
+      bonjourName = BONJOURNAME;
+      writeBonjourNameToEEPROM(BONJOURNAME);
+    #else
+      bonjourName = readBonjourNameFromEEPROM();
+    #endif
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
     WiFi.mode(WIFI_STA);
     String hostname = "LED-controller-";
     hostname.concat(bonjourName);
     WiFi.hostname(hostname);
-    WiFi.begin(ssid, password);
+    WiFi.begin(STASSID, STAPSK);
       
         // Wait for connection
     while (WiFi.status() != WL_CONNECTED) {
@@ -73,7 +76,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPref
 
     Serial.println();
     Serial.print(F("Connected to "));
-    Serial.println(ssid);
+    Serial.println(STASSID);
     Serial.print(F("IP address: "));
     Serial.println(WiFi.localIP());
 
@@ -118,7 +121,9 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPref
     server.enableCORS(true);
     server.begin();
     Serial.println(F("HTTP server started"));
-    // getTime();
+
+    startOTA(bonjourName.c_str());
+
 }
 
 
@@ -132,7 +137,7 @@ void sendHeaders() {
 
 
 
-unsigned long webClientPreviousMillis = 0;
+static unsigned long webClientPreviousMillis = 0;
 void webClientTimer(uint16_t speed) {
     unsigned long currentMillis = millis();
     if (currentMillis - webClientPreviousMillis >= speed) {

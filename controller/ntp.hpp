@@ -1,7 +1,15 @@
+#ifdef ESP32
+#include <WiFi.h>
+
+#else
+#include <ESP8266WiFi.h>
+#endif
+
+
 static const unsigned int localPort = 2390;  // local port to listen for UDP packets
 IPAddress timeServerIP;  // time.nist.gov NTP server address
 static const char* ntpServerName = "time.nist.gov";
-const int NTP_PACKET_SIZE = 48;  // NTP time stamp is in the first 48 bytes of the message
+static const int NTP_PACKET_SIZE = 48;  // NTP time stamp is in the first 48 bytes of the message
 WiFiUDP udp;
 
 static uint32_t epoch = 0;
@@ -108,7 +116,7 @@ float getTimeDecimal() {
   return temp + decimal;
 }
 
-unsigned long NTPPreviousMillis = 0;
+static unsigned long NTPPreviousMillis = 0;
 void NTPTimer() {
     unsigned long currentMillis = millis();
     if (currentMillis - NTPPreviousMillis >= 3600000) {
@@ -156,7 +164,7 @@ uint8_t determineProfileUsed() {
   return _profile;
 }
 
-unsigned long clockTickPreviousMillis = 0;
+static unsigned long clockTickPreviousMillis = 0;
 void clockTick(void(*activateProfile)()) {
     unsigned long currentMillis = millis();
     if (currentMillis - clockTickPreviousMillis >= 1000) {
