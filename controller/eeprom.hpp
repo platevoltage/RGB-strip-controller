@@ -35,7 +35,7 @@ void createDir(const char * path){
 
 
 
-void writeFile(const char * path, String message) {
+void writeFile(const char * path, const char * message) {
   Serial.printf("Writing file: %s\n", path);
 
   File file = LittleFS.open(path, "w");
@@ -54,39 +54,39 @@ void writeFile(const char * path, String message) {
 
 
 
-void appendFile(const char * path, String message) {
-  Serial.printf("Appending to file: %s\n", path);
+// void appendFile(const char * path, String message) {
+//   Serial.printf("Appending to file: %s\n", path);
 
-  File file = LittleFS.open(path, "a");
-  if (!file) {
-    Serial.println("Failed to open file for appending");
-    return;
-  }
-  if (file.print(message)) {
-    Serial.println("Message appended");
-  } else {
-    Serial.println("Append failed");
-  }
-  file.close();
-}
+//   File file = LittleFS.open(path, "a");
+//   if (!file) {
+//     Serial.println("Failed to open file for appending");
+//     return;
+//   }
+//   if (file.print(message)) {
+//     Serial.println("Message appended");
+//   } else {
+//     Serial.println("Append failed");
+//   }
+//   file.close();
+// }
 
-void renameFile(const char * path1, const char * path2) {
-  Serial.printf("Renaming file %s to %s\n", path1, path2);
-  if (LittleFS.rename(path1, path2)) {
-    Serial.println("File renamed");
-  } else {
-    Serial.println("Rename failed");
-  }
-}
+// void renameFile(const char * path1, const char * path2) {
+//   Serial.printf("Renaming file %s to %s\n", path1, path2);
+//   if (LittleFS.rename(path1, path2)) {
+//     Serial.println("File renamed");
+//   } else {
+//     Serial.println("Rename failed");
+//   }
+// }
 
-void deleteFile(const char * path) {
-  Serial.printf("Deleting file: %s\n", path);
-  if (LittleFS.remove(path)) {
-    Serial.println("File deleted");
-  } else {
-    Serial.println("Delete failed");
-  }
-}
+// void deleteFile(const char * path) {
+//   Serial.printf("Deleting file: %s\n", path);
+//   if (LittleFS.remove(path)) {
+//     Serial.println("File deleted");
+//   } else {
+//     Serial.println("Delete failed");
+//   }
+// }
 
 uint16_t readStripLengthFromEEPROM() {
   String string = readFile( "/stripLength.txt");
@@ -102,7 +102,7 @@ void writePixelsToEEPROM(uint32_t pixelData[], size_t length, uint8_t profile) {
     message += String(color);
     if(i < length-1) message += '\n';
   }
-  writeFile( ("/" + (String)profile + "/pixels.txt").c_str(), message);
+  writeFile( ("/" + (String)profile + "/pixels.txt").c_str(), message.c_str());
   // writeFile("0/pixels.txt", message);
 }
 
@@ -115,7 +115,7 @@ String readPixelsFromEEPROM(uint8_t profile) {
 
 void writeStripLengthToEEPROM(uint16_t stripLength) {
   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
-  writeFile( "/stripLength.txt", String(stripLength));
+  writeFile( "/stripLength.txt", String(stripLength).c_str());
 }
 
 void writeDividersToEEPROM(uint16_t positions[], size_t length) {
@@ -126,7 +126,7 @@ void writeDividersToEEPROM(uint16_t positions[], size_t length) {
       message += "\n";
     }
   }
-  writeFile( "/dividers.txt", message);
+  writeFile( "/dividers.txt", message.c_str());
 }
 
 void writeScheduleToEEPROM(float times[], size_t length) {
@@ -135,7 +135,7 @@ void writeScheduleToEEPROM(float times[], size_t length) {
       message += times[i];
       message += "\n";
   }
-  writeFile( "/schedule.txt", message);
+  writeFile( "/schedule.txt", message.c_str());
 }
 
 String readScheduleFromEEPROM() {
@@ -145,10 +145,10 @@ String readScheduleFromEEPROM() {
 
 void writeEffectSpeedToEEPROM(uint16_t effectSpeed, uint8_t profile) {
   // writeFile("effectSpeed.txt", String(effectSpeed));
-  writeFile( ("/" + (String)profile + "/effectSpeed.txt").c_str(), String(effectSpeed));
+  writeFile( ("/" + (String)profile + "/effectSpeed.txt").c_str(), String(effectSpeed).c_str());
 }
 void writeCurrentProfileToEEPROM(uint8_t profile) {
-  writeFile( "/profile.txt", String(profile));
+  writeFile( "/profile.txt", String(profile).c_str());
 }
 
 String readDividersFromEEPROM() {
@@ -172,6 +172,6 @@ String readBonjourNameFromEEPROM() {
 }
 
 void writeBonjourNameToEEPROM(String bonjourName) {
-  writeFile( "/bonjour.txt", bonjourName);
+  writeFile( "/bonjour.txt", bonjourName.c_str());
 }
 

@@ -25,7 +25,7 @@
 //31000 max for esp8266. 150 pixels.
 #define JSON_BUFFER_SIZE 31000
 #define EEPROM_SIZE 2048
-#define MAX_PIXELS 180
+#define MAX_PIXELS 250
 
 #endif
 

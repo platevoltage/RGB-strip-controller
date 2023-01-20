@@ -10,7 +10,7 @@ static uint8_t scheduleLength = 4;
 static uint8_t profile = 0;
 
 
-byte packetBuffer[NTP_PACKET_SIZE]; 
+static byte packetBuffer[NTP_PACKET_SIZE]; 
 
 void startNTP() {
     Serial.println("Starting UDP");

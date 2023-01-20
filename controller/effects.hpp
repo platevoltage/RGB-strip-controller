@@ -1,4 +1,4 @@
-void walk(uint32_t(*readPixel)(uint16_t), void(*setPixel)(uint16_t, uint32_t, boolean), uint16_t start, uint16_t end) {
+void walk(uint32_t(*readPixel)(uint16_t), void(*setPixel)(uint16_t, uint32_t, bool), uint16_t start, uint16_t end) {
       // Serial.println();
 
       uint32_t firstPixel = (*readPixel)(start-1);
@@ -16,7 +16,7 @@ void walk(uint32_t(*readPixel)(uint16_t), void(*setPixel)(uint16_t, uint32_t, bo
 }
 
 unsigned long effectPreviousMillis = 0;
-void effectTimer(uint16_t speed, uint8_t activeGroups, uint16_t groups[][2], uint32_t(*readPixel)(uint16_t), void(*setPixel)(uint16_t, uint32_t, boolean)) {
+void effectTimer(uint16_t speed, uint8_t activeGroups, uint16_t groups[][2], uint32_t(*readPixel)(uint16_t), void(*setPixel)(uint16_t, uint32_t, bool)) {
     unsigned long currentMillis = millis();
 
     if (speed < 10) speed = 10;
