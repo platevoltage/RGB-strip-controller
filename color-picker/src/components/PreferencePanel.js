@@ -16,13 +16,6 @@ export default function PreferencePanel({get, set, open}) {
     const [bonjourName, setBonjourName] = useState("");
     const [saving, setSaving] = useState(false);
 
-    const [undo, setUndo] = useState({
-        pin,
-        bitOrder,
-        ssid,
-        wifiPassword,
-        bonjourName,
-    });
 
 
     const style = {
@@ -87,7 +80,6 @@ export default function PreferencePanel({get, set, open}) {
         try {
             setSaving(true);
             await savePreferences(get.addressTextBox, pin, bitOrder, ssid, wifiPassword, bonjourName);
-            setUndo({pin, bitOrder, ssid, wifiPassword, bonjourName});
             setSaving(false);
             open(false);
         } catch (err) {
