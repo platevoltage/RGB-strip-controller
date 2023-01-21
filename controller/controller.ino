@@ -259,8 +259,6 @@ void setup(void) {
   // digitalWrite(LED_BUILTIN, 0);
   Serial.begin(115200);
 
-  // WiFi.softAP(ssid, password);
-  // IPAddress myIP = WiFi.softAPIP();
 
   Serial.println("Mount LittleFS");
   if(!LittleFS.begin()){
@@ -269,7 +267,7 @@ void setup(void) {
   }
   Serial.println();
   getPreferences();
-  // pixelType = NEO_GRB;
+
   #ifdef WS2801
     pixels = new Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CLK_PIN);
   #else

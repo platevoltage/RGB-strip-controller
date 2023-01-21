@@ -10,7 +10,7 @@ export default function PreferencePanel({get, set}) {
     const bonjourNameRef = useRef();
 
     const [pin, setPin] = useState(5);
-    const [bitOrder, setBitOrder] = useState();
+    const [bitOrder, setBitOrder] = useState(82);
     const [ssid, setSsid] = useState("");
     const [wifiPassword, setWifiPassword] = useState("");
     const [bonjourName, setBonjourName] = useState("");
