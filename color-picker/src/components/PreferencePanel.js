@@ -52,6 +52,7 @@ export default function PreferencePanel({get, set}) {
     }
 
     useEffect(() => {
+
         pinRef.current.value=pin;
         bitOrderRef.current.value=bitOrder;
         (async () => {
@@ -68,8 +69,6 @@ export default function PreferencePanel({get, set}) {
             wifiPasswordRef.current.value=result.password;
             bonjourNameRef.current.value=result.bonjour;
 
-            console.log(result.bitOrder);
-            console.log(  ((3 << 6) | (1 << 4) | (0 << 2) | (2)));
         })();
 
     },[]);
@@ -77,7 +76,7 @@ export default function PreferencePanel({get, set}) {
     async function handleSave() {
         try {
 
-            await savePreferences(get.addressTextBox, pin, bitOrder, ssid, wifiPassword);
+            await savePreferences(get.addressTextBox, pin, bitOrder, ssid, wifiPassword, bonjourName);
         } catch (err) {
             console.error(err);
         }

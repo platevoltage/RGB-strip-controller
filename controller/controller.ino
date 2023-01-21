@@ -65,7 +65,7 @@ void getPreferences() {
 
   sendHeaders();
   String preferenceString = readSystemPrefsFromEEPROM();
-
+  Serial.println(preferenceString);
   ssid = getValue(preferenceString, '\n', 0);
   password = getValue(preferenceString, '\n', 1);
   bonjourName = getValue(preferenceString, '\n', 2);
@@ -89,7 +89,6 @@ void getPreferences() {
 
 void savePreferences() {
   sendHeaders();
-  Serial.println(server.arg("plain"));
   DynamicJsonDocument jsonBuffer(5000);
   DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
   Serial.println(server.arg("plain"));
@@ -98,7 +97,16 @@ void savePreferences() {
     jsonBuffer.clear();
   }
   else {
+    dataPin = jsonBuffer["pin"];
+    pixelType = jsonBuffer["bitOrder"];
+    ssid = String(jsonBuffer["ssid"]);
+    password = String(jsonBuffer["wifiPassword"]);
+    bonjourName = String(jsonBuffer["bonjourName"]);
+
+    writeSystemPrefsToEEPROM(ssid, password, bonjourName, dataPin, pixelType);
+
     server.send(200, "text/json", F("{success:true}"));
+    Serial.println(server.arg("plain"));
   }
 }
 
