@@ -83,8 +83,23 @@ void getPreferences() {
   message += "\", \"bonjour\":\"";
   message += bonjourName;
   message += "\"}";
-  
+
   server.send(200, "text/json", message);
+}
+
+void savePreferences() {
+  sendHeaders();
+  Serial.println(server.arg("plain"));
+  DynamicJsonDocument jsonBuffer(5000);
+  DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
+  Serial.println(server.arg("plain"));
+  if (error) {
+    server.send(200, "text/json", F("{success:false}"));
+    jsonBuffer.clear();
+  }
+  else {
+    server.send(200, "text/json", F("{success:true}"));
+  }
 }
 
 uint16_t * getDividersAndGroups(uint16_t dividers[4]) {
@@ -275,7 +290,7 @@ void setup(void) {
   getCurrentConfig(); 
   activateProfile();
 
-  serverStart(updateConfig, getCurrentConfig, getPreferences);
+  serverStart(updateConfig, getCurrentConfig, getPreferences, savePreferences);
 
   createDir("/0");
   createDir("/1");

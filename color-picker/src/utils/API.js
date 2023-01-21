@@ -17,6 +17,23 @@ export const getPreferences = async (address) => {
 
 }
 
+export const savePreferences = async (address, pin, bitOrder, ssid, wifiPassword, bonjourName) => {
+    return fetch(`${address}/saveprefs`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            pin,
+            bitOrder,
+            ssid,
+            wifiPassword,
+            bonjourName
+        })
+    });
+
+}
+
 export const writeChanges = (stripLength, pixels, address, dividers, effectSpeed, profile, schedule) => {
     console.log(schedule);
     const pixelsArray = [];

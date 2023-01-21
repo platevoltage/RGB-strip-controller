@@ -1,4 +1,4 @@
-import { getPreferences } from '../utils/API'
+import { getPreferences, savePreferences } from '../utils/API'
 import { useState, useRef, useEffect } from 'react';
 
 export default function PreferencePanel({get, set}) {
@@ -72,7 +72,17 @@ export default function PreferencePanel({get, set}) {
             console.log(  ((3 << 6) | (1 << 4) | (0 << 2) | (2)));
         })();
 
-    },[])
+    },[]);
+
+    async function handleSave() {
+        try {
+
+            await savePreferences(get.addressTextBox, pin, bitOrder, ssid, wifiPassword);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     return (
         <div style={style}>
                 <span>Pin: </span>
@@ -188,16 +198,7 @@ export default function PreferencePanel({get, set}) {
                 style={inputStyle}
             />
 
-            <button style={buttonStyle} onClick={
-                async () => {
-                    const result = await getPreferences(get.addressTextBox);
-                    setPin(result.pin);
-                    setBitOrder(result.bitOrder);
-                    pinRef.current.value=result.pin;
-                    bitOrderRef.current.value=result.bitOrder;
-
-                } 
-            }
+            <button style={buttonStyle} onClick={handleSave}
             >Save</button>
         </div>
     )

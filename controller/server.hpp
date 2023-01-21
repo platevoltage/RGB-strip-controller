@@ -49,7 +49,7 @@ void handleNotFound() {
 }
 
 
-void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPreferences)()) {
+void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPreferences)(), void(*savePreferences)()) {
     // String bonjourName;;
     // #if OVERRIDE_BONJOUR
     //   bonjourName = BONJOURNAME;
@@ -118,6 +118,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPref
     server.on(F("/current"), *getCurrentConfig);
     server.on(F("/update"), *updateConfig);
     server.on(F("/getprefs"), *getPreferences);
+    server.on(F("/saveprefs"), *savePreferences);
 
     server.onNotFound(handleNotFound);
     server.enableCORS(true);
