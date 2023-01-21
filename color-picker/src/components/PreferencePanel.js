@@ -10,7 +10,7 @@ export default function PreferencePanel({get, set, open}) {
     const wifiPasswordRef = useRef();
     const bonjourNameRef = useRef();
 
-    const [brightness, setBrightness] = useState(255);
+    const [brightness, setBrightness] = useState(100);
     const [pin, setPin] = useState(5);
     const [bitOrder, setBitOrder] = useState(82);
     const [ssid, setSsid] = useState("");
@@ -105,7 +105,7 @@ export default function PreferencePanel({get, set, open}) {
                     name="brightness"
                     onChange={(e) => {setBrightness(e.target.value)}}
                     type="text"
-                    placeholder="0-255"
+                    placeholder="0-100"
                     style={inputStyle}
                 />
                 <br />

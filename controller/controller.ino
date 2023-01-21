@@ -50,7 +50,6 @@ static bool pauseEffects = false;
 
 static uint8_t dataPin;
 static uint8_t pixelType;
-static uint8_t brightness = 255;
 
 void getPreferences() {
 
@@ -279,7 +278,7 @@ void setup(void) {
   #else
     pixels = new Adafruit_NeoPixel(stripLength, dataPin, pixelType + NEO_KHZ800);
   #endif
-  pixels->setBrightness(brightness);
+  // pixels->setBrightness(brightness);
   pixels->begin();
 
 
