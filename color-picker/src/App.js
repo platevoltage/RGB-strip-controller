@@ -23,7 +23,6 @@ function App() {
   const [undoArray, setUndoArray] = useState([]);
   const [lengthTextBox, setLengthTextBox] = useState(storedLength);
   const [addressTextBox, setAddressTextBox] = useState(window.localStorage.getItem("ip") || "");
-  // const [addressTextBox, setAddressTextBox] = useState("http://localhost");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [colorDataUnsaved, setColorDataUnsaved] = useState(noConnectionArray);
