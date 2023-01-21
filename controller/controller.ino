@@ -85,6 +85,7 @@ void getPreferences() {
   message += "\"}";
 
   server.send(200, "text/json", message);
+
 }
 
 void savePreferences() {
@@ -107,6 +108,8 @@ void savePreferences() {
 
     server.send(200, "text/json", F("{success:true}"));
     Serial.println(server.arg("plain"));
+
+    ESP.restart();
   }
 }
 
