@@ -181,7 +181,7 @@ export default function PreferencePanel({get, set}) {
                 value={wifiPassword}
                 name="wifiPassword"
                 onChange={(e) => {setWifiPassword(e.target.value)}}
-                type="text"
+                type="password"
                 placeholder=""
                 style={inputStyle}
             />
