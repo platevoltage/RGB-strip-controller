@@ -25,7 +25,9 @@ ESP8266WebServer server(80);
 #endif
 
 
-
+static String ssid;
+static String password;
+static String bonjourName;
 
 void handleNotFound() {
   // digitalWrite(LED_BUILTIN, 1);
@@ -48,20 +50,20 @@ void handleNotFound() {
 
 
 void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPreferences)()) {
-    String bonjourName;;
-    #if OVERRIDE_BONJOUR
-      bonjourName = BONJOURNAME;
-      writeBonjourNameToEEPROM(BONJOURNAME);
-    #else
-      bonjourName = readBonjourNameFromEEPROM();
-    #endif
+    // String bonjourName;;
+    // #if OVERRIDE_BONJOUR
+    //   bonjourName = BONJOURNAME;
+    //   writeBonjourNameToEEPROM(BONJOURNAME);
+    // #else
+    //   bonjourName = readBonjourNameFromEEPROM();
+    // #endif
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
     WiFi.mode(WIFI_STA);
     String hostname = "LED-controller-";
     hostname.concat(bonjourName);
     WiFi.hostname(hostname);
-    WiFi.begin(STASSID, STAPSK);
+    WiFi.begin(ssid, password);
       
         // Wait for connection
     while (WiFi.status() != WL_CONNECTED) {
@@ -76,7 +78,7 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPref
 
     Serial.println();
     Serial.print(F("Connected to "));
-    Serial.println(STASSID);
+    Serial.println(ssid);
     Serial.print(F("IP address: "));
     Serial.println(WiFi.localIP());
 

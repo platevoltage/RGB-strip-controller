@@ -53,6 +53,8 @@ export default function PreferencePanel({get, set}) {
             setBitOrder(result.bitOrder);
             pinRef.current.value=result.pin;
             bitOrderRef.current.value=result.bitOrder;
+            console.log(result.bitOrder);
+            console.log(  ((3 << 6) | (1 << 4) | (0 << 2) | (2)));
         })();
 
     },[])
@@ -147,7 +149,7 @@ export default function PreferencePanel({get, set}) {
 
                 } 
             }
-            >Save</button>{get.addressTextBox}
+            >Save</button>
         </div>
     )
 }
