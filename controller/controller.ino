@@ -27,20 +27,12 @@
 
 #endif
 
-// #include "ota.hpp"
 #include "json.hpp"
 #include "color.hpp"
 #include "eeprom.hpp"
 #include "effects.hpp"
 #include "string.hpp"
 #include "server.hpp"
-
-
-//----begin generated includes and wifi definitions
-
-//// in server.h
-
-//----end generated includes and wifi definitions
 
 
 
@@ -55,9 +47,7 @@
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
 static bool pauseEffects = false;
-// static String ssid;
-// static String password;
-// static String bonjourName;
+
 static uint8_t dataPin;
 static uint8_t pixelType;
 

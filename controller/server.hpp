@@ -62,18 +62,28 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPref
     WiFi.mode(WIFI_STA);
     String hostname = "LED-controller-";
     hostname.concat(bonjourName);
-    WiFi.hostname(hostname);
-    WiFi.begin(ssid, password);
-      
-        // Wait for connection
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
-      Serial.print(F("."));
-    }
-    while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-      Serial.println(F("Connection Failed! Rebooting..."));
-      delay(5000);
-      ESP.restart();
+
+    if (ssid == "") {
+
+      WiFi.hostname(hostname);
+      WiFi.softAP("RGB-Controller");
+      IPAddress myIP = WiFi.softAPIP();
+      Serial.print("AP IP address: ");
+      Serial.println(myIP);
+
+    } else {
+
+      WiFi.begin(ssid, password);
+      //   Wait for connection
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(F("."));
+      }
+      while (WiFi.waitForConnectResult() != WL_CONNECTED) {
+        Serial.println(F("Connection Failed! Rebooting..."));
+        delay(5000);
+        ESP.restart();
+      }
     }
 
     Serial.println();

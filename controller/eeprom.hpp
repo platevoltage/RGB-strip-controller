@@ -53,41 +53,6 @@ void writeFile(const char * path, const char * message) {
 }
 
 
-
-// void appendFile(const char * path, String message) {
-//   Serial.printf("Appending to file: %s\n", path);
-
-//   File file = LittleFS.open(path, "a");
-//   if (!file) {
-//     Serial.println("Failed to open file for appending");
-//     return;
-//   }
-//   if (file.print(message)) {
-//     Serial.println("Message appended");
-//   } else {
-//     Serial.println("Append failed");
-//   }
-//   file.close();
-// }
-
-// void renameFile(const char * path1, const char * path2) {
-//   Serial.printf("Renaming file %s to %s\n", path1, path2);
-//   if (LittleFS.rename(path1, path2)) {
-//     Serial.println("File renamed");
-//   } else {
-//     Serial.println("Rename failed");
-//   }
-// }
-
-// void deleteFile(const char * path) {
-//   Serial.printf("Deleting file: %s\n", path);
-//   if (LittleFS.remove(path)) {
-//     Serial.println("File deleted");
-//   } else {
-//     Serial.println("Delete failed");
-//   }
-// }
-
 uint16_t readStripLengthFromEEPROM() {
   String string = readFile( "/stripLength.txt");
   return string.toInt();
@@ -103,12 +68,10 @@ void writePixelsToEEPROM(uint32_t pixelData[], size_t length, uint8_t profile) {
     if(i < length-1) message += '\n';
   }
   writeFile( ("/" + (String)profile + "/pixels.txt").c_str(), message.c_str());
-  // writeFile("0/pixels.txt", message);
 }
 
 String readPixelsFromEEPROM(uint8_t profile) {
   String message = readFile( ("/" + (String)profile + "/pixels.txt").c_str());
-  // String message = readFile("/0/pixels.txt");
   return message;
 }
 
@@ -144,7 +107,6 @@ String readScheduleFromEEPROM() {
 }
 
 void writeEffectSpeedToEEPROM(uint16_t effectSpeed, uint8_t profile) {
-  // writeFile("effectSpeed.txt", String(effectSpeed));
   writeFile( ("/" + (String)profile + "/effectSpeed.txt").c_str(), String(effectSpeed).c_str());
 }
 void writeCurrentProfileToEEPROM(uint8_t profile) {
@@ -156,7 +118,6 @@ String readDividersFromEEPROM() {
   return message;
 }
 uint16_t readEffectSpeedFromEEPROM(uint8_t profile) {
-  // String string = readFile("/effectSpeed.txt");
   String message = readFile(( "/" + (String)profile + "/effectSpeed.txt").c_str());
 
   return message.toInt();
@@ -165,15 +126,6 @@ uint8_t readCurrentProfileFromEEPROM() {
   String string = readFile( "/profile.txt");
   return string.toInt();
 }
-
-// String readBonjourNameFromEEPROM() {
-//   String message = readFile( "/bonjour.txt");
-//   return message;
-// }
-
-// void writeBonjourNameToEEPROM(String bonjourName) {
-//   writeFile( "/bonjour.txt", bonjourName.c_str());
-// }
 
 void writeSystemPrefsToEEPROM(String ssid, String password, String bonjourName, uint8_t dataPin, uint16_t pixelType) {
   String message = ssid;
