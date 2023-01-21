@@ -50,6 +50,7 @@ static bool pauseEffects = false;
 
 static uint8_t dataPin;
 static uint8_t pixelType;
+static uint8_t brightness = 255;
 
 void getPreferences() {
 
@@ -61,6 +62,7 @@ void getPreferences() {
   bonjourName = getValue(preferenceString, '\n', 2);
   dataPin = getValue(preferenceString, '\n', 3).toInt();
   pixelType = getValue(preferenceString, '\n', 4).toInt();
+  brightness = getValue(preferenceString, '\n', 5).toInt();
   
   String message = "{\"pin\":\"";
   message += dataPin;
@@ -72,6 +74,8 @@ void getPreferences() {
   message += password;
   message += "\", \"bonjour\":\"";
   message += bonjourName;
+  message += "\", \"brightness\":\"";
+  message += brightness;
   message += "\"}";
 
   server.send(200, "text/json", message);
@@ -93,8 +97,9 @@ void savePreferences() {
     ssid = String(jsonBuffer["ssid"]);
     password = String(jsonBuffer["wifiPassword"]);
     bonjourName = String(jsonBuffer["bonjourName"]);
+    brightness = jsonBuffer["brightness"];
 
-    writeSystemPrefsToEEPROM(ssid, password, bonjourName, dataPin, pixelType);
+    writeSystemPrefsToEEPROM(ssid, password, bonjourName, dataPin, pixelType, brightness);
 
     server.send(200, "text/json", F("{success:true}"));
     Serial.println(server.arg("plain"));
@@ -274,7 +279,7 @@ void setup(void) {
   #else
     pixels = new Adafruit_NeoPixel(stripLength, dataPin, pixelType + NEO_KHZ800);
   #endif
-
+  pixels->setBrightness(brightness);
   pixels->begin();
 
 

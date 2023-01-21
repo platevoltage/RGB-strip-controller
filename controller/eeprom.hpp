@@ -127,7 +127,7 @@ uint8_t readCurrentProfileFromEEPROM() {
   return string.toInt();
 }
 
-void writeSystemPrefsToEEPROM(String ssid, String password, String bonjourName, uint8_t dataPin, uint16_t pixelType) {
+void writeSystemPrefsToEEPROM(String ssid, String password, String bonjourName, uint8_t dataPin, uint16_t pixelType, uint8_t brightness) {
   String message = ssid;
   message += "\n";
   message += password;
@@ -137,6 +137,8 @@ void writeSystemPrefsToEEPROM(String ssid, String password, String bonjourName, 
   message += dataPin;
   message += "\n";
   message += pixelType;
+  message += "\n";
+  message += brightness;
   writeFile( "/preferences.txt", message.c_str());
 }
 

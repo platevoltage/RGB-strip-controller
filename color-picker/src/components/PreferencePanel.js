@@ -3,18 +3,22 @@ import { useState, useRef, useEffect } from 'react';
 
 export default function PreferencePanel({get, set, open}) {
 
+    const brightnessRef = useRef();
     const pinRef = useRef();
     const bitOrderRef = useRef();
     const ssidRef = useRef();
     const wifiPasswordRef = useRef();
     const bonjourNameRef = useRef();
 
+    const [brightness, setBrightness] = useState(255);
     const [pin, setPin] = useState(5);
     const [bitOrder, setBitOrder] = useState(82);
     const [ssid, setSsid] = useState("");
     const [wifiPassword, setWifiPassword] = useState("");
     const [bonjourName, setBonjourName] = useState("");
+
     const [saving, setSaving] = useState(false);
+
 
 
 
@@ -59,18 +63,20 @@ export default function PreferencePanel({get, set, open}) {
         bitOrderRef.current.value=bitOrder;
         (async () => {
             const result = await getPreferences(get.addressTextBox);
-            const pin = result.pin, bitOrder = result.bitOrder, ssid = result.ssid, wifiPassword = result.password, bonjourName = result.bonjour;
+            const pin = result.pin, bitOrder = result.bitOrder, ssid = result.ssid, wifiPassword = result.password, bonjourName = result.bonjour, brightness = result.brightness;
             setPin(+pin);
             setBitOrder(+bitOrder);
             setSsid(ssid);
             setWifiPassword(wifiPassword);
             setBonjourName(bonjourName);
+            setBrightness(brightness);
 
             pinRef.current.value=pin;
             bitOrderRef.current.value=bitOrder;
             ssidRef.current.value=ssid;
             wifiPasswordRef.current.value=wifiPassword;
             bonjourNameRef.current.value=bonjourName;
+            brightnessRef.current.value=brightness;
 
         })();
 
@@ -79,7 +85,7 @@ export default function PreferencePanel({get, set, open}) {
     async function handleSave() {
         try {
             setSaving(true);
-            await savePreferences(get.addressTextBox, pin, bitOrder, ssid, wifiPassword, bonjourName);
+            await savePreferences(get.addressTextBox, pin, bitOrder, ssid, wifiPassword, bonjourName, brightness);
             setSaving(false);
             open(false);
         } catch (err) {
@@ -92,6 +98,17 @@ export default function PreferencePanel({get, set, open}) {
 
     return (
         <div style={style}>
+                <span>Brightness:</span>
+                <input
+                    ref={brightnessRef}
+                    value={brightness}
+                    name="brightness"
+                    onChange={(e) => {setBrightness(e.target.value)}}
+                    type="text"
+                    placeholder="0-255"
+                    style={inputStyle}
+                />
+                <br />
                 <span>Pin: </span>
                 <select
                     ref={pinRef}

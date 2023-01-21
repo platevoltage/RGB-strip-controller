@@ -17,7 +17,7 @@ export const getPreferences = async (address) => {
 
 }
 
-export const savePreferences = async (address, pin, bitOrder, ssid, wifiPassword, bonjourName) => {
+export const savePreferences = async (address, pin, bitOrder, ssid, wifiPassword, bonjourName, brightness) => {
     return fetch(`${address}/saveprefs`, {
         method: 'POST',
         headers: {
@@ -28,7 +28,8 @@ export const savePreferences = async (address, pin, bitOrder, ssid, wifiPassword
             bitOrder,
             ssid,
             wifiPassword,
-            bonjourName
+            bonjourName,
+            brightness
         })
     });
 
