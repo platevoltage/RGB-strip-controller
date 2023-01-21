@@ -166,12 +166,30 @@ uint8_t readCurrentProfileFromEEPROM() {
   return string.toInt();
 }
 
-String readBonjourNameFromEEPROM() {
-  String message = readFile( "/bonjour.txt");
-  return message;
+// String readBonjourNameFromEEPROM() {
+//   String message = readFile( "/bonjour.txt");
+//   return message;
+// }
+
+// void writeBonjourNameToEEPROM(String bonjourName) {
+//   writeFile( "/bonjour.txt", bonjourName.c_str());
+// }
+
+void writeSystemPrefsToEEPROM(String ssid, String password, String bonjourName, uint8_t dataPin, uint16_t pixelType) {
+  String message = ssid;
+  message += "\n";
+  message += password;
+  message += "\n";
+  message += bonjourName;
+  message += "\n";
+  message += dataPin;
+  message += "\n";
+  message += pixelType;
+  writeFile( "/preferences.txt", message.c_str());
 }
 
-void writeBonjourNameToEEPROM(String bonjourName) {
-  writeFile( "/bonjour.txt", bonjourName.c_str());
+String readSystemPrefsFromEEPROM() {
+  String message = readFile( "/preferences.txt");
+  return message;
 }
 

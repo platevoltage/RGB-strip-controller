@@ -4,13 +4,13 @@
 //user prefs------
 
 // #define WS2801 // uncomment for ws2801
-#define STASSID "Can't stop the signal, Mal"
-#define STAPSK "youcanttaketheskyfromme"
+// #define STASSID "Can't stop the signal, Mal"
+// #define STAPSK "youcanttaketheskyfromme"
 // #define APSSID "ESPap"
 // #define APPSK  "thereisnospoon"
 // #define OVERRIDE_BONJOUR 1
-// #define BONJOURNAME "lamp"
-#define DATA_PIN 5
+// #define BONJOURNAME "test"
+// #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
 
@@ -45,22 +45,72 @@
 
 
 #ifdef WS2801
-#include <Adafruit_WS2801.h>
-Adafruit_WS2801 pixels = Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CLK_PIN);
+  #include <Adafruit_WS2801.h>
+  Adafruit_WS2801* pixels = NULL;
 #else
-#include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel pixels(stripLength, DATA_PIN, NEO_GRBW + NEO_KHZ800);
+  #include <Adafruit_NeoPixel.h>
+  Adafruit_NeoPixel* pixels = NULL;
 #endif
 
 static uint16_t groups[5][2] = {};
 static uint8_t activeGroups = 0;
 static bool pauseEffects = false;
-
+// static String ssid;
+// static String password;
+// static String bonjourName;
+static uint8_t dataPin;
+static uint8_t pixelType;
 
 void getPreferences() {
+
   sendHeaders();
-  // server.send(200, "text/json", F("{success:false}"));
-  server.send(200, "text/json", F("{\"pin\":5, \"bitOrder\": \"GRBW\"}"));
+  String preferenceString = readSystemPrefsFromEEPROM();
+  Serial.println(preferenceString);
+  ssid = getValue(preferenceString, '\n', 0);
+  password = getValue(preferenceString, '\n', 1);
+  bonjourName = getValue(preferenceString, '\n', 2);
+  dataPin = getValue(preferenceString, '\n', 3).toInt();
+  pixelType = getValue(preferenceString, '\n', 4).toInt();
+  
+  String message = "{\"pin\":\"";
+  message += dataPin;
+  message += "\", \"bitOrder\":\"";
+  message += pixelType;
+  message += "\", \"ssid\":\"";
+  message += ssid;
+  message += "\", \"password\":\"";
+  message += password;
+  message += "\", \"bonjour\":\"";
+  message += bonjourName;
+  message += "\"}";
+
+  server.send(200, "text/json", message);
+
+}
+
+void savePreferences() {
+  sendHeaders();
+  DynamicJsonDocument jsonBuffer(5000);
+  DeserializationError error = deserializeJson(jsonBuffer, server.arg("plain"));
+  Serial.println(server.arg("plain"));
+  if (error) {
+    server.send(200, "text/json", F("{success:false}"));
+    jsonBuffer.clear();
+  }
+  else {
+    dataPin = jsonBuffer["pin"];
+    pixelType = jsonBuffer["bitOrder"];
+    ssid = String(jsonBuffer["ssid"]);
+    password = String(jsonBuffer["wifiPassword"]);
+    bonjourName = String(jsonBuffer["bonjourName"]);
+
+    writeSystemPrefsToEEPROM(ssid, password, bonjourName, dataPin, pixelType);
+
+    server.send(200, "text/json", F("{success:true}"));
+    Serial.println(server.arg("plain"));
+
+    ESP.restart();
+  }
 }
 
 uint16_t * getDividersAndGroups(uint16_t dividers[4]) {
@@ -97,7 +147,7 @@ uint32_t * getPixelData(uint32_t pixelData[1000], uint8_t profile, bool activate
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
     pixelData[i] = singlePixel;
-    if (activate) pixels.setPixelColor(i, colorMod(pixelData[i]));
+    if (activate) pixels->setPixelColor(i, colorMod(pixelData[i]));
   }
   return pixelData;
 }
@@ -111,7 +161,6 @@ void getCurrentConfig() {
 
   if (!colorsOnly) {
     stripLength = readStripLengthFromEEPROM();
-    // bonjourName = readBonjourNameFromEEPROM();
     getSchedule();
     _effectSpeed = readEffectSpeedFromEEPROM(profileArg);
   }
@@ -136,7 +185,7 @@ void activateProfile() {
 
     uint32_t pixelArray[stripLength];
     getPixelData(pixelArray, profile, true);
-    pixels.show();
+    pixels->show();
 
     pauseEffects = false;
 }
@@ -165,7 +214,7 @@ void updateConfig() {
     }
     
     if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
-    pixels.updateLength(stripLength);
+    pixels->updateLength(stripLength);
     server.send(200, "text/json", F("{success:true}"));
 
     uint16_t dividersLength = jsonBuffer["dividers"].size();
@@ -198,16 +247,16 @@ void updateConfig() {
 void setStripLength(uint16_t newStripLength) {
   stripLength = newStripLength;
   if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
-  pixels.updateLength(stripLength);
+  pixels->updateLength(stripLength);
 }
 
 void setPixel(uint16_t position, uint32_t color, bool show) {
-  pixels.setPixelColor(position, color);
-  if (show) pixels.show();
+  pixels->setPixelColor(position, color);
+  if (show) pixels->show();
 }
 
 uint32_t readPixel(uint16_t position) {
-  return pixels.getPixelColor(position);
+  return pixels->getPixelColor(position);
 }
 
 
@@ -223,42 +272,41 @@ void setup(void) {
   // WiFi.softAP(ssid, password);
   // IPAddress myIP = WiFi.softAPIP();
 
-
-  Serial.println();
-  pixels.begin();
-
   Serial.println("Mount LittleFS");
   if(!LittleFS.begin()){
         Serial.println("LittleFS Mount Failed");
         return;
   }
+  Serial.println();
+  getPreferences();
+  // pixelType = NEO_GRB;
+  #ifdef WS2801
+    pixels = new Adafruit_WS2801(stripLength, WS2801_DATA_PIN, WS2801_CLK_PIN);
+  #else
+    pixels = new Adafruit_NeoPixel(stripLength, dataPin, pixelType + NEO_KHZ800);
+  #endif
 
+  pixels->begin();
+
+
+  // writeSystemPrefsToEEPROM(STASSID, STAPSK, BONJOURNAME, DATA_PIN, pixelType);
   epoch = getTime();
-  getCurrentConfig(); 
 
-  // startOTA(bonjourName.c_str());
-  
-  createDir("/0");
-  createDir("/1");
-  createDir("/2");
-  createDir("/3");
   setStripLength(readStripLengthFromEEPROM());
 
   getSchedule();
   uint16_t dividersArray[4] = {};
   getDividersAndGroups(dividersArray);
-  // activateProfile();
 
-  serverStart(updateConfig, getCurrentConfig, getPreferences);
+  getCurrentConfig(); 
+  activateProfile();
 
-  // #if OVERRIDE_BONJOUR
-  //   bonjourName = BONJOURNAME;
-  //   writeBonjourNameToEEPROM(BONJOURNAME);
-  // #else
-  //   bonjourName = readBonjourNameFromEEPROM();
-  //   Serial.print("BONJOUR TAKEN FROM MEMORY - ");
-  //   Serial.println(bonjourName);
-  // #endif
+  serverStart(updateConfig, getCurrentConfig, getPreferences, savePreferences);
+
+  createDir("/0");
+  createDir("/1");
+  createDir("/2");
+  createDir("/3");
   
 }
 
