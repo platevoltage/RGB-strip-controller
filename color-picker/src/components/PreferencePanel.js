@@ -14,6 +14,15 @@ export default function PreferencePanel({get, set, open}) {
     const [ssid, setSsid] = useState("");
     const [wifiPassword, setWifiPassword] = useState("");
     const [bonjourName, setBonjourName] = useState("");
+    const [saving, setSaving] = useState(false);
+
+    const [undo, setUndo] = useState({
+        pin,
+        bitOrder,
+        ssid,
+        wifiPassword,
+        bonjourName,
+    });
 
 
     const style = {
@@ -35,13 +44,13 @@ export default function PreferencePanel({get, set, open}) {
     }
 
     const buttonStyle = {
-        position: "absolute",
-        right: "5px",
-        bottom: "5px",
+        // position: "absolute",
+        // right: "5px",
+        // bottom: "5px",
         backgroundColor: "#666666",
         padding: "10px",
         textDecoration: "none",
-        color: "#ffffff",
+        color: saving ? "#ffffff44" : "#ffffff",
         borderRadius: "4px",
         borderStyle: "solid",
         borderWidth: "1px",
@@ -57,17 +66,18 @@ export default function PreferencePanel({get, set, open}) {
         bitOrderRef.current.value=bitOrder;
         (async () => {
             const result = await getPreferences(get.addressTextBox);
-            setPin(+result.pin);
-            setBitOrder(+result.bitOrder);
-            setSsid(result.ssid);
-            setWifiPassword(result.password);
-            setBonjourName(result.bonjour);
+            const pin = result.pin, bitOrder = result.bitOrder, ssid = result.ssid, wifiPassword = result.password, bonjourName = result.bonjour;
+            setPin(+pin);
+            setBitOrder(+bitOrder);
+            setSsid(ssid);
+            setWifiPassword(wifiPassword);
+            setBonjourName(bonjourName);
 
-            pinRef.current.value=result.pin;
-            bitOrderRef.current.value=result.bitOrder;
-            ssidRef.current.value=result.ssid;
-            wifiPasswordRef.current.value=result.password;
-            bonjourNameRef.current.value=result.bonjour;
+            pinRef.current.value=pin;
+            bitOrderRef.current.value=bitOrder;
+            ssidRef.current.value=ssid;
+            wifiPasswordRef.current.value=wifiPassword;
+            bonjourNameRef.current.value=bonjourName;
 
         })();
 
@@ -75,11 +85,17 @@ export default function PreferencePanel({get, set, open}) {
 
     async function handleSave() {
         try {
+            setSaving(true);
             await savePreferences(get.addressTextBox, pin, bitOrder, ssid, wifiPassword, bonjourName);
+            setUndo({pin, bitOrder, ssid, wifiPassword, bonjourName});
+            setSaving(false);
             open(false);
         } catch (err) {
             console.error(err);
         }
+    }
+    function handleCancel() {
+        open(false);
     }
 
     return (
@@ -196,9 +212,14 @@ export default function PreferencePanel({get, set, open}) {
                 placeholder=""
                 style={inputStyle}
             />
+            <div style={{ position: "absolute", right: "5px", bottom: "5px"}}>
 
-            <button style={buttonStyle} onClick={handleSave}
-            >Save</button>
+                <button style={buttonStyle} onClick={handleCancel}
+                >Cancel</button>
+                <button style={buttonStyle} onClick={handleSave}
+                >{saving ? "Saving" : "Save"}</button>
+            </div>
+
         </div>
     )
 }
