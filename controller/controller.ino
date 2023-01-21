@@ -99,6 +99,7 @@ void savePreferences() {
     server.send(200, "text/json", F("{success:true}"));
     Serial.println(server.arg("plain"));
 
+    delay(1000);
     ESP.restart();
   }
 }

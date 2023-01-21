@@ -1,7 +1,7 @@
 import { getPreferences, savePreferences } from '../utils/API'
 import { useState, useRef, useEffect } from 'react';
 
-export default function PreferencePanel({get, set}) {
+export default function PreferencePanel({get, set, open}) {
 
     const pinRef = useRef();
     const bitOrderRef = useRef();
@@ -75,8 +75,8 @@ export default function PreferencePanel({get, set}) {
 
     async function handleSave() {
         try {
-
             await savePreferences(get.addressTextBox, pin, bitOrder, ssid, wifiPassword, bonjourName);
+            open(false);
         } catch (err) {
             console.error(err);
         }
