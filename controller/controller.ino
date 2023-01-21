@@ -65,7 +65,6 @@ void getPreferences() {
 
   sendHeaders();
   String preferenceString = readSystemPrefsFromEEPROM();
-  Serial.println(preferenceString);
 
   ssid = getValue(preferenceString, '\n', 0);
   password = getValue(preferenceString, '\n', 1);
@@ -73,8 +72,6 @@ void getPreferences() {
   dataPin = getValue(preferenceString, '\n', 3).toInt();
   pixelType = getValue(preferenceString, '\n', 4).toInt();
   
-
-
   String message = "{\"pin\":\"";
   message += dataPin;
   message += "\", \"bitOrder\":\"";
@@ -86,8 +83,7 @@ void getPreferences() {
   message += "\", \"bonjour\":\"";
   message += bonjourName;
   message += "\"}";
-  Serial.println(message);
-  // server.send(200, "text/json", F("{success:false}"));
+  
   server.send(200, "text/json", message);
 }
 
@@ -139,7 +135,6 @@ void getCurrentConfig() {
 
   if (!colorsOnly) {
     stripLength = readStripLengthFromEEPROM();
-    // bonjourName = readBonjourNameFromEEPROM();
     getSchedule();
     _effectSpeed = readEffectSpeedFromEEPROM(profileArg);
   }
