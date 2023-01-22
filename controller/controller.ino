@@ -137,12 +137,12 @@ void getSchedule() {
   }
 }
 
-uint32_t * getPixelData(uint32_t pixelData[], uint8_t profile, bool activate = false) {
+uint32_t * getPixelData(uint32_t pixelData[], uint8_t profile) {
   String pixelString = readPixelsFromEEPROM(profile);
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
     pixelData[i] = singlePixel;
-    if (activate) pixels->setPixelColor(i, colorMod(pixelData[i]));
+    // if (activate) pixels->setPixelColor(i, colorMod(pixelData[i]));
   }
   return pixelData;
 }
@@ -176,19 +176,32 @@ void activateProfile() {
 
     pauseEffects = true;
 
+    //fade out
+    if(millis() > 2000) for(int j = 100; j >= 0; j--) {
+      for (int i = 0; i < stripLength; i++) {
+        uint32_t currentPixelColor = pixels->getPixelColor(i);
+        Serial.println(currentPixelColor);
+        pixels->setPixelColor(i, adjustBrightness(currentPixelColor, j) );
+      }
+      pixels->show();
+      delay(10);
+    }
+
     effectSpeed = readEffectSpeedFromEEPROM(profile);
 
     uint32_t pixelArray[stripLength];
 
     uint32_t * pixelData = getPixelData(pixelArray, profile);
-
-  for (int j = 0; j < 100; j++) {  
-    for (int i = 0; i < stripLength; i++) {
-      pixels->setPixelColor(i, adjustBrightness(colorMod(pixelData[i]), j) );
+    
+    
+    //fade in
+    for (int j = 0; j < 100; j++) {
+      for (int i = 0; i < stripLength; i++) {
+        pixels->setPixelColor(i, adjustBrightness(colorMod(pixelData[i]), j) );
+      }
+      pixels->show();
+      delay(10);
     }
-    pixels->show();
-    delay(10);
-  }
 
 
     pauseEffects = false;
@@ -207,7 +220,7 @@ void updateConfig() {
   else {
     const char *status = jsonBuffer["status"];
     uint16_t length = jsonBuffer["length"];
-    stripLength = jsonBuffer["stripLength"];
+    uint16_t _stripLength = jsonBuffer["stripLength"];
     uint16_t _effectSpeed = jsonBuffer["effectSpeed"];
     const uint8_t _profile = jsonBuffer["profile"];
     
@@ -217,8 +230,11 @@ void updateConfig() {
       schedule[i] = jsonBuffer["schedule"][i];
     }
     
-    if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
-    pixels->updateLength(stripLength);
+    if (_stripLength > MAX_PIXELS) _stripLength = MAX_PIXELS;
+    if (stripLength != _stripLength) {
+      pixels->updateLength(stripLength);
+      stripLength = _stripLength;
+    }
     server.send(200, "text/json", F("{success:true}"));
 
     uint16_t dividersLength = jsonBuffer["dividers"].size();
