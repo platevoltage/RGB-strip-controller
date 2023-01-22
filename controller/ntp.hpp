@@ -127,7 +127,7 @@ void NTPTimer() {
 }
 
 
-uint8_t determineProfileUsed() {
+uint8_t determineProfileUsedRealTime() {
   float timeDecimal = getTimeDecimal();
   Serial.print(timeDecimal);
   Serial.print("----");
@@ -164,13 +164,19 @@ uint8_t determineProfileUsed() {
   return _profile;
 }
 
+uint8_t determineProfileUsedTimer() {
+  Serial.println( millis()/10000 % 3 );
+  return millis()/10000 % 3;
+}
+
 static unsigned long clockTickPreviousMillis = 0;
 void clockTick(void(*activateProfile)(uint8_t, uint8_t)) {
     unsigned long currentMillis = millis();
     if (currentMillis - clockTickPreviousMillis >= 1000) {
       clockTickPreviousMillis = currentMillis;
         epoch++;
-        uint8_t _profile = determineProfileUsed();
+        // uint8_t _profile = determineProfileUsedRealTime();
+        uint8_t _profile = determineProfileUsedTimer();
         if (profile != _profile) {
           (*activateProfile)(profile, _profile);
           profile = _profile;
