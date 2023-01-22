@@ -137,7 +137,7 @@ void getSchedule() {
   }
 }
 
-uint32_t * getPixelData(uint32_t pixelData[1000], uint8_t profile, bool activate = false) {
+uint32_t * getPixelData(uint32_t pixelData[], uint8_t profile, bool activate = false) {
   String pixelString = readPixelsFromEEPROM(profile);
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
@@ -179,8 +179,17 @@ void activateProfile() {
     effectSpeed = readEffectSpeedFromEEPROM(profile);
 
     uint32_t pixelArray[stripLength];
-    getPixelData(pixelArray, profile, true);
+
+    uint32_t * pixelData = getPixelData(pixelArray, profile);
+
+  for (int j = 0; j < 100; j++) {  
+    for (int i = 0; i < stripLength; i++) {
+      pixels->setPixelColor(i, adjustBrightness(colorMod(pixelData[i]), j) );
+    }
     pixels->show();
+    delay(10);
+  }
+
 
     pauseEffects = false;
 }
@@ -233,7 +242,7 @@ void updateConfig() {
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
 
-    activateProfile();
+    // activateProfile();
   }
 
 }
@@ -314,7 +323,7 @@ void loop(void) {
 
   // NTP often fails on first try. Will repeat getTime for 30 seconds.
   if (epoch < 100000 && millis() < 30000) {
-    Serial.println("NPT FAIL");
+    Serial.println("NTP FAIL");
     epoch = getTime();
   }
   // Serial.println(activeGroups);
