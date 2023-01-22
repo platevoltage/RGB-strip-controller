@@ -193,7 +193,7 @@ void activateProfile(uint8_t oldProfile, uint8_t newProfile) {
 
     // if(millis() > 5000) fadeOut(readPixel, setPixel);
 
-    effectSpeed = readEffectSpeedFromEEPROM(profile);
+    effectSpeed = readEffectSpeedFromEEPROM(newProfile);
 
     uint32_t oldPixelArray[stripLength];
     uint32_t * oldPixelData = getPixelData(oldPixelArray, oldProfile);
