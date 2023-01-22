@@ -17,7 +17,7 @@ uint32_t adjustBrightness(uint32_t input, uint8_t brightness) {
   g *= brightnessPercent;
   b *= brightnessPercent;
 
-  uint32_t output = w << 24 | r << 16 | b << 8 | g;
+  uint32_t output = w << 24 | r << 16 | g << 8 | b;
 
   return output;
 }
