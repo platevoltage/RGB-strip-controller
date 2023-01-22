@@ -1,8 +1,7 @@
 import { useRef, useEffect } from 'react';
 
 export default function ScheduleTimeline({currentTime, timelineRef}) {
-    const timeRef = useRef(null);
-    let timeWidth;
+
     const style = {
         // position: 'absolute',
         display: 'flex',
@@ -15,7 +14,7 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
         // top: "40%"
     }
     const hourWidth = 2.4;
-    const hourMargin = 1.77;
+    const hourMargin = 100/24 - hourWidth;
     const hourStyle = {
         color: "#ffffff",
         position: "relative",
