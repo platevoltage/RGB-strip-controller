@@ -17,7 +17,7 @@ export default function Schedule({schedule, setSchedule, colors, currentTime, wi
     return (
         <div style={style} ref={selfRef}>
             <div ref={timelineRef} style={{position: 'absolute', right: "20px", top: "40%", width: "calc(100% - 280px)", height: "20px"}}>
-                <ScheduleTimeline currentTime={currentTime} timelineRef={timelineRef}/>
+                <ScheduleTimeline realTime={false} currentTime={currentTime} timelineRef={timelineRef}/>
         
             </div>
 

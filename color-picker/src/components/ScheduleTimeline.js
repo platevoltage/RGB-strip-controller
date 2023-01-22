@@ -1,6 +1,13 @@
 import { useRef, useEffect } from 'react';
 
-export default function ScheduleTimeline({currentTime, timelineRef}) {
+export default function ScheduleTimeline({realTime, currentTime, timelineRef}) {
+
+    let numOfTicks;
+    if (realTime) {
+        numOfTicks = 24;
+    } else {
+        numOfTicks = 10;
+    }
 
     const style = {
         // position: 'absolute',
@@ -14,7 +21,7 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
         // top: "40%"
     }
     const hourWidth = 2.4;
-    const hourMargin = 100/24 - hourWidth;
+    const hourMargin = 100/numOfTicks - hourWidth;
     const hourStyle = {
         color: "#ffffff",
         position: "relative",
@@ -73,15 +80,15 @@ export default function ScheduleTimeline({currentTime, timelineRef}) {
     // hour*4.35-4
     return (
         <div style={style}>
-            <div style={{...hourStyle, ...currentTimeStyle}}>
+            {realTime && <div style={{...hourStyle, ...currentTimeStyle}}>
                 Current Time
                 <div style={downArrowStyle}></div>
-            </div>
-            {[...Array(24)].map((_,index) => (
+            </div>}
+            {[...Array(numOfTicks)].map((_,index) => (
 
                 <div style={hourStyle} key={index}>
                     <p style={{marginTop: "20%"}}>{index}</p>
-                    { (index === 0 ||index > 12) && 
+                    { (index === 0 ||index > 12) && realTime &&
                         <div style={{...hourStyle,...twelveHourStyle}}>
                             <p style={{marginTop: "20%"}}>{Math.abs(index-12)}</p>
                         </div>
