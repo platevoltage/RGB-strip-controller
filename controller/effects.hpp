@@ -48,9 +48,18 @@ void fadeOut(uint32_t(*readPixel)(uint16_t), void(*setPixel)(uint16_t, uint32_t,
 }
 
 void fadeIn(uint32_t pixelData[], uint32_t(*readPixel)(uint16_t), void(*setPixel)(uint16_t, uint32_t, bool)) {
-  for (int j = 0; j < 100; j++) {
+  for (int j = 0; j <= 100; j++) {
     for (int i = 0; i < stripLength; i++) {
       (*setPixel)(i, adjustBrightness(colorMod(pixelData[i]), j), i==stripLength-1 );
+    }
+    delay(10);
+  }
+}
+
+void crossFade(uint32_t oldPixelData[], uint32_t newPixelData[], void(*setPixel)(uint16_t, uint32_t, bool)) {
+  for (int j = 0; j <= 100; j++) {
+    for (int i = 0; i < stripLength; i++) {
+      (*setPixel)(i, crossFadePixel( oldPixelData[i], newPixelData[i], j ), i==stripLength-1 );
     }
     delay(10);
   }

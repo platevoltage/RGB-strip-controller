@@ -17,7 +17,39 @@ uint32_t adjustBrightness(uint32_t input, uint8_t brightness) {
   g *= brightnessPercent;
   b *= brightnessPercent;
 
-  uint32_t output = r << 16 | g << 8 | b;
+  uint32_t output = w << 24 | r << 16 | b << 8 | g;
+
+  return output;
+}
+
+uint32_t crossFadePixel(uint32_t color1, uint32_t color2, uint8_t amount) {
+
+  const float crossFadePercent2 = (float)amount/100;
+  const float crossFadePercent1 = (float)1 - crossFadePercent2;
+
+  Serial.print("Crossfade 1 - ");
+  Serial.println(crossFadePercent1);
+    Serial.print("Crossfade 2 - ");
+  Serial.println(crossFadePercent2);
+
+
+  uint8_t w1 = color1 >> 24;
+  uint8_t r1 = color1 >> 16;
+  uint8_t g1 = color1 >> 8;
+  uint8_t b1 = color1;
+
+  uint8_t w2 = color2 >> 24;
+  uint8_t r2 = color2 >> 16;
+  uint8_t g2 = color2 >> 8;
+  uint8_t b2 = color2;
+
+  float w = w1*crossFadePercent1 + w2*crossFadePercent2;
+  float r = r1*crossFadePercent1 + r2*crossFadePercent2;
+  float g = g1*crossFadePercent1 + g2*crossFadePercent2;
+  float b = b1*crossFadePercent1 + b2*crossFadePercent2;
+
+
+  uint32_t output = (uint8_t)w << 24 | (uint8_t)r << 16 | (uint8_t)g << 8 | (uint8_t)b;
 
   return output;
 }

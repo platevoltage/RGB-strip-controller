@@ -187,17 +187,20 @@ void getCurrentConfig() {
 
 }
 
-void activateProfile() {
+void activateProfile(uint8_t oldProfile, uint8_t newProfile) {
 
     pauseEffects = true;
 
-    if(millis() > 5000) fadeOut(readPixel, setPixel);
+    // if(millis() > 5000) fadeOut(readPixel, setPixel);
 
     effectSpeed = readEffectSpeedFromEEPROM(profile);
 
-    uint32_t pixelArray[stripLength];
-    uint32_t * pixelData = getPixelData(pixelArray, profile);
-    fadeIn(pixelData, readPixel, setPixel);
+    uint32_t oldPixelArray[stripLength];
+    uint32_t * oldPixelData = getPixelData(oldPixelArray, oldProfile);
+    uint32_t newPixelArray[stripLength];
+    uint32_t * newPixelData = getPixelData(newPixelArray, newProfile);
+    // fadeIn(newPixelData, readPixel, setPixel);
+    crossFade(oldPixelData, newPixelData, setPixel);
 
     pauseEffects = false;
 }
@@ -294,7 +297,7 @@ void setup(void) {
   getDividersAndGroups(dividersArray);
 
   getCurrentConfig(); 
-  activateProfile();
+  activateProfile(profile, profile);
 
   serverStart(updateConfig, getCurrentConfig, getPreferences, savePreferences);
 

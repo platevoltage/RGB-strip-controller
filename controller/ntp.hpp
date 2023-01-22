@@ -165,15 +165,15 @@ uint8_t determineProfileUsed() {
 }
 
 static unsigned long clockTickPreviousMillis = 0;
-void clockTick(void(*activateProfile)()) {
+void clockTick(void(*activateProfile)(uint8_t, uint8_t)) {
     unsigned long currentMillis = millis();
     if (currentMillis - clockTickPreviousMillis >= 1000) {
       clockTickPreviousMillis = currentMillis;
         epoch++;
-        uint8_t checkIfProfileChange = determineProfileUsed();
-        if (profile != checkIfProfileChange) {
-          profile = checkIfProfileChange;
-          (*activateProfile)();
+        uint8_t _profile = determineProfileUsed();
+        if (profile != _profile) {
+          (*activateProfile)(profile, _profile);
+          profile = _profile;
         }
         Serial.print("HEAP - ");
         Serial.println(ESP.getFreeHeap());
