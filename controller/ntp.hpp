@@ -175,8 +175,8 @@ void clockTick(void(*activateProfile)(uint8_t, uint8_t)) {
     if (currentMillis - clockTickPreviousMillis >= 1000) {
       clockTickPreviousMillis = currentMillis;
         epoch++;
-        // uint8_t _profile = determineProfileUsedRealTime();
-        uint8_t _profile = determineProfileUsedTimer();
+        uint8_t _profile = determineProfileUsedRealTime();
+        // uint8_t _profile = determineProfileUsedTimer();
         if (profile != _profile) {
           (*activateProfile)(profile, _profile);
           profile = _profile;

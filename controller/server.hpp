@@ -50,13 +50,7 @@ void handleNotFound() {
 
 
 void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPreferences)(), void(*savePreferences)()) {
-    // String bonjourName;;
-    // #if OVERRIDE_BONJOUR
-    //   bonjourName = BONJOURNAME;
-    //   writeBonjourNameToEEPROM(BONJOURNAME);
-    // #else
-    //   bonjourName = readBonjourNameFromEEPROM();
-    // #endif
+
     WiFi.setAutoReconnect(true);
     WiFi.persistent(true);
     WiFi.mode(WIFI_STA);

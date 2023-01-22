@@ -7,8 +7,7 @@
 // #define INSTALL_PREFS // uncomment to preload wifi and system prefs.
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-// #define OVERRIDE_BONJOUR 1
-#define BONJOURNAME "test"
+#define BONJOURNAME "desk"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -257,8 +256,6 @@ void updateConfig() {
     writeCurrentProfileToEEPROM(profile);
 
 
-    //WE NEED THIS
-    // activateProfile(profile, profile);
   }
 
 }
