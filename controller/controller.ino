@@ -199,8 +199,8 @@ void activateProfile(uint8_t oldProfile, uint8_t newProfile) {
     uint32_t * oldPixelData = getPixelData(oldPixelArray, oldProfile);
     uint32_t newPixelArray[stripLength];
     uint32_t * newPixelData = getPixelData(newPixelArray, newProfile);
-    // fadeIn(newPixelData, readPixel, setPixel);
-    crossFade(oldPixelData, newPixelData, setPixel);
+    if(millis() < 5000) fadeIn(newPixelData, readPixel, setPixel);
+    else crossFade(oldPixelData, newPixelData, setPixel);
 
     pauseEffects = false;
 }
@@ -246,8 +246,6 @@ void updateConfig() {
     for (uint16_t i = 0; i < stripLength; i++) {
       pixelData[i] = jsonBuffer["color"][i];
     }
-
-    
 
     writeDividersToEEPROM(dividers, dividersLength);
     writeScheduleToEEPROM(schedule, scheduleLength);
