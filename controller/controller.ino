@@ -4,13 +4,12 @@
 //user prefs------
 
 // #define WS2801 // uncomment for ws2801
-// #define STASSID "Can't stop the signal, Mal"
-// #define STAPSK "youcanttaketheskyfromme"
-// #define APSSID "ESPap"
-// #define APPSK  "thereisnospoon"
+// #define INSTALL_PREFS // uncomment to preload wifi and system prefs.
+#define STASSID "Can't stop the signal, Mal"
+#define STAPSK "youcanttaketheskyfromme"
 // #define OVERRIDE_BONJOUR 1
-// #define BONJOURNAME "test"
-// #define DATA_PIN 5
+#define BONJOURNAME "test"
+#define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
 
@@ -205,6 +204,7 @@ void activateProfile(uint8_t oldProfile, uint8_t newProfile) {
     pauseEffects = false;
 }
 
+
 void updateConfig() {
   sendHeaders();
 
@@ -254,7 +254,9 @@ void updateConfig() {
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
 
-    activateProfile(profile, profile);
+
+    //WE NEED THIS
+    // activateProfile(profile, profile);
   }
 
 }
@@ -277,6 +279,11 @@ void setup(void) {
         return;
   }
   Serial.println();
+  
+  #ifdef INSTALL_PREFS
+  writeSystemPrefsToEEPROM(STASSID, STAPSK, BONJOURNAME, DATA_PIN, 201, 100);
+  #endif
+
   getPreferences();
 
   #ifdef WS2801
@@ -323,5 +330,6 @@ void loop(void) {
     Serial.println("NTP FAIL");
     epoch = getTime();
   }
+  yield() ;
   // Serial.println(activeGroups);
 }
