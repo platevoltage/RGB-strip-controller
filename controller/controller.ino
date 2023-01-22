@@ -158,7 +158,6 @@ uint32_t * getPixelData(uint32_t pixelData[], uint8_t profile) {
   for (uint16_t i = 0; i < stripLength; i++) {
     uint32_t singlePixel = toInt32(getValue(pixelString, '\n', i));
     pixelData[i] = singlePixel;
-    // if (activate) pixels->setPixelColor(i, colorMod(pixelData[i]));
   }
   return pixelData;
 }
@@ -245,8 +244,6 @@ void updateConfig() {
       pixelData[i] = jsonBuffer["color"][i];
     }
 
-    
-
     writeDividersToEEPROM(dividers, dividersLength);
     writeScheduleToEEPROM(schedule, scheduleLength);
     writePixelsToEEPROM(pixelData, stripLength, _profile);
@@ -254,7 +251,6 @@ void updateConfig() {
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
 
-    // activateProfile();
   }
 
 }
