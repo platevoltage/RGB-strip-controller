@@ -51,6 +51,22 @@ static bool pauseEffects = false;
 static uint8_t dataPin;
 static uint8_t pixelType;
 
+
+void setStripLength(uint16_t newStripLength) {
+  stripLength = newStripLength;
+  if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
+  pixels->updateLength(stripLength);
+}
+
+void setPixel(uint16_t position, uint32_t color, bool show = false) {
+  pixels->setPixelColor(position, color);
+  if (show) pixels->show();
+}
+
+uint32_t readPixel(uint16_t position) {
+  return pixels->getPixelColor(position);
+}
+
 void getPreferences() {
 
   sendHeaders();
@@ -176,33 +192,13 @@ void activateProfile() {
 
     pauseEffects = true;
 
-    //fade out
-    if(millis() > 2000) for(int j = 100; j >= 0; j--) {
-      for (int i = 0; i < stripLength; i++) {
-        uint32_t currentPixelColor = pixels->getPixelColor(i);
-        Serial.println(currentPixelColor);
-        pixels->setPixelColor(i, adjustBrightness(currentPixelColor, j) );
-      }
-      pixels->show();
-      delay(10);
-    }
+    if(millis() > 5000) fadeOut(readPixel, setPixel);
 
     effectSpeed = readEffectSpeedFromEEPROM(profile);
 
     uint32_t pixelArray[stripLength];
-
     uint32_t * pixelData = getPixelData(pixelArray, profile);
-    
-    
-    //fade in
-    for (int j = 0; j < 100; j++) {
-      for (int i = 0; i < stripLength; i++) {
-        pixels->setPixelColor(i, adjustBrightness(colorMod(pixelData[i]), j) );
-      }
-      pixels->show();
-      delay(10);
-    }
-
+    fadeIn(pixelData, readPixel, setPixel);
 
     pauseEffects = false;
 }
@@ -263,21 +259,6 @@ void updateConfig() {
 
 }
 
-
-void setStripLength(uint16_t newStripLength) {
-  stripLength = newStripLength;
-  if (stripLength > MAX_PIXELS) stripLength = MAX_PIXELS;
-  pixels->updateLength(stripLength);
-}
-
-void setPixel(uint16_t position, uint32_t color, bool show) {
-  pixels->setPixelColor(position, color);
-  if (show) pixels->show();
-}
-
-uint32_t readPixel(uint16_t position) {
-  return pixels->getPixelColor(position);
-}
 
 
 
