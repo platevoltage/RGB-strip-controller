@@ -247,6 +247,8 @@ void updateConfig() {
       pixelData[i] = jsonBuffer["color"][i];
     }
 
+    
+
     writeDividersToEEPROM(dividers, dividersLength);
     writeScheduleToEEPROM(schedule, scheduleLength);
     writePixelsToEEPROM(pixelData, stripLength, _profile);
@@ -254,6 +256,7 @@ void updateConfig() {
     writeStripLengthToEEPROM(stripLength);
     writeCurrentProfileToEEPROM(profile);
 
+    activateProfile(profile, profile);
   }
 
 }
