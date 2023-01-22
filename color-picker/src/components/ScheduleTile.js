@@ -7,6 +7,8 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     const [y, setY] = useState(yOrigin);
     let [timePlacement, setTimePlacement] = useState(0);
 
+    const numOfTicks = 24;
+
     const style = {
         textAlign: 'center',
         position: 'absolute',
@@ -42,8 +44,8 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         
         let adjustedTime = schedule[index]-timeOffset;
 
-        if (adjustedTime < 0) adjustedTime +=24;
-        if (adjustedTime >= 24) adjustedTime -=24;
+        if (adjustedTime < 0) adjustedTime += numOfTicks;
+        if (adjustedTime >= numOfTicks) adjustedTime -= numOfTicks;
         
         if (schedule[index] !== 0 && schedule[index] !== undefined && !mouseClick) {
             if (schedule[index] - timeOffset === 0) {
@@ -51,7 +53,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
                 setTimePlacement(0);
             }
             else {
-                setX( ((timeline.x - tile.width*2) + timeline.width) - timeline.width*((24 -  adjustedTime )/24) );
+                setX( ((timeline.x - tile.width*2) + timeline.width) - timeline.width*((numOfTicks -  adjustedTime )/numOfTicks) );
                 setTimePlacement(adjustedTime);
             }
             setY(20);
@@ -61,12 +63,12 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
 
     useEffect(() => {
         console.log(colors);
-        if (mouseClick) setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*24) || 0);
+        if (mouseClick) setTimePlacement((((tile.x - timeline.x + tile.width/2 ) / ( timeline.width  ))*numOfTicks) || 0);
     }, [ x, y])
 
     let minutes = (Math.round(60*(timePlacement-Math.floor(timePlacement))));
     const timeOffset = (new Date().getTimezoneOffset()/60);
-    const gmtTime = (timePlacement + timeOffset) - Math.floor((timePlacement + timeOffset)/24)*24;
+    const gmtTime = (timePlacement + timeOffset) - Math.floor((timePlacement + timeOffset)/numOfTicks)*numOfTicks;
     const parent = {
         x: parentRef.current?.getBoundingClientRect().x, 
         y: parentRef.current?.getBoundingClientRect().y,
@@ -134,7 +136,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         if (timePlacement === 0) schedule[index] = 0;
         else if (timePlacement>-1 && timePlacement<0) schedule[index] = timeOffset+.01;
         else if (timePlacement<=-1) schedule[index] = 0;
-        else if (timePlacement>24) schedule[index] = timeOffset;
+        else if (timePlacement>numOfTicks) schedule[index] = timeOffset;
         else schedule[index] = +gmtTime.toFixed(2);
         setSchedule(schedule);
         // console.log(schedule);
@@ -164,7 +166,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         _timePlacement = 0;
         minutes = 1;
     } 
-    if (timePlacement > 24) {
+    if (timePlacement > numOfTicks) {
         _timePlacement = 0;
         minutes = 0;
     }
