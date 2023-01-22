@@ -245,7 +245,9 @@ void updateConfig() {
 
     for (uint16_t i = 0; i < stripLength; i++) {
       pixelData[i] = jsonBuffer["color"][i];
+      pixels->setPixelColor(i, pixelData[i]);
     }
+    pixels->show();
 
     writeDividersToEEPROM(dividers, dividersLength);
     writeScheduleToEEPROM(schedule, scheduleLength);
