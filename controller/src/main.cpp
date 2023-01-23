@@ -7,7 +7,7 @@
 // #define INSTALL_PREFS // uncomment to preload wifi and system prefs.
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "desk"
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -24,6 +24,7 @@
 #define MAX_PIXELS 250
 
 #endif
+
 
 #include "json.hpp"
 #include "color.hpp"
@@ -107,9 +108,12 @@ void savePreferences() {
   else {
     dataPin = jsonBuffer["pin"];
     pixelType = jsonBuffer["bitOrder"];
-    ssid = String(jsonBuffer["ssid"]);
-    password = String(jsonBuffer["wifiPassword"]);
-    bonjourName = String(jsonBuffer["bonjourName"]);
+    const char* _ssid = jsonBuffer["ssid"];
+    ssid = _ssid;
+    const char* _password = jsonBuffer["wifiPassword"];
+    password = _password;
+    const char* _bonjourName = jsonBuffer["bonjourName"];
+    bonjourName = _bonjourName;
     brightness = jsonBuffer["brightness"];
 
     writeSystemPrefsToEEPROM(ssid, password, bonjourName, dataPin, pixelType, brightness);
@@ -265,7 +269,7 @@ void updateConfig() {
 
 
 
-void setup(void) {
+void setup() {
 
   // pinMode(LED_BUILTIN, OUTPUT);
   // digitalWrite(LED_BUILTIN, 0);
@@ -273,11 +277,18 @@ void setup(void) {
 
 
   Serial.println("Mount LittleFS");
-  if(!LittleFS.begin()){
+  #ifdef ESP32
+  if(!LittleFS.begin(true)) {
         Serial.println("LittleFS Mount Failed");
         return;
   }
-  Serial.println();
+  #else
+  if(!LittleFS.begin()) {
+        Serial.println("LittleFS Mount Failed");
+        return;
+  }
+  #endif
+
   
   #ifdef INSTALL_PREFS
   writeSystemPrefsToEEPROM(STASSID, STAPSK, BONJOURNAME, DATA_PIN, 201, 100);
@@ -290,12 +301,9 @@ void setup(void) {
   #else
     pixels = new Adafruit_NeoPixel(stripLength, dataPin, pixelType + NEO_KHZ800);
   #endif
-  // pixels->setBrightness(brightness);
+
   pixels->begin();
 
-
-  // writeSystemPrefsToEEPROM(STASSID, STAPSK, BONJOURNAME, DATA_PIN, pixelType);
-  epoch = getTime();
 
   setStripLength(readStripLengthFromEEPROM());
 
@@ -312,12 +320,14 @@ void setup(void) {
   createDir("/1");
   createDir("/2");
   createDir("/3");
+
+  epoch = getTime(); // CRASHES ESP32
   
 }
 
 
 
-void loop(void) {
+void loop() {
   webClientTimer(10);
   NTPTimer();
   if (effectSpeed > 0 && millis() > 10000 && !pauseEffects) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
