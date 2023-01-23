@@ -269,7 +269,7 @@ void updateConfig() {
 
 
 
-void setup(void) {
+void setup() {
 
   // pinMode(LED_BUILTIN, OUTPUT);
   // digitalWrite(LED_BUILTIN, 0);
@@ -289,7 +289,6 @@ void setup(void) {
   }
   #endif
 
-  Serial.println();
   
   #ifdef INSTALL_PREFS
   writeSystemPrefsToEEPROM(STASSID, STAPSK, BONJOURNAME, DATA_PIN, 201, 100);
@@ -302,11 +301,9 @@ void setup(void) {
   #else
     pixels = new Adafruit_NeoPixel(stripLength, dataPin, pixelType + NEO_KHZ800);
   #endif
-  // pixels->setBrightness(brightness);
+
   pixels->begin();
 
-
-  // writeSystemPrefsToEEPROM(STASSID, STAPSK, BONJOURNAME, DATA_PIN, pixelType);
 
   setStripLength(readStripLengthFromEEPROM());
 
@@ -330,7 +327,7 @@ void setup(void) {
 
 
 
-void loop(void) {
+void loop() {
   webClientTimer(10);
   NTPTimer();
   if (effectSpeed > 0 && millis() > 10000 && !pauseEffects) effectTimer(effectSpeed, activeGroups, groups, readPixel, setPixel);
@@ -338,7 +335,7 @@ void loop(void) {
 
 
   // NTP often fails on first try. Will repeat getTime for 30 seconds.
-  if (epoch < 100000 && millis() < 30000 && millis() > 10000) {
+  if (epoch < 100000 && millis() < 30000) {
     Serial.println("NTP FAIL");
     epoch = getTime();
   }
