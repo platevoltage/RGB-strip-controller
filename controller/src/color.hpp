@@ -27,12 +27,6 @@ uint32_t crossFadePixel(uint32_t color1, uint32_t color2, uint8_t amount) {
   const float crossFadePercent2 = (float)amount/100;
   const float crossFadePercent1 = (float)1 - crossFadePercent2;
 
-  // Serial.print("Crossfade 1 - ");
-  // Serial.println(crossFadePercent1);
-  //   Serial.print("Crossfade 2 - ");
-  // Serial.println(crossFadePercent2);
-
-
   uint8_t w1 = color1 >> 24;
   uint8_t r1 = color1 >> 16;
   uint8_t g1 = color1 >> 8;
