@@ -134,11 +134,11 @@ void writeSystemPrefsToEEPROM(String ssid, String password, String bonjourName, 
   message += "\n";
   message += bonjourName;
   message += "\n";
-  message += dataPin;
+  message += String(dataPin);
   message += "\n";
-  message += pixelType;
+  message += String(pixelType);
   message += "\n";
-  message += brightness;
+  message += String(brightness);
   writeFile( "/preferences.txt", message.c_str());
 }
 
