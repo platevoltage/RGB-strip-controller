@@ -80,7 +80,7 @@ uint16_t readStripLengthFromEEPROM() {
 
 void writePixelsToEEPROM(uint32_t pixelData[], size_t length, uint8_t profile) {
   String message;
-  for (int i=0; i < length; i++) {
+  for (size_t i=0; i < length; i++) {
     uint32_t color = pixelData[i];
 
     message += String(color);
@@ -102,7 +102,7 @@ void writeStripLengthToEEPROM(uint16_t stripLength) {
 
 void writeDividersToEEPROM(uint16_t positions[], size_t length) {
   String message;
-  for (int i=0; i < length; i++) {
+  for (size_t i=0; i < length; i++) {
     if (positions[i] > 0) {
       message += positions[i];
       message += "\n";
@@ -113,7 +113,7 @@ void writeDividersToEEPROM(uint16_t positions[], size_t length) {
 
 void writeScheduleToEEPROM(float times[], size_t length) {
   String message;
-  for (int i=0; i < length; i++) {
+  for (size_t i=0; i < length; i++) {
       message += times[i];
       message += "\n";
   }
