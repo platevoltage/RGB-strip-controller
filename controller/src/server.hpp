@@ -66,8 +66,9 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPref
       Serial.println(myIP);
 
     } else {
-
-      WiFi.begin(ssid, password);
+      const char* _ssid = ssid.c_str(); 
+      const char* _password = password.c_str(); 
+      WiFi.begin(_ssid, _password);
       //   Wait for connection
       while (WiFi.status() != WL_CONNECTED) {
         delay(500);

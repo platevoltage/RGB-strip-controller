@@ -44,8 +44,8 @@ void sendNTPpacket(IPAddress& address) {
   packetBuffer[14] = 49;
   packetBuffer[15] = 52;
 
-  // all NTP fields have been given values, now
-  // you can send a packet requesting a timestamp:
+  // // all NTP fields have been given values, now
+  // // you can send a packet requesting a timestamp:
   udp.beginPacket(address, 123);  // NTP requests are to port 123
   udp.write(packetBuffer, NTP_PACKET_SIZE);
   udp.endPacket();
@@ -54,7 +54,8 @@ void sendNTPpacket(IPAddress& address) {
 uint32_t getTime() {
     // get a random server from the pool
   WiFi.hostByName(ntpServerName, timeServerIP);
-
+  Serial.print("ip - ");
+  Serial.println(timeServerIP);
   sendNTPpacket(timeServerIP);  // send an NTP packet to a time server
   // wait to see if a reply is available
   delay(1000);

@@ -107,9 +107,12 @@ void savePreferences() {
   else {
     dataPin = jsonBuffer["pin"];
     pixelType = jsonBuffer["bitOrder"];
-    ssid = String(jsonBuffer["ssid"]);
-    password = String(jsonBuffer["wifiPassword"]);
-    bonjourName = String(jsonBuffer["bonjourName"]);
+    const char* _ssid = jsonBuffer["ssid"];
+    ssid = _ssid;
+    const char* _password = jsonBuffer["wifiPassword"];
+    password = _password;
+    const char* _bonjourName = jsonBuffer["bonjourName"];
+    bonjourName = _bonjourName;
     brightness = jsonBuffer["brightness"];
 
     writeSystemPrefsToEEPROM(ssid, password, bonjourName, dataPin, pixelType, brightness);
@@ -262,6 +265,7 @@ void updateConfig() {
 
 
 
+#define FORMAT_LITTLEFS_IF_FAILED true
 
 
 
@@ -273,7 +277,7 @@ void setup(void) {
 
 
   Serial.println("Mount LittleFS");
-  if(!LittleFS.begin()){
+  if(!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED)){
         Serial.println("LittleFS Mount Failed");
         return;
   }
@@ -325,10 +329,10 @@ void loop(void) {
 
 
   // NTP often fails on first try. Will repeat getTime for 30 seconds.
-  if (epoch < 100000 && millis() < 30000) {
-    Serial.println("NTP FAIL");
-    epoch = getTime();
-  }
+  // if (epoch < 100000 && millis() < 30000) {
+  //   Serial.println("NTP FAIL");
+  //   epoch = getTime();
+  // }
   yield() ;
   // Serial.println(activeGroups);
 }

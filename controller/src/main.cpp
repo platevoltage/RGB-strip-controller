@@ -277,7 +277,7 @@ void setup(void) {
 
 
   Serial.println("Mount LittleFS");
-  if(!LittleFS.begin()){
+  if(!LittleFS.begin(true)) {
         Serial.println("LittleFS Mount Failed");
         return;
   }
@@ -299,7 +299,6 @@ void setup(void) {
 
 
   // writeSystemPrefsToEEPROM(STASSID, STAPSK, BONJOURNAME, DATA_PIN, pixelType);
-  epoch = getTime();
 
   setStripLength(readStripLengthFromEEPROM());
 
@@ -316,6 +315,8 @@ void setup(void) {
   createDir("/1");
   createDir("/2");
   createDir("/3");
+
+  epoch = getTime(); // CRASHES ESP32
   
 }
 
@@ -329,7 +330,7 @@ void loop(void) {
 
 
   // NTP often fails on first try. Will repeat getTime for 30 seconds.
-  if (epoch < 100000 && millis() < 30000) {
+  if (epoch < 100000 && millis() < 30000 && millis() > 10000) {
     Serial.println("NTP FAIL");
     epoch = getTime();
   }
