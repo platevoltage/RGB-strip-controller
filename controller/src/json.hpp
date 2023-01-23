@@ -17,14 +17,14 @@ String jsonStringify(uint32_t epoch, uint32_t pixelData[], size_t dividersSize, 
     DynamicJsonDocument dividerBuffer(1000);
     JsonArray dividerArray = dividerBuffer.to<JsonArray>();
 
-    for (int i = 0; i < dividersSize; i++) {
+    for (size_t i = 0; i < dividersSize; i++) {
       dividerArray.add(dividers[i]);
     }
 
     DynamicJsonDocument scheduleBuffer(200);
     JsonArray scheduleArray = scheduleBuffer.to<JsonArray>();
 
-    for (int i = 0; i < scheduleSize; i++) {
+    for (size_t i = 0; i < scheduleSize; i++) {
       scheduleArray.add(schedule[i]);
     }
 

@@ -7,7 +7,7 @@
 // #define INSTALL_PREFS // uncomment to preload wifi and system prefs.
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "test"
+#define BONJOURNAME "desk"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13
@@ -169,7 +169,7 @@ void getCurrentConfig() {
 
   uint8_t profileArg = server.arg(0).toInt();
   bool colorsOnly = server.arg(1).toInt();
-  uint16_t _effectSpeed;
+  uint16_t _effectSpeed = 0;
 
   if (!colorsOnly) {
     stripLength = readStripLengthFromEEPROM();
@@ -219,8 +219,8 @@ void updateConfig() {
     jsonBuffer.clear();
   }
   else {
-    const char *status = jsonBuffer["status"];
-    uint16_t length = jsonBuffer["length"];
+    // const char *status = jsonBuffer["status"];
+    // uint16_t length = jsonBuffer["length"];
     uint16_t _stripLength = jsonBuffer["stripLength"];
     uint16_t _effectSpeed = jsonBuffer["effectSpeed"];
     const uint8_t _profile = jsonBuffer["profile"];
@@ -320,6 +320,7 @@ void setup() {
   createDir("/1");
   createDir("/2");
   createDir("/3");
+  listDir("/");
 
   epoch = getTime(); // CRASHES ESP32
   
