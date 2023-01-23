@@ -15,7 +15,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run post-build",
+    "post-build": "/usr/local/bin/python3 script.py && rm -Rf ../controller/src/payload && rm -f ../controller/src/react.hpp && mv react-server/* ../controller/src/",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
