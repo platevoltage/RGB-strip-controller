@@ -1,8 +1,4 @@
-#include "payload/manifest.json.h"
-#include "payload/static/css/main.c83abc47.css.h"
-#include "payload/static/js/main.12f95d7e.js.h"
-#include "payload/static/js/787.05b7a068.chunk.js.h"
-#include "payload/index.html.h"
+#include "react.hpp"
 #include <WiFiClient.h>
 #include <WiFiUdp.h>
 #include "ntp.hpp"
@@ -101,19 +97,19 @@ void serverStart(void(*updateConfig)(), void(*getCurrentConfig)(), void(*getPref
     //-----begin generated paths
 
 
-    server.on(F("/RGB-strip-controller/manifest.json"), []() {
+    server.on(F(MANIFEST_JSON_PATH), []() {
       server.send_P(200, "text/json", _manifest_json);
     });
-    server.on(F("/RGB-strip-controller/static/css/main.c83abc47.css"), []() {
+    server.on(F(MAIN_JS_PATH), []() {
       server.send_P(200, "text/css", _main_css);
     });
-    server.on(F("/RGB-strip-controller/static/js/main.12f95d7e.js"), []() {
+    server.on(F(MAIN_CSS_PATH), []() {
       server.send_P(200, "text/javascript", _main_js);
     });
-    server.on(F("/RGB-strip-controller/static/js/787.05b7a068.chunk.js"), []() {
+    server.on(F(CHUNK_JS_PATH), []() {
       server.send_P(200, "text/javascript", _chunk_js);
     });
-    server.on(F("/RGB-strip-controller/index.html"), []() {
+    server.on(F(INDEX_HTML_PATH), []() {
       server.send_P(200, "text/html", _index_html);
     });
 
