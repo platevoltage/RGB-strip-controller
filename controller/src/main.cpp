@@ -7,7 +7,7 @@
 // #define INSTALL_PREFS // uncomment to preload wifi and system prefs.
 #define STASSID "Can't stop the signal, Mal"
 #define STAPSK "youcanttaketheskyfromme"
-#define BONJOURNAME "desk"
+#define BONJOURNAME "test"
 #define DATA_PIN 5
 #define WS2801_DATA_PIN 15
 #define WS2801_CLK_PIN 13

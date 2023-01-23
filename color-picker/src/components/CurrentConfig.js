@@ -61,10 +61,10 @@ export default function CurrentConfig({get, set}) {
                 <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox} profile={+profile} schedule={schedule} addressTextBox={addressTextBox}/>
                 <ReadButton get={get} set={set} setLoadingParent={setLoading}/>
                 <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
-                <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />
                 <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
                 <Mode mode={mode} setMode={setMode}/>
                 <Profile setLoadingParent={setLoading} get={get} set={set} />
+                { process.env.NODE_ENV === 'development' && <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />}
             </div>
              
     );
