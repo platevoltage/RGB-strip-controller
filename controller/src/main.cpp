@@ -277,10 +277,18 @@ void setup(void) {
 
 
   Serial.println("Mount LittleFS");
+  #ifdef ESP32
   if(!LittleFS.begin(true)) {
         Serial.println("LittleFS Mount Failed");
         return;
   }
+  #else
+  if(!LittleFS.begin()) {
+        Serial.println("LittleFS Mount Failed");
+        return;
+  }
+  #endif
+
   Serial.println();
   
   #ifdef INSTALL_PREFS
