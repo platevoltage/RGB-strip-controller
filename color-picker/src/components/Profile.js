@@ -28,13 +28,13 @@ export default function Profile({setLoadingParent, get, set}) {
     }
 
     const inputStyle = {
-        width: "100px",
-        fontSize: "1.6em",
+        width: "3.3em",
+        fontSize: "1em"
     }
   
     return (
         <div style={style}>
-            <span>Profile:</span>
+            <span style={{fontSize: ".8em"}}>Profile:</span>
             <select
                 // value={textBox}
                 // name="effect-speed"

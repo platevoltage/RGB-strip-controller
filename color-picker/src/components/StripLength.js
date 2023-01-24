@@ -8,13 +8,13 @@ export default function StripLength({colorData, textBox, setTextBox}) {
     }
 
     const inputStyle = {
-        width: "50px",
-        fontSize: "1.6em"
+        width: "3.3em",
+        fontSize: "1em"
     }
   
     return (
         <div style={style}>
-            <span>Length:</span>
+            <span style={{fontSize: ".8em"}}>Length:</span>
             <input
                 value={textBox}
                 name="strip-length"

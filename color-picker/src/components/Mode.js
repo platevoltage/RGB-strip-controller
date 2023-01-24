@@ -8,13 +8,13 @@ export default function Mode({mode, setMode}) {
     }
 
     const inputStyle = {
-        width: "100px",
-        fontSize: "1.6em",
+        width: "6em",
+        fontSize: "1em"
     }
   
     return (
         <div style={style}>
-            <span>Mode:</span>
+            <span style={{fontSize: ".8em"}}>Mode:</span>
             <select
                 // value={textBox}
                 // name="effect-speed"

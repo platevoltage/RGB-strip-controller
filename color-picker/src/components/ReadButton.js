@@ -37,7 +37,7 @@ export default function ReadButton({get, set, setLoadingParent}) {
     }
   
     return (
-        <div style={{margin: "10px", display: "flex", justifyContent: "center", flexDirection: "column", textAlign: "center"}}>
+        <div style={{margin: "10px", display: "flex", justifyContent: "flex-end", flexDirection: "column", textAlign: "center"}}>
             {loading ? 
                 <button style={style}>Loading</button>
                 : 

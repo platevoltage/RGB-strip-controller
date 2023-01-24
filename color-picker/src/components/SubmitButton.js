@@ -58,7 +58,7 @@ export default function SubmitButton({length, pixels, setLoadingParent, loadingP
     }
  
     return (
-        <div style={{margin: "10px", display: "flex", justifyContent: "center", flexDirection: "column", textAlign: "center"}}>
+        <div style={{margin: "10px", display: "flex", justifyContent: "flex-end", flexDirection: "column", textAlign: "center"}}>
             {loading ? 
                 <a href="#x" style={style}>Loading</a>
                 : 
