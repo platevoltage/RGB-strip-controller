@@ -107,6 +107,8 @@ function App() {
   }, []);
   return (
     <div className="App" style={style}>
+
+      {document.URL.includes("github") && <div style={{position: "absolute", top: "0", left: "0"}}>This app is in demo mode, <a href={process.env.PUBLIC_URL+ "/demo.html"} target="_blank" rel="noopener noreferrer">Click here for demo video</a></div>}
       
       <Preferences set={globalSetters} get={globalGetters} />
 
