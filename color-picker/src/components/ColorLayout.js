@@ -44,12 +44,13 @@ export default function ColorLayout({get, set}) {
         justifyContent: "center",
         fontSize: "60px"
     }
-        function handleKeyDown(e) {
+    function handleKeyDown(e) {
         if (e.shiftKey) setShiftKey(true);
         if (e.altKey) setAltKey(true);
         if (e.ctrlKey) setCtrlKey(true);
         if (e.key === 'z') {
             set.setColorDataUnsaved([...undoArray]);
+            console.log(e)
         }
     }
     function handleKeyUp(e) {
@@ -157,19 +158,19 @@ export default function ColorLayout({get, set}) {
         }
         setColorDataUnsaved([...colorDataUnsaved]);  
     }
-    useEffect(()=>{
+    useEffect(() => {
         const tilesSection = tilesRef.current;
-        tilesSection.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown);
         tilesSection.addEventListener("keyup", handleKeyUp);
-        tilesSection.addEventListener("mousedown", handleMouseDown);
+        window.addEventListener("mousedown", handleMouseDown);
         window.addEventListener("mouseup", handleMouseUp);
         setInterval(tick, 1000);
         
         return () => {
             tilesSection.removeEventListener("mousedown", handleMouseDown);
             window.removeEventListener("mouseup", handleMouseUp);
-            tilesSection.removeEventListener("keyup", handleKeyUp);
-            tilesSection.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keyup", handleKeyUp);
+            window.removeEventListener("keydown", handleKeyDown);
             clearInterval(tick);
         };
 
