@@ -120,6 +120,7 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     }
 
     function handleMouseMove(e) {
+        
         tile.x = tileRef.current?.getBoundingClientRect().x;
         tile.y = tileRef.current?.getBoundingClientRect().y;
         if (mouseClick) {
@@ -146,12 +147,12 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         _tileRef.addEventListener('mousedown', handleMouseDown);
         window.addEventListener('mouseup', handleMouseUp);
         _tileRef.addEventListener('mouseout', handleMouseOut);
-        _parentRef.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mousemove', handleMouseMove);
         return () => {
             _tileRef.removeEventListener('mousedown', handleMouseDown);
             window.removeEventListener('mouseup', handleMouseUp);
             _tileRef.removeEventListener('mouseout', handleMouseOut);
-            _parentRef.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mousemove', handleMouseMove);
         };
         
     // eslint-disable-next-line react-hooks/exhaustive-deps
