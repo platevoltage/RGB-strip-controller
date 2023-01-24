@@ -161,8 +161,8 @@ export default function ColorLayout({get, set}) {
     useEffect(() => {
         const tilesSection = tilesRef.current;
         window.addEventListener("keydown", handleKeyDown);
-        tilesSection.addEventListener("keyup", handleKeyUp);
-        window.addEventListener("mousedown", handleMouseDown);
+        window.addEventListener("keyup", handleKeyUp);
+        tilesSection.addEventListener("mousedown", handleMouseDown);
         window.addEventListener("mouseup", handleMouseUp);
         setInterval(tick, 1000);
         

@@ -88,7 +88,6 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
         height: timelineRef.current?.getBoundingClientRect().height
     };
 
-    // console.log(ref.current);
     function snap() {
         tile.x = tileRef.current?.getBoundingClientRect().x;
         tile.y = tileRef.current?.getBoundingClientRect().y;
@@ -133,17 +132,16 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
     }
 
     useEffect(() => {
-        // console.log(timePlacement);
+
         if (timePlacement === 0) schedule[index] = 0;
         else if (timePlacement>-1 && timePlacement<0) schedule[index] = timeOffset+.01;
         else if (timePlacement<=-1) schedule[index] = 0;
         else if (timePlacement>numOfTicks) schedule[index] = timeOffset;
         else schedule[index] = +gmtTime.toFixed(2);
         setSchedule(schedule);
-        // console.log(schedule);
 
         const _tileRef = tileRef.current;
-        const _parentRef = parentRef.current;
+        // const _parentRef = parentRef.current;
         _tileRef.addEventListener('mousedown', handleMouseDown);
         window.addEventListener('mouseup', handleMouseUp);
         _tileRef.addEventListener('mouseout', handleMouseOut);
@@ -184,7 +182,6 @@ export default function ScheduleTile({parentRef, timelineRef, xOrigin, yOrigin, 
                 <span>{Math.floor(_timePlacement)}:{minutes < 10 ? "0" : ""}{minutes}</span>
                 <span style={{fontSize: ".50em"}}>{Math.floor(_timePlacement)%12 || 12}:{minutes < 10 ? "0" : ""}{minutes}{Math.floor(_timePlacement) >= 12 ? "PM" : "AM"}</span>
                 
-                {/* {Math.floor(_timePlacement)%12 > 1 ? "AM" : "PM"} */}
             </div> }
   
             <div style={gradientStyle}></div>

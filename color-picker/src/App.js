@@ -99,13 +99,12 @@ function App() {
       setWindowWidth(e.target.window.innerWidth)
   }
   useEffect(() => {
-    console.log(process.env.NODE_ENV);
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
     }
   }, []);
-  
+
   return (
     <div className="App" style={style}>
 
