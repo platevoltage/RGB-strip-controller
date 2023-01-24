@@ -162,12 +162,12 @@ export default function ColorLayout({get, set}) {
         tilesSection.addEventListener("keydown", handleKeyDown);
         tilesSection.addEventListener("keyup", handleKeyUp);
         tilesSection.addEventListener("mousedown", handleMouseDown);
-        tilesSection.addEventListener("mouseup", handleMouseUp);
+        window.addEventListener("mouseup", handleMouseUp);
         setInterval(tick, 1000);
         
         return () => {
             tilesSection.removeEventListener("mousedown", handleMouseDown);
-            tilesSection.removeEventListener("mouseup", handleMouseUp);
+            window.removeEventListener("mouseup", handleMouseUp);
             tilesSection.removeEventListener("keyup", handleKeyUp);
             tilesSection.removeEventListener("keydown", handleKeyDown);
             clearInterval(tick);
