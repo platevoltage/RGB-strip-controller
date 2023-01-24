@@ -95,6 +95,7 @@ export const getData = async (_profile, get, set, skipSetters) => {
     try {
         window.localStorage.setItem("ip", get.addressTextBox);
         console.log(_profile);
+        console.log(process.env);
         let result;
         if (process.env.REACT_APP_DEMO_OFF) {
             const response = await getCurrentConfig(get.addressTextBox, _profile, skipSetters);
@@ -102,7 +103,6 @@ export const getData = async (_profile, get, set, skipSetters) => {
         } else {
             result = demoData[_profile];
         }
-        console.log(process.env);
 
         console.log(result);
         let colorArray = [];
