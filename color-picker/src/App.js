@@ -105,6 +105,7 @@ function App() {
       window.removeEventListener('resize', handleResize);
     }
   }, []);
+  
   return (
     <div className="App" style={style}>
 
@@ -120,7 +121,6 @@ function App() {
 
       <CurrentConfig set={globalSetters} get={globalGetters}/>
  
-     
     </div>
   );
 }
