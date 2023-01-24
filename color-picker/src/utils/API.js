@@ -1,3 +1,5 @@
+
+
 export const getCurrentConfig = (address, profile, colorsOnly) => {
     return fetch(`${address}/current?profile=${profile}&colorsonly=${colorsOnly ? 1:0}`, {
         headers: {
