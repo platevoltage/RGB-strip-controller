@@ -1,18 +1,19 @@
 export default function Address({textBox, setTextBox}) {
 
     const style = {
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
         left: 0,
         display: 'flex',
         flexDirection: 'column',
         margin: "10px",
-        backgroundColor: "#444444"
+        fontSize: ".6em"
+        // backgroundColor: "#444444"
     }
 
     const inputStyle = {
-        width: "200px",
-        fontSize: "1.6em"
+        width: "100px",
+        fontSize: ".6em"
     }
   
     return (

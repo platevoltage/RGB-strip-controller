@@ -4,17 +4,17 @@ export default function EffectSpeed({colorData, textBox, setTextBox}) {
         display: 'flex',
         flexDirection: 'column',
         margin: "10px",
-        backgroundColor: "#444444"
+        // backgroundColor: "#888888"
     }
 
     const inputStyle = {
-        width: "70px",
-        fontSize: "1.6em"
+        width: "6em",
+        fontSize: "1em"
     }
   
     return (
         <div style={style}>
-            <span>EffectSpeed:</span>
+            <span style={{fontSize: ".8em"}}>EffectSpeed:</span>
             <input
                 value={textBox}
                 name="effect-speed"

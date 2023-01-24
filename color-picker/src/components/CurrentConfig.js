@@ -53,17 +53,26 @@ export default function CurrentConfig({get, set}) {
     const buttonStyle = {
         display: "flex",
         padding: "10px",
+        // backgroundColor: "#444499",
+        position: "relative",
     }
 
     return (
         
             <div style={buttonStyle}>
+
+                <div style={{display: "flex", position: "absolute", right: "20px"}}>
+
+                    <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
+                    <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
+                    <Mode mode={mode} setMode={setMode}/>
+                    <Profile setLoadingParent={setLoading} get={get} set={set} />
+
+                </div>
+
                 <SubmitButton length={+lengthTextBox} pixels={colorDataUnsaved} setLoadingParent={setLoading} loadingParent={loading} setError={setError} error={error} address={addressTextBox} dividers={dividerLocations} effectSpeed={+effectSpeedTextBox} profile={+profile} schedule={schedule} addressTextBox={addressTextBox}/>
+
                 <ReadButton get={get} set={set} setLoadingParent={setLoading}/>
-                <StripLength colorData={colorData} textBox={lengthTextBox} setTextBox={setLengthTextBox} />
-                <EffectSpeed textBox={effectSpeedTextBox} setTextBox={setEffectSpeedTextBox} />
-                <Mode mode={mode} setMode={setMode}/>
-                <Profile setLoadingParent={setLoading} get={get} set={set} />
                 { process.env.NODE_ENV === 'development' && <Address textBox={addressTextBox} setTextBox={setAddressTextBox} />}
             </div>
              
