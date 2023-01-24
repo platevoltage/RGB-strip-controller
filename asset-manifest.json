@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/RGB-strip-controller/static/css/main.52be9abe.css",
-    "main.js": "/RGB-strip-controller/static/js/main.a39a5dc3.js",
+    "main.js": "/RGB-strip-controller/static/js/main.b8e36ce3.js",
     "static/js/787.05b7a068.chunk.js": "/RGB-strip-controller/static/js/787.05b7a068.chunk.js",
     "index.html": "/RGB-strip-controller/index.html",
     "main.52be9abe.css.map": "/RGB-strip-controller/static/css/main.52be9abe.css.map",
-    "main.a39a5dc3.js.map": "/RGB-strip-controller/static/js/main.a39a5dc3.js.map",
+    "main.b8e36ce3.js.map": "/RGB-strip-controller/static/js/main.b8e36ce3.js.map",
     "787.05b7a068.chunk.js.map": "/RGB-strip-controller/static/js/787.05b7a068.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.52be9abe.css",
-    "static/js/main.a39a5dc3.js"
+    "static/js/main.b8e36ce3.js"
   ]
 }
