@@ -40,4 +40,6 @@ select, input {
   box-shadow: 2px 2px 2px #00000044
 }
 
-
+a {
+  color: #8888dd;
+}

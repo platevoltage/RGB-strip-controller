@@ -1,0 +1,12 @@
+static const char _demo_html[] PROGMEM = R"=====(
+<!DOCTYPE html>
+<html>
+<body style="background-color: #111111">
+
+    <video width="1000" controls>
+        <source src="demo.mp4" type="video/mp4" />
+      </video>
+
+</body>
+</html>
+)=====";
