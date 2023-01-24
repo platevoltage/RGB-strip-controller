@@ -320,9 +320,9 @@ void setup() {
   createDir("/1");
   createDir("/2");
   createDir("/3");
-  listDir("/");
+  // listDir("/");
 
-  epoch = getTime(); // CRASHES ESP32
+  epoch = getTime(); 
   
 }
 
