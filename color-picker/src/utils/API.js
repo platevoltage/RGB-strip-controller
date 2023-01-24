@@ -95,9 +95,13 @@ export const getData = async (_profile, get, set, skipSetters) => {
     try {
         window.localStorage.setItem("ip", get.addressTextBox);
         console.log(_profile);
-        // const response = await getCurrentConfig(get.addressTextBox, _profile, skipSetters);
-        // const result = await response.json();
-        const result = demoData[_profile];
+        let result;
+        if (process.env.REACT_APP_DEMO) {
+            result = demoData[_profile];
+        } else {
+            const response = await getCurrentConfig(get.addressTextBox, _profile, skipSetters);
+            result = await response.json();
+        }
         console.log(process.env);
 
         console.log(result);
