@@ -96,11 +96,11 @@ export const getData = async (_profile, get, set, skipSetters) => {
         window.localStorage.setItem("ip", get.addressTextBox);
         console.log(_profile);
         let result;
-        if (process.env.REACT_APP_DEMO) {
-            result = demoData[_profile];
-        } else {
+        if (process.env.REACT_APP_DEMO_OFF) {
             const response = await getCurrentConfig(get.addressTextBox, _profile, skipSetters);
             result = await response.json();
+        } else {
+            result = demoData[_profile];
         }
         console.log(process.env);
 
