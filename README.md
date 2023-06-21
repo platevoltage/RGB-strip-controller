@@ -1,6 +1,7 @@
 # RGB-strip-controller
 
-## https://platevoltage.github.io/RGB-strip-controller/
+### Demo Video: https://platevoltage.github.io/RGB-strip-controller/demo.html
+### Live Interface: https://platevoltage.github.io/RGB-strip-controller/
 
 This is a web app built with React that communicates with an ESP8266 or ESP32 microcontroller to operate addressable RGBW led strips.
 
